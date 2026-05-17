@@ -916,7 +916,7 @@
     try {
       const tab = document.querySelector('.pay-tab.active')?.dataset.tab || 'wechat';
       const method = tab === 'paypal' ? 'PayPal' : tab === 'alipay' ? 'Alipay' : 'WeChat';
-      const resp = await fetch('https://api.tools.vanhci.top/email', {
+      const resp = await fetch('https://toolkit-api.vanhci.workers.dev/email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, paymentMethod: method })
@@ -941,7 +941,7 @@
     const btn = document.getElementById('lic-activate-btn');
     btn.textContent = '激活中...'; btn.disabled = true;
     try {
-      const resp = await fetch('https://api.tools.vanhci.top/activate', {
+      const resp = await fetch('https://toolkit-api.vanhci.workers.dev/activate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, key })
