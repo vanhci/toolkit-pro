@@ -37,7 +37,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://www.paypal.com/sdk/js?client-id=BAA29DZq9GpuvgJXRJw1bxJmQfGROuKOrftRsQYYF-Haj0bCq-2sjZmlm1PY9l2y1NS-0bn5F_1Ksw2Y8c&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -315,9 +314,9 @@
 
       <!-- PayPal -->
       <div id="qr-paypal" class="qr-panel hidden">
-        <p class="text-xs text-gray-500 mb-3">Click to pay securely via PayPal</p>
-        <div id="paypal-container-8QT9VM8QL7USJ"></div>
-        <p class="text-xs text-gray-400 mt-2">Rate ~¥9.9, charged in USD</p>
+        <p class="text-xs text-gray-500 mb-3">扫描二维码，用 PayPal 安全支付</p>
+        <img src="assets/paypal-pay.jpg" alt="PayPal" class="mx-auto rounded-xl w-52">
+        <p class="text-xs text-gray-400 mt-2">汇率约 ¥9.9，以 PayPal 显示为准</p>
       </div>
 
       <p class="text-xs text-gray-400 mt-4" id="pw-contact">支付后联系微信：vanhci 解锁</p>
@@ -466,7 +465,7 @@
       paywallSubtitle: 'Lifetime · Unlimited · No subscription',
       wechatScan: 'Scan the QR code with WeChat',
       alipayScan: 'Scan the QR code with Alipay',
-      paypalNote: 'Rate ~¥9.9, actual amount shown on PayPal',
+      paypalScan: 'Scan the QR code with PayPal',
       lifetime: 'Lifetime',
       original: 'Original ¥29',
       wechatPay: 'WeChat Pay ¥9.9',
@@ -745,7 +744,7 @@
     const alipayScanLabel = document.querySelector('#qr-alipay p.text-xs');
     if (alipayScanLabel) alipayScanLabel.textContent = lang.alipayScan || '截图二维码，用支付宝扫一扫支付';
     const paypalNote = document.querySelector('#qr-paypal p.text-xs.text-gray-400');
-    if (paypalNote) paypalNote.textContent = lang.paypalNote || '汇率约 ¥9.9，以 PayPal 实际显示为准';
+    if (paypalNote) paypalNote.textContent = lang.paypalScan || '汇率约 ¥9.9，以 PayPal 显示为准';
     const pwContact = document.getElementById('pw-contact');
     if (pwContact) pwContact.textContent = lang.contact;
   }
@@ -819,13 +818,6 @@
     document.querySelectorAll('.pay-tab').forEach((b, i) => b.classList.toggle('active', i === 0));
     document.querySelectorAll('.qr-panel').forEach((p, i) => p.classList.toggle('hidden', i !== 0));
   });
-
-  // PayPal button render
-  if (typeof paypal !== 'undefined') {
-    paypal.HostedButtons({
-      hostedButtonId: "8QT9VM8QL7USJ",
-    }).render("#paypal-container-8QT9VM8QL7USJ");
-  }
 
   // Paywall tab switching
   document.querySelectorAll('.pay-tab').forEach(btn => {
