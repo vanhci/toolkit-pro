@@ -37,6 +37,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=BAA29DZq9GpuvgJXRJw1bxJmQfGROuKOrftRsQYYF-Haj0bCq-2sjZmlm1PY9l2y1NS-0bn5F_1Ksw2Y8c&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -51,7 +52,11 @@
     .toast { animation: slideIn 0.3s ease; }
     @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .modal-overlay { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
-    .modal-content { animation: scaleIn 0.2s ease; }
+    .modal-content { animation: scaleIn 0.2s ease; position: relative; }
+    .qr-panel img { border: 1px solid #f0f0f0; }
+    .pay-tab { background: transparent; color: #6b7280; }
+    .pay-tab.active { background: white; color: #1f2937; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .pay-tab:hover:not(.active) { color: #374151; }
     @keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     .pro-badge { background: linear-gradient(135deg, #f59e0b, #d97706); }
     .canvas-preview { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
@@ -275,25 +280,47 @@
   </div>
 
   <!-- PAYWALL MODAL -->
+  <!-- PAYWALL MODAL -->
   <div id="paywall-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
-    <div class="modal-content bg-white rounded-2xl p-8 max-w-sm w-full text-center">
-      <div class="text-5xl mb-4">⭐</div>
-      <h2 class="text-xl font-bold text-gray-900 mb-2" id="pw-title">升级解锁</h2>
-      <p class="text-sm text-gray-500 mb-6" id="pw-desc">每日免费3次，升级后无限制使用所有工具<br>一次付费，永久解锁，无需订阅。</p>
-      <div class="bg-gray-50 rounded-xl p-4 mb-6">
-        <div class="flex justify-between items-center mb-2">
-          <span class="text-gray-500" id="pw-lifetime">终身解锁</span>
-          <span class="font-bold text-2xl text-gray-900">¥9.9</span>
-        </div>
-        <div class="text-xs text-gray-400 line-through" id="pw-original">原价 ¥29</div>
+    <div class="modal-content bg-white rounded-2xl p-6 max-w-sm w-full text-center">
+      <button id="pw-close" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+      <div class="text-3xl mb-3">⭐</div>
+      <h2 class="text-xl font-bold text-gray-900 mb-1" id="pw-title">升级解锁</h2>
+      <p class="text-xs text-gray-400 mb-3" id="pw-subtitle">终身解锁 · 永久使用 · 无订阅</p>
+      <div class="bg-gray-50 rounded-xl p-3 mb-4">
+        <span class="font-bold text-2xl text-gray-900">¥9.9</span>
+        <span class="text-xs text-gray-400 line-through ml-2">原价 ¥29</span>
       </div>
-      <button class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition mb-3" id="pw-wechat">
-        微信支付 ¥9.9
-      </button>
-      <button class="w-full bg-gray-100 text-gray-700 py-2.5 rounded-xl font-medium hover:bg-gray-200 transition" id="pw-alipay">
-        支付宝支付 ¥9.9
-      </button>
-      <p class="text-xs text-gray-400 mt-4" id="pw-contact">支付后联系微信：vanhci 解锁 · 注明：工具站解锁</p>
+
+      <!-- Tab buttons -->
+      <div class="flex gap-1 mb-4 bg-gray-100 rounded-xl p-1">
+        <button class="pay-tab flex-1 py-2 rounded-lg text-sm font-medium transition" data-tab="wechat">微信</button>
+        <button class="pay-tab flex-1 py-2 rounded-lg text-sm font-medium transition" data-tab="alipay">支付宝</button>
+        <button class="pay-tab flex-1 py-2 rounded-lg text-sm font-medium transition" data-tab="paypal">PayPal</button>
+      </div>
+
+      <!-- WeChat QR -->
+      <div id="qr-wechat" class="qr-panel">
+        <p class="text-xs text-gray-500 mb-3">截图二维码，用微信扫一扫支付</p>
+        <img src="assets/wechat-pay.jpg" alt="微信支付" class="mx-auto rounded-xl w-52">
+        <p class="text-xs text-gray-400 mt-2">微信昵称：vanhci(超)</p>
+      </div>
+
+      <!-- Alipay QR -->
+      <div id="qr-alipay" class="qr-panel hidden">
+        <p class="text-xs text-gray-500 mb-3">截图二维码，用支付宝扫一扫支付</p>
+        <img src="assets/alipay-pay.jpg" alt="支付宝" class="mx-auto rounded-xl w-52">
+        <p class="text-xs text-gray-400 mt-2">支付宝昵称：VAN(**超)</p>
+      </div>
+
+      <!-- PayPal -->
+      <div id="qr-paypal" class="qr-panel hidden">
+        <p class="text-xs text-gray-500 mb-3">Click to pay securely via PayPal</p>
+        <div id="paypal-container-8QT9VM8QL7USJ"></div>
+        <p class="text-xs text-gray-400 mt-2">Rate ~¥9.9, charged in USD</p>
+      </div>
+
+      <p class="text-xs text-gray-400 mt-4" id="pw-contact">支付后联系微信：vanhci 解锁</p>
     </div>
   </div>
 
@@ -352,6 +379,10 @@
       selectFirst: '选择功能 ↑',
       paywallTitle: '升级解锁',
       paywallDesc: '每日免费3次，升级后无限制使用所有工具<br>一次付费，永久解锁，无需订阅。',
+      paywallSubtitle: '终身解锁 · 永久使用 · 无订阅',
+      wechatScan: '截图二维码，用微信扫一扫支付',
+      alipayScan: '截图二维码，用支付宝扫一扫支付',
+      paypalNote: '汇率约 ¥9.9，以 PayPal 实际显示为准',
       lifetime: '终身解锁',
       original: '原价 ¥29',
       wechatPay: '微信支付 ¥9.9',
@@ -432,6 +463,10 @@
       selectFirst: 'Select a tool ↑',
       paywallTitle: 'Upgrade',
       paywallDesc: '3 free uses daily, unlimited after upgrade<br>One-time payment, lifetime access, no subscription.',
+      paywallSubtitle: 'Lifetime · Unlimited · No subscription',
+      wechatScan: 'Scan the QR code with WeChat',
+      alipayScan: 'Scan the QR code with Alipay',
+      paypalNote: 'Rate ~¥9.9, actual amount shown on PayPal',
       lifetime: 'Lifetime',
       original: 'Original ¥29',
       wechatPay: 'WeChat Pay ¥9.9',
@@ -697,16 +732,20 @@
     // Apply to paywall
     const pwTitle = document.getElementById('pw-title');
     if (pwTitle) pwTitle.textContent = lang.paywallTitle;
-    const pwDesc = document.getElementById('pw-desc');
-    if (pwDesc) pwDesc.innerHTML = lang.paywallDesc;
-    const pwLifetime = document.getElementById('pw-lifetime');
-    if (pwLifetime) pwLifetime.textContent = lang.lifetime;
-    const pwOriginal = document.getElementById('pw-original');
-    if (pwOriginal) pwOriginal.textContent = lang.original;
-    const pwWechat = document.getElementById('pw-wechat');
-    if (pwWechat) pwWechat.textContent = lang.wechatPay;
-    const pwAlipay = document.getElementById('pw-alipay');
-    if (pwAlipay) pwAlipay.textContent = lang.alipay;
+    const pwSubtitle = document.getElementById('pw-subtitle');
+    if (pwSubtitle) pwSubtitle.textContent = lang.paywallSubtitle;
+    // Apply paywall tab labels (per language)
+    const tabLabels = { wechat: currentLang === 'en' ? 'WeChat' : '微信', alipay: currentLang === 'en' ? 'Alipay' : '支付宝', paypal: 'PayPal' };
+    document.querySelectorAll('.pay-tab[data-tab="wechat"]').forEach(b => b.textContent = tabLabels.wechat);
+    document.querySelectorAll('.pay-tab[data-tab="alipay"]').forEach(b => b.textContent = tabLabels.alipay);
+    document.querySelectorAll('.pay-tab[data-tab="paypal"]').forEach(b => b.textContent = tabLabels.paypal);
+    // QR labels
+    const wechatScanLabel = document.querySelector('#qr-wechat p.text-xs');
+    if (wechatScanLabel) wechatScanLabel.textContent = lang.wechatScan || '截图二维码，用微信扫一扫支付';
+    const alipayScanLabel = document.querySelector('#qr-alipay p.text-xs');
+    if (alipayScanLabel) alipayScanLabel.textContent = lang.alipayScan || '截图二维码，用支付宝扫一扫支付';
+    const paypalNote = document.querySelector('#qr-paypal p.text-xs.text-gray-400');
+    if (paypalNote) paypalNote.textContent = lang.paypalNote || '汇率约 ¥9.9，以 PayPal 实际显示为准';
     const pwContact = document.getElementById('pw-contact');
     if (pwContact) pwContact.textContent = lang.contact;
   }
@@ -776,10 +815,36 @@
   document.getElementById('removeAdBtn').addEventListener('click', () => {
     if (adRemoved) { showToast(t('unlocked')); return; }
     document.getElementById('paywall-modal').classList.remove('hidden');
+    // Switch to first tab
+    document.querySelectorAll('.pay-tab').forEach((b, i) => b.classList.toggle('active', i === 0));
+    document.querySelectorAll('.qr-panel').forEach((p, i) => p.classList.toggle('hidden', i !== 0));
   });
 
-  document.getElementById('pw-wechat')?.addEventListener('click', () => showToast(t('toastPaymentPending')));
-  document.getElementById('pw-alipay')?.addEventListener('click', () => showToast(t('toastPaymentPending')));
+  // PayPal button render
+  if (typeof paypal !== 'undefined') {
+    paypal.HostedButtons({
+      hostedButtonId: "8QT9VM8QL7USJ",
+    }).render("#paypal-container-8QT9VM8QL7USJ");
+  }
+
+  // Paywall tab switching
+  document.querySelectorAll('.pay-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.pay-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.qr-panel').forEach(p => p.classList.add('hidden'));
+      btn.classList.add('active');
+      document.getElementById('qr-' + btn.dataset.tab).classList.remove('hidden');
+    });
+  });
+
+  // Close paywall
+  document.getElementById('pw-close')?.addEventListener('click', () => {
+    document.getElementById('paywall-modal').classList.add('hidden');
+  });
+  document.getElementById('paywall-modal')?.addEventListener('click', e => {
+    if (e.target === document.getElementById('paywall-modal'))
+      document.getElementById('paywall-modal').classList.add('hidden');
+  });
 
   // ========== TOAST ==========
   function showToast(msg) {
