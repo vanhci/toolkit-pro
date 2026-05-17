@@ -56,6 +56,8 @@
     .pay-tab { background: transparent; color: #6b7280; }
     .pay-tab.active { background: white; color: #1f2937; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
     .pay-tab:hover:not(.active) { color: #374151; }
+    .lic-step input:focus { outline: none; border-color: #6366f1; }
+    #license-modal .modal-content { position: relative; }
     @keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     .pro-badge { background: linear-gradient(135deg, #f59e0b, #d97706); }
     .canvas-preview { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
@@ -320,6 +322,40 @@
       </div>
 
       <p class="text-xs text-gray-400 mt-4" id="pw-contact">支付后联系微信：vanhci 解锁</p>
+      <button id="pw-activate-btn" class="mt-3 text-xs text-indigo-600 hover:text-indigo-800 underline">已付款，获取激活码 →</button>
+    </div>
+  </div>
+
+  <!-- LICENSE ACTIVATION MODAL -->
+  <div id="license-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+    <div class="modal-content bg-white rounded-2xl p-6 max-w-sm w-full text-center">
+      <button id="lic-close" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+      <div class="text-3xl mb-3">🔑</div>
+      <h2 class="text-xl font-bold text-gray-900 mb-1" id="lic-title">获取激活码</h2>
+      <p class="text-xs text-gray-400 mb-4" id="lic-subtitle">输入您的邮箱，我们发送激活码</p>
+
+      <div id="lic-step-email" class="lic-step">
+        <input type="email" id="lic-email" placeholder="your@email.com" class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm mb-3">
+        <button id="lic-send-btn" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition">
+          发送激活码
+        </button>
+        <p class="text-xs text-gray-400 mt-2">验证码将在 1 分钟内送达</p>
+      </div>
+
+      <div id="lic-step-key" class="lic-step hidden">
+        <input type="text" id="lic-key" placeholder="TKP-XXXXXX-XXXXXX" class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm mb-3 font-mono" style="letter-spacing:2px">
+        <button id="lic-activate-btn" class="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition">
+          激活解锁
+        </button>
+        <p class="text-xs text-gray-400 mt-2">没收到？检查垃圾邮件</p>
+      </div>
+
+      <div id="lic-success" class="lic-step hidden">
+        <div class="text-4xl mb-3">🎉</div>
+        <p class="text-lg font-bold text-green-600">已激活！</p>
+        <p class="text-sm text-gray-500 mt-1">解锁成功，感谢购买</p>
+        <button id="lic-done-btn" class="mt-4 bg-indigo-600 text-white px-6 py-2 rounded-xl font-medium hover:bg-indigo-700">开始使用 →</button>
+      </div>
     </div>
   </div>
 
@@ -827,13 +863,18 @@
     document.querySelectorAll('.qr-panel').forEach((p, i) => p.classList.toggle('hidden', i !== 0));
   });
 
-  // Paywall tab switching
+  // Paywall tab switching + dynamic price
+  const prices = { wechat: {price:'¥9.99', original:'¥29'}, alipay: {price:'¥9.99', original:'¥29'}, paypal: {price:'$2.99', original:'$8.99'} };
   document.querySelectorAll('.pay-tab').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.pay-tab').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.qr-panel').forEach(p => p.classList.add('hidden'));
       btn.classList.add('active');
       document.getElementById('qr-' + btn.dataset.tab).classList.remove('hidden');
+      // Update price dynamically per tab
+      const p = prices[btn.dataset.tab];
+      document.getElementById('pw-price').textContent = p.price;
+      document.getElementById('pw-original-price').textContent = p.original;
     });
   });
 
@@ -844,6 +885,86 @@
   document.getElementById('paywall-modal')?.addEventListener('click', e => {
     if (e.target === document.getElementById('paywall-modal'))
       document.getElementById('paywall-modal').classList.add('hidden');
+  });
+
+  // Open license modal from "已付款，获取激活码" link
+  document.getElementById('pw-activate-btn')?.addEventListener('click', () => {
+    document.getElementById('paywall-modal').classList.add('hidden');
+    document.getElementById('license-modal').classList.remove('hidden');
+    // Reset to step 1
+    document.querySelectorAll('.lic-step').forEach(s => s.classList.add('hidden'));
+    document.getElementById('lic-step-email').classList.remove('hidden');
+    document.getElementById('lic-email').value = '';
+    document.getElementById('lic-key').value = '';
+  });
+
+  // Close license modal
+  document.getElementById('lic-close')?.addEventListener('click', () => {
+    document.getElementById('license-modal').classList.add('hidden');
+  });
+  document.getElementById('license-modal')?.addEventListener('click', e => {
+    if (e.target === document.getElementById('license-modal'))
+      document.getElementById('license-modal').classList.add('hidden');
+  });
+
+  // Send license key to email
+  document.getElementById('lic-send-btn')?.addEventListener('click', async () => {
+    const email = document.getElementById('lic-email').value.trim();
+    if (!email || !email.includes('@')) { showToast('请输入有效邮箱'); return; }
+    const btn = document.getElementById('lic-send-btn');
+    btn.textContent = '发送中...'; btn.disabled = true;
+    try {
+      const tab = document.querySelector('.pay-tab.active')?.dataset.tab || 'wechat';
+      const method = tab === 'paypal' ? 'PayPal' : tab === 'alipay' ? 'Alipay' : 'WeChat';
+      const resp = await fetch('https://api.tools.vanhci.top/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, paymentMethod: method })
+      });
+      const data = await resp.json();
+      if (data.success) {
+        showToast('激活码已发送！');
+        document.getElementById('lic-step-email').classList.add('hidden');
+        document.getElementById('lic-step-key').classList.remove('hidden');
+      } else {
+        showToast(data.error || '发送失败');
+      }
+    } catch(e) { showToast('发送失败: ' + e.message); }
+    btn.textContent = '发送激活码'; btn.disabled = false;
+  });
+
+  // Activate with license key
+  document.getElementById('lic-activate-btn')?.addEventListener('click', async () => {
+    const email = document.getElementById('lic-email').value.trim();
+    const key = document.getElementById('lic-key').value.trim().toUpperCase();
+    if (!email || !key) { showToast('请填写邮箱和激活码'); return; }
+    const btn = document.getElementById('lic-activate-btn');
+    btn.textContent = '激活中...'; btn.disabled = true;
+    try {
+      const resp = await fetch('https://api.tools.vanhci.top/activate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, key })
+      });
+      const data = await resp.json();
+      if (data.success) {
+        adRemoved = true;
+        localStorage.setItem('toolkit_unlocked', 'true');
+        document.getElementById('removeAdBtn')?.remove();
+        document.querySelectorAll('.ad-slot').forEach(el => el.remove());
+        document.getElementById('lic-step-key').classList.add('hidden');
+        document.getElementById('lic-success').classList.remove('hidden');
+      } else {
+        showToast(data.error || '激活失败');
+      }
+    } catch(e) { showToast('激活失败: ' + e.message); }
+    btn.textContent = '激活解锁'; btn.disabled = false;
+  });
+
+  // Done - close license modal
+  document.getElementById('lic-done-btn')?.addEventListener('click', () => {
+    document.getElementById('license-modal').classList.add('hidden');
+    showToast('已解锁！');
   });
 
   // ========== TOAST ==========
