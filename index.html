@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToolKit Pro — 免费在线工具箱</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', -apple-system, sans-serif; }
+    .ad-slot { background: #f8fafc; border: 2px dashed #cbd5e1; min-height: 100px; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 12px; }
+    .ad-slot.removed { border: none; background: transparent; }
+    .tab-active { background: #4f46e5; color: white; }
+    .tool-card { transition: all 0.2s; }
+    .tool-card:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+    .drop-zone { border: 2px dashed #cbd5e1; transition: all 0.2s; }
+    .drop-zone.dragover { border-color: #4f46e5; background: #eef2ff; }
+    .toast { animation: slideIn 0.3s ease; }
+    @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-overlay { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+    .modal-content { animation: scaleIn 0.2s ease; }
+    @keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .pro-badge { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .canvas-preview { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+    .output-card { border: 1px solid #e2e8f0; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- TOP AD SLOT -->
+  <div id="top-ad" class="ad-slot mx-4 mt-4 rounded-xl">📢 广告位 — 728×90 Leaderboard</div>
+
+  <!-- HEADER -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div>
+        <h1 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+          🛠️ ToolKit Pro
+        </h1>
+        <p class="text-xs text-gray-500 mt-0.5">免费在线工具箱 · 无需注册 · 永不过期</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <span id="use-indicator" class="text-xs font-medium text-gray-400">今日已用 0/3 次</span>
+        <button id="removeAdBtn" class="pro-badge text-white text-xs font-semibold px-3 py-1.5 rounded-full hover:opacity-90 transition">
+          ⭐ 升级解锁 ¥9.9
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- TOOL TABS -->
+  <nav class="bg-white border-b border-gray-200">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="flex gap-1 overflow-x-auto py-2" id="toolTabs">
+        <button class="tab-btn tab-active px-4 py-2 rounded-lg text-sm font-medium transition" data-tool="excel">📊 Excel处理</button>
+        <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="image">🖼️ 图片处理</button>
+        <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="rename">📂 文件重命名</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="max-w-6xl mx-auto px-4 py-6">
+
+    <!-- TOOL: EXCEL -->
+    <section id="tool-excel" class="tool-content">
+      <div class="grid md:grid-cols-3 gap-4 mb-6">
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="excelSetMode('merge')">
+          <div class="text-2xl mb-2">🔀</div>
+          <h3 class="font-semibold text-gray-900">合并表格</h3>
+          <p class="text-xs text-gray-500 mt-1">将多个 Excel/CSV 合并为一个</p>
+        </div>
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="excelSetMode('split')">
+          <div class="text-2xl mb-2">📂</div>
+          <h3 class="font-semibold text-gray-900">拆分表格</h3>
+          <p class="text-xs text-gray-500 mt-1">按列值拆成多个文件</p>
+        </div>
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="excelSetMode('clean')">
+          <div class="text-2xl mb-2">🧹</div>
+          <h3 class="font-semibold text-gray-900">清洗数据</h3>
+          <p class="text-xs text-gray-500 mt-1">去空行、空格、重复项</p>
+        </div>
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="excelSetMode('search')">
+          <div class="text-2xl mb-2">🔍</div>
+          <h3 class="font-semibold text-gray-900">搜索筛选</h3>
+          <p class="text-xs text-gray-500 mt-1">按关键词过滤行</p>
+        </div>
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="excelSetMode('compare')">
+          <div class="text-2xl mb-2">⚖️</div>
+          <h3 class="font-semibold text-gray-900">对比差异</h3>
+          <p class="text-xs text-gray-500 mt-1">找出两个表格的区别</p>
+        </div>
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="excelSetMode('dedup')">
+          <div class="text-2xl mb-2">🗂️</div>
+          <h3 class="font-semibold text-gray-900">去重客户</h3>
+          <p class="text-xs text-gray-500 mt-1">按姓名/手机号去重</p>
+        </div>
+      </div>
+
+      <!-- Excel 操作面板 -->
+      <div id="excel-panel" class="bg-white rounded-2xl border border-gray-100 p-6">
+        <div id="excel-mode-title" class="font-bold text-gray-900 mb-4 text-lg">选择功能 ↑</div>
+        <div id="excel-dropzone" class="drop-zone rounded-xl p-10 text-center cursor-pointer mb-4" onclick="document.getElementById('excel-input').click()">
+          <div class="text-4xl mb-3">📁</div>
+          <p class="text-gray-700 font-medium">点击上传或拖拽文件到这里</p>
+          <p class="text-xs text-gray-400 mt-1">支持 .xlsx .xls .csv</p>
+          <input type="file" id="excel-input" class="hidden" multiple accept=".xlsx,.xls,.csv">
+        </div>
+        <div id="excel-files" class="space-y-2 mb-4"></div>
+        <div id="excel-options" class="hidden mb-4 p-4 bg-gray-50 rounded-xl"></div>
+        <button id="excel-run" class="hidden bg-indigo-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-indigo-700 transition disabled:opacity-50" onclick="excelRun()">
+          开始处理 →
+        </button>
+      </div>
+    </section>
+
+    <!-- TOOL: IMAGE -->
+    <section id="tool-image" class="tool-content hidden">
+      <div class="grid md:grid-cols-2 gap-4 mb-6">
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="imageSetMode('resize')">
+          <div class="text-2xl mb-2">📐</div>
+          <h3 class="font-semibold text-gray-900">调整尺寸</h3>
+          <p class="text-xs text-gray-500 mt-1">批量缩放图片到指定尺寸</p>
+        </div>
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="imageSetMode('compress')">
+          <div class="text-2xl mb-2">🗜️</div>
+          <h3 class="font-semibold text-gray-900">压缩图片</h3>
+          <p class="text-xs text-gray-500 mt-1">减小文件体积保持清晰度</p>
+        </div>
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="imageSetMode('watermark')">
+          <div class="text-2xl mb-2">💧</div>
+          <h3 class="font-semibold text-gray-900">添加水印</h3>
+          <p class="text-xs text-gray-500 mt-1">文字或图片水印</p>
+        </div>
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="imageSetMode('convert')">
+          <div class="text-2xl mb-2">🔄</div>
+          <h3 class="font-semibold text-gray-900">格式转换</h3>
+          <p class="text-xs text-gray-500 mt-1">PNG/JPG/WebP 互转</p>
+        </div>
+      </div>
+      <div id="image-dropzone" class="drop-zone rounded-xl p-10 text-center cursor-pointer bg-white border border-gray-100 mb-4" onclick="document.getElementById('image-input').click()">
+        <div class="text-4xl mb-3">🖼️</div>
+        <p class="text-gray-700 font-medium">点击上传或拖拽图片</p>
+        <p class="text-xs text-gray-400 mt-1">支持 PNG, JPG, WebP, GIF</p>
+        <input type="file" id="image-input" class="hidden" multiple accept="image/*">
+      </div>
+      <div id="image-options" class="bg-white rounded-2xl border border-gray-100 p-6 mb-4"></div>
+      <button id="image-run" class="hidden bg-indigo-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-indigo-700 transition" onclick="imageRun()">
+        开始处理 →
+      </button>
+    </section>
+
+</main>
+    <section id="tool-rename" class="tool-content hidden">
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 max-w-lg">
+        <h3 class="font-bold text-gray-900 mb-4 text-lg">📂 批量文件重命名</h3>
+        <div id="rename-dropzone" class="drop-zone rounded-xl p-8 text-center cursor-pointer mb-4" onclick="document.getElementById('rename-input').click()">
+          <div class="text-4xl mb-2">📁</div>
+          <p class="text-gray-700 font-medium">点击上传或拖拽文件</p>
+          <p class="text-xs text-gray-400 mt-1">支持任意文件类型</p>
+          <input type="file" id="rename-input" class="hidden" multiple>
+        </div>
+        <div id="rename-files" class="space-y-2 mb-4"></div>
+        <div class="space-y-3">
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">命名模板</label>
+            <input type="text" id="rename-pattern" value="{原名}_{编号}" placeholder="{原名}_{编号}" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm">
+            <p class="text-xs text-gray-400 mt-1">可用：{原名} {编号} {日期} {年份} {月份} {日}</p>
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            <label class="flex items-center gap-1 text-xs text-gray-600">
+              <input type="checkbox" id="rename-lower" class="rounded"> 全部小写
+            </label>
+            <label class="flex items-center gap-1 text-xs text-gray-600">
+              <input type="checkbox" id="rename-date" class="rounded"> 加日期
+            </label>
+          </div>
+          <button id="rename-run" class="hidden w-full bg-indigo-600 text-white py-2.5 rounded-xl font-semibold hover:bg-indigo-700 transition" onclick="renameRun()">
+            开始重命名 →
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- OUTPUT SECTION (hidden by default) -->
+  <div id="output-section" class="hidden max-w-6xl mx-auto px-4 pb-8">
+    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+      <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">✅ 处理完成</h3>
+      <div id="output-files" class="space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- PAYWALL MODAL -->
+  <div id="paywall-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+    <div class="modal-content bg-white rounded-2xl p-8 max-w-sm w-full text-center">
+      <div class="text-5xl mb-4">⭐</div>
+      <h2 class="text-xl font-bold text-gray-900 mb-2">升级解锁</h2>
+      <p class="text-sm text-gray-500 mb-6">每日免费3次，升级后无限制使用所有工具<br>一次付费，永久解锁，无需订阅。</p>
+      <div class="bg-gray-50 rounded-xl p-4 mb-6">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-gray-500">终身解锁</span>
+          <span class="font-bold text-2xl text-gray-900">¥9.9</span>
+        </div>
+        <div class="text-xs text-gray-400 line-through">原价 ¥29</div>
+      </div>
+      <button onclick="alert('支付功能开发中，请联系微信：vanhci')" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition mb-3">
+        微信支付 ¥9.9
+      </button>
+      <button onclick="alert('支付功能开发中，请联系微信：vanhci')" class="w-full bg-gray-100 text-gray-700 py-2.5 rounded-xl font-medium hover:bg-gray-200 transition">
+        支付宝支付 ¥9.9
+      </button>
+      <p class="text-xs text-gray-400 mt-4">支付后联系微信：vanhci 解锁 · 注明：工具站解锁</p>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-5 py-3 rounded-full text-sm font-medium shadow-xl z-50">
+  </div>
+
+  <!-- BOTTOM AD SLOT -->
+  <div id="bottom-ad" class="ad-slot mx-4 mt-6 mb-4 rounded-xl">📢 广告位 — 728×90 Leaderboard</div>
+
+  <footer class="text-center text-xs text-gray-400 pb-8">
+    <p>ToolKit Pro · 免费在线工具箱 · © 2026</p>
+  </footer>
+
+  <script>
+  // ========== STATE ==========
+  let excelMode = null, excelFiles = [], excelData = [];
+  let imageMode = null, imageFiles = [];
+  let coverPreset = '考研', coverColor = '#4f46e5';
+  let renameFiles = [];
+  let adRemoved = false;
+  let dailyUses = 0;
+  const FREE_DAILY_LIMIT = 3;
+  const STORAGE_KEY = 'toolkit_daily_uses';
+  const DATE_KEY = 'toolkit_date';
+
+  function checkDailyLimit() {
+    const today = new Date().toDateString();
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    if (stored.date !== today) {
+      dailyUses = 0;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({date: today, count: 0}));
+    } else {
+      dailyUses = stored.count || 0;
+    }
+    updateUseIndicator();
+  }
+
+  function recordUse() {
+    dailyUses++;
+    const today = new Date().toDateString();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({date: today, count: dailyUses}));
+    updateUseIndicator();
+  }
+
+  function updateUseIndicator() {
+    const el = document.getElementById('use-indicator');
+    if (el) {
+      if (dailyUses >= FREE_DAILY_LIMIT) {
+        el.textContent = `⚠️ 今日已用 ${dailyUses}/${FREE_DAILY_LIMIT} 次`;
+        el.className = 'text-xs font-medium text-red-500';
+      } else {
+        el.textContent = `今日已用 ${dailyUses}/${FREE_DAILY_LIMIT} 次`;
+        el.className = 'text-xs font-medium text-gray-400';
+      }
+    }
+  }
+
+  // ========== TAB SWITCHING ==========
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('tab-active','bg-indigo-600','text-white'); b.classList.add('bg-gray-100','text-gray-700'); });
+      btn.classList.add('tab-active','bg-indigo-600','text-white'); btn.classList.remove('bg-gray-100','text-gray-700');
+      document.querySelectorAll('.tool-content').forEach(c => c.classList.add('hidden'));
+      document.getElementById('tool-' + btn.dataset.tool).classList.remove('hidden');
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+
+  // ========== AD REMOVAL ==========
+  document.getElementById('removeAdBtn').addEventListener('click', () => {
+    if (adRemoved) { showToast('已解锁！'); return; }
+    document.getElementById('paywall-modal').classList.remove('hidden');
+  });
+
+  // ========== TOAST ==========
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.remove('hidden');
+    t.classList.add('toast');
+    setTimeout(() => t.classList.add('hidden'), 2500);
+  }
+
+  // ========== EXCEL ==========
+  function excelSetMode(mode) {
+    excelMode = mode;
+    document.getElementById('excel-mode-title').textContent = {merge:'🔀 合并表格',split:'📂 拆分表格',clean:'🧹 清洗数据',search:'🔍 搜索筛选',compare:'⚖️ 对比差异',dedup:'🗂️ 去重'}[mode];
+    document.getElementById('excel-options').classList.add('hidden');
+    excelFiles = []; excelData = [];
+    document.getElementById('excel-files').innerHTML = '';
+    excelSetupDropzone();
+  }
+
+  function excelSetupDropzone() {
+    const dz = document.getElementById('excel-dropzone');
+    dz.ondragover = e => { e.preventDefault(); dz.classList.add('dragover'); };
+    dz.ondragleave = () => dz.classList.remove('dragover');
+    dz.ondrop = e => { e.preventDefault(); dz.classList.remove('dragover'); handleExcelFiles(e.dataTransfer.files); };
+    document.getElementById('excel-input').onchange = e => handleExcelFiles(e.target.files);
+  }
+
+  async function handleExcelFiles(files) {
+    excelFiles = Array.from(files);
+    if (!excelMode) { showToast('请先选择功能'); return; }
+    const fl = document.getElementById('excel-files');
+    fl.innerHTML = excelFiles.map(f => `<div class="flex items-center gap-2 text-sm text-gray-700"><span>📄</span><span>${f.name}</span><span class="text-xs text-gray-400">${(f.size/1024).toFixed(1)}KB</span></div>`).join('');
+    excelData = [];
+    for (const f of excelFiles) {
+      const buf = await f.arrayBuffer();
+      const wb = XLSX.read(buf, {type:'array'});
+      excelData.push({name: f.name, wb});
+    }
+    showExcelOptions();
+  }
+
+  function showExcelOptions() {
+    const opt = document.getElementById('excel-options');
+    opt.classList.remove('hidden');
+    if (excelMode === 'search') {
+      opt.innerHTML = `<label class="block text-xs font-medium text-gray-600 mb-1">搜索关键词</label><input type="text" id="search-kw" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm" placeholder="输入要搜索的文字">`;
+    } else if (excelMode === 'split') {
+      opt.innerHTML = `<label class="block text-xs font-medium text-gray-600 mb-1">按哪列拆分（输入列名或字母，如A）</label><input type="text" id="split-col" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm" placeholder="A">`;
+    } else if (excelMode === 'dedup') {
+      opt.innerHTML = `<label class="block text-xs font-medium text-gray-600 mb-1">去重依据列</label><input type="text" id="dedup-col" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm" placeholder="姓名 或 0（第一列）">`;
+    } else {
+      opt.classList.add('hidden');
+    }
+    document.getElementById('excel-run').classList.remove('hidden');
+  }
+
+  function excelRun() {
+    if (!adRemoved && dailyUses >= FREE_DAILY_LIMIT) {
+      document.getElementById('paywall-modal').classList.remove('hidden'); return;
+    }
+    if (!excelData.length) return;
+    recordUse();
+    let result, outputName;
+    try {
+      if (excelMode === 'merge') {
+        const all = [];
+        for (const d of excelData) {
+          for (const sn of d.wb.SheetNames) {
+            const rows = XLSX.utils.sheet_to_json(d.wb.Sheets[sn], {header:1});
+            all.push(...rows.slice(1));
+          }
+        }
+        const ws = XLSX.utils.aoa_to_sheet([...excelData[0].wb.Sheets[excelData[0].wb.SheetNames[0]] ? XLSX.utils.sheet_to_json(excelData[0].wb.Sheets[excelData[0].wb.SheetNames[0]],{header:1}).slice(0,1) : []].concat(all));
+        // Simple: just use first sheet headers
+        let headers = [];
+        if (excelData[0].wb.SheetNames.length > 0) {
+          const sh = excelData[0].wb.Sheets[excelData[0].wb.SheetNames[0]];
+          const firstRows = XLSX.utils.sheet_to_json(sh, {header:1});
+          if (firstRows.length) headers = firstRows[0];
+        }
+        const mergedData = [headers];
+        for (const d of excelData) {
+          for (const sn of d.wb.SheetNames) {
+            mergedData.push(...XLSX.utils.sheet_to_json(d.wb.Sheets[sn]).slice(0));
+          }
+        }
+        const wb2 = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb2, XLSX.utils.json_to_sheet(mergedData), '合并结果');
+        result = wb2; outputName = '合并结果.xlsx';
+      } else if (excelMode === 'clean') {
+        let allRows = [];
+        for (const d of excelData) {
+          for (const sn of d.wb.SheetNames) {
+            allRows.push(...XLSX.utils.sheet_to_json(d.wb.Sheets[sn]));
+          }
+        }
+        // Remove empty rows
+        allRows = allRows.filter(r => Object.values(r).some(v => v !== null && v !== undefined && String(v).trim()));
+        const wb2 = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb2, XLSX.utils.json_to_sheet(allRows), '清洗结果');
+        result = wb2; outputName = '清洗结果.xlsx';
+      } else if (excelMode === 'search') {
+        const kw = document.getElementById('search-kw')?.value?.toLowerCase() || '';
+        let allRows = [];
+        for (const d of excelData) {
+          for (const sn of d.wb.SheetNames) {
+            allRows.push(...XLSX.utils.sheet_to_json(d.wb.Sheets[sn]));
+          }
+        }
+        const filtered = allRows.filter(r => JSON.stringify(r).toLowerCase().includes(kw));
+        const wb2 = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb2, XLSX.utils.json_to_sheet(filtered), '搜索结果');
+        result = wb2; outputName = '搜索结果.xlsx';
+      } else if (excelMode === 'dedup') {
+        let allRows = [];
+        for (const d of excelData) {
+          for (const sn of d.wb.SheetNames) {
+            allRows.push(...XLSX.utils.sheet_to_json(d.wb.Sheets[sn]));
+          }
+        }
+        const seen = new Set();
+        allRows = allRows.filter(r => {
+          const key = JSON.stringify(r);
+          if (seen.has(key)) return false;
+          seen.add(key); return true;
+        });
+        const wb2 = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb2, XLSX.utils.json_to_sheet(allRows), '去重结果');
+        result = wb2; outputName = '去重结果.xlsx';
+      } else {
+        showToast('该功能开发中'); return;
+      }
+      const buf = XLSX.write(result, {bookType:'xlsx',type:'array'});
+      downloadFile(buf, outputName);
+      showToast('✅ 处理完成！');
+    } catch(e) { showToast('处理失败: ' + e.message); }
+  }
+
+  // ========== IMAGE ==========
+  function imageSetMode(mode) {
+    imageMode = mode;
+    const opts = document.getElementById('image-options');
+    opts.classList.remove('hidden');
+    opts.innerHTML = (mode === 'resize') ? `<div class="grid grid-cols-2 gap-3"><div><label class="block text-xs font-medium text-gray-600 mb-1">宽度(px)</label><input type="number" id="img-w" value="800" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm"></div><div><label class="block text-xs font-medium text-gray-600 mb-1">高度(px)</label><input type="number" id="img-h" value="600" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm"></div></div>` :
+      mode === 'compress' ? `<div><label class="block text-xs font-medium text-gray-600 mb-1">压缩质量 (%)</label><input type="range" id="img-quality" min="10" max="100" value="80" class="w-full"><div class="text-xs text-center text-gray-500 mt-1"><span id="quality-val">80</span>%</div></div><script>document.getElementById('img-quality').oninput = e => document.getElementById('quality-val').textContent = e.target.value;</scr`+`ipt>` :
+      mode === 'watermark' ? `<div><label class="block text-xs font-medium text-gray-600 mb-1">水印文字</label><input type="text" id="wm-text" value="© ToolKit" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm"></div>` :
+      mode === 'convert' ? `<div><label class="block text-xs font-medium text-gray-600 mb-1">目标格式</label><select id="img-format" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm"><option value="image/png">PNG</option><option value="image/jpeg">JPEG</option><option value="image/webp">WebP</option></select></div>` : '';
+    document.getElementById('image-run').classList.remove('hidden');
+    const dz = document.getElementById('image-dropzone');
+    dz.ondragover = e => { e.preventDefault(); dz.classList.add('dragover'); };
+    dz.ondragleave = () => dz.classList.remove('dragover');
+    dz.ondrop = e => { e.preventDefault(); dz.classList.remove('dragover'); imageFiles = Array.from(e.dataTransfer.files); showToast(`已上传 ${imageFiles.length} 张图片`); };
+    document.getElementById('image-input').onchange = e => { imageFiles = Array.from(e.target.files); showToast(`已上传 ${imageFiles.length} 张图片`); };
+  }
+
+  async function imageRun() {
+    if (!adRemoved && dailyUses >= FREE_DAILY_LIMIT) {
+      document.getElementById('paywall-modal').classList.remove('hidden'); return;
+    }
+    if (!imageFiles.length) { showToast('请先上传图片'); return; }
+    recordUse();
+    showToast('开始处理...');
+    for (const f of imageFiles) {
+      const img = await loadImage(f);
+      let canvas = document.createElement('canvas');
+      let ctx = canvas.getContext('2d');
+      if (imageMode === 'resize') {
+        canvas.width = parseInt(document.getElementById('img-w').value) || 800;
+        canvas.height = parseInt(document.getElementById('img-h').value) || 600;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      } else if (imageMode === 'compress') {
+        canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+        ctx.drawImage(img, 0, 0);
+        canvas.toBlob(blob => {
+          downloadBlob(blob, f.name.replace(/\.[^.]+$/, '_压缩.jpg'));
+        }, 'image/jpeg', (parseInt(document.getElementById('img-quality')?.value) || 80) / 100);
+        continue;
+      } else if (imageMode === 'watermark') {
+        canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+        ctx.drawImage(img, 0, 0);
+        ctx.font = `${Math.max(20, img.naturalWidth/15)}px sans-serif`;
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.fillText(document.getElementById('wm-text')?.value || '©', 20, img.naturalHeight - 20);
+      } else if (imageMode === 'convert') {
+        canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+        ctx.drawImage(img, 0, 0);
+        const fmt = document.getElementById('img-format')?.value || 'image/png';
+        canvas.toBlob(blob => {
+          const ext = fmt.split('/')[1];
+          downloadBlob(blob, f.name.replace(/\.[^.]+$/, '.' + (ext==='jpeg'?'jpg':ext)));
+        }, fmt, 0.92);
+        continue;
+      }
+      canvas.toBlob(blob => downloadBlob(blob, f.name), 'image/png');
+    }
+    showToast('✅ 处理完成！');
+  }
+
+  function loadImage(file) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = URL.createObjectURL(file);
+    });
+  }
+
+  // ========== COVER ==========
+  const coverPresets = {
+    '考研': { bg:'#1e3a8a', accent:'#fbbf24', emoji:'📚', tag:'#考研' },
+    '健身': { bg:'#064e3b', accent:'#34d399', emoji:'💪', tag:'#健身' },
+    '早睡': { bg:'#1e1b4b', accent:'#a78bfa', emoji:'🌙', tag:'#早睡' },
+    '英语': { bg:'#7c2d12', accent:'#fbbf24', emoji:'🇬🇧', tag:'#英语' },
+    '读书': { bg:'#4c1d95', accent:'#c4b5fd', emoji:'📖', tag:'#读书' },
+    '减肥': { bg:'#831843', accent:'#f472b6', emoji:'⚖️', tag:'#减肥' }
+  };
+
+  function coverSetPreset(preset) {
+    coverPreset = preset;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.contains('tab-active') && b.dataset.tool === 'cover');
+    coverUpdate();
+  }
+
+  function coverUpdate() {
+    const canvas = document.getElementById('cover-canvas');
+    const ctx = canvas.getContext('2d');
+    const w = 1080, h = 1080;
+    const p = coverPresets[coverPreset] || coverPresets['考研'];
+    const title = document.getElementById('cover-title')?.value || '100天考研冲刺';
+    const days = document.getElementById('cover-days')?.value || '100';
+
+    // Background gradient
+    const grad = ctx.createLinearGradient(0, 0, w, h);
+    grad.addColorStop(0, p.bg);
+    grad.addColorStop(1, p.bg + 'dd');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Decorative circles
+    ctx.globalAlpha = 0.08;
+    ctx.fillStyle = p.accent;
+    ctx.beginPath(); ctx.arc(900, 200, 300, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(100, 800, 200, 0, Math.PI*2); ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Emoji badge top-left
+    ctx.font = '180px serif';
+    ctx.fillText(p.emoji, 60, 220);
+
+    // Tag top-right
+    ctx.font = 'bold 48px sans-serif';
+    ctx.fillStyle = p.accent;
+    ctx.textAlign = 'right';
+    ctx.fillText(p.tag, w - 60, 100);
+    ctx.textAlign = 'left';
+
+    // Main title
+    ctx.font = 'bold 100px sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.fillText(title, w/2, 500);
+
+    // Days badge
+    ctx.font = 'bold 140px sans-serif';
+    ctx.fillStyle = p.accent;
+    ctx.fillText(days, w/2, 720);
+
+    ctx.font = 'bold 60px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    ctx.fillText('天 冲 刺 计 划', w/2, 820);
+
+    // Bottom decoration line
+    ctx.strokeStyle = p.accent;
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.moveTo(w/2 - 200, 880);
+    ctx.lineTo(w/2 + 200, 880);
+    ctx.stroke();
+
+    // Brand
+    ctx.font = '36px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.fillText('ToolKit Pro', w/2, 980);
+  }
+
+  function coverDownload() {
+    const canvas = document.getElementById('cover-canvas');
+    canvas.toBlob(blob => downloadBlob(blob, `${coverPreset}_封面_${Date.now()}.png`), 'image/png');
+    showToast('✅ 封面已下载！');
+  }
+
+  // ========== PDF ==========
+  function pdfSetColor(color) {
+    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('ring-2','ring-offset-2'));
+    document.querySelector(`.color-btn[data-color="${color}"]`).classList.add('ring-2','ring-offset-2');
+    coverColor = {blue:'#3b82f6',green:'#22c55e',purple:'#a855f7',pink:'#ec4899',cyan:'#06b6d4'}[color] || '#4f46e5';
+  }
+
+  async function pdfGenerate() {
+    const { jsPDF } = window.jspdf;
+    const goal = document.getElementById('pdf-goal').value || '自律计划';
+    const days = parseInt(document.getElementById('pdf-days').value) || 30;
+    const template = document.getElementById('pdf-template').value;
+
+    showToast('正在生成 PDF...');
+    await new Promise(r => setTimeout(r, 100));
+
+    const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const pageW = 210, pageH = 297;
+    const color = coverColor || '#4f46e5';
+
+    // Header
+    doc.setFillColor(...hexToRgb(color));
+    doc.rect(0, 0, pageW, 40, 'F');
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(22);
+    doc.setFont('helvetica', 'bold');
+    doc.text(goal, pageW/2, 22, {align:'center'});
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`${days}天打卡计划`, pageW/2, 30, {align:'center'});
+
+    // Grid for daily checklist
+    const startY = 50;
+    const rowsPerPage = template === 'daily' ? 10 : 5;
+    let y = startY;
+    let day = 1;
+
+    while (day <= days) {
+      for (let r = 0; r < rowsPerPage && day <= days; r++) {
+        doc.setDrawColor(220);
+        doc.setFillColor(250);
+        doc.roundedRect(15, y, pageW - 30, 18, 2, 2, 'FD');
+        doc.setTextColor(60);
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`第 ${day} 天`, 20, y + 7);
+        doc.setFont('helvetica', 'normal');
+        doc.text(goal, 50, y + 7);
+        // Checkbox
+        doc.setDrawColor(150);
+        doc.rect(pageW - 35, y + 3, 10, 10);
+        doc.setFontSize(9);
+        doc.text('✓', pageW - 32, y + 10);
+        y += 20;
+        day++;
+      }
+      if (day <= days) {
+        doc.addPage();
+        y = startY;
+      }
+    }
+
+    doc.save(`${goal}_${days}天计划.pdf`);
+    showToast('✅ PDF 已下载！');
+  }
+
+  function hexToRgb(hex) {
+    const r = parseInt(hex.slice(1,3),16);
+    const g = parseInt(hex.slice(3,5),16);
+    const b = parseInt(hex.slice(5,7),16);
+    return [r,g,b];
+  }
+
+  // ========== RENAME ==========
+  document.getElementById('rename-input').onchange = e => {
+    renameFiles = Array.from(e.target.files);
+    const fl = document.getElementById('rename-files');
+    fl.innerHTML = renameFiles.map(f => `<div class="text-sm text-gray-700">📄 ${f.name}</div>`).join('');
+    if (renameFiles.length) document.getElementById('rename-run').classList.remove('hidden');
+  };
+
+  function renameRun() {
+    if (!adRemoved && dailyUses >= FREE_DAILY_LIMIT) {
+      document.getElementById('paywall-modal').classList.remove('hidden'); return;
+    }
+    if (!renameFiles.length) return;
+    recordUse();
+    const pattern = document.getElementById('rename-pattern').value || '{原名}_{编号}';
+    const lower = document.getElementById('rename-lower').checked;
+    const renameResults = renameFiles.map((f, i) => {
+      let name = pattern
+        .replace('{原名}', f.name.replace(/\.[^.]+$/, ''))
+        .replace('{编号}', String(i+1).padStart(3,'0'))
+        .replace('{日期}', new Date().toISOString().slice(0,10))
+        .replace('{年份}', new Date().getFullYear())
+        .replace('{月份}', String(new Date().getMonth()+1).padStart(2,'0'))
+        .replace('{日}', String(new Date().getDate()).padStart(2,'0'));
+      if (lower) name = name.toLowerCase();
+      name += f.name.match(/\.[^.]+$/)?.[0] || '';
+      return {orig: f.name, new: name, file: f};
+    });
+
+    // Download a text file with new names (can't rename on user's filesystem)
+    const text = renameResults.map(r => `${r.orig} → ${r.new}`).join('\n');
+    const blob = new Blob([text], {type:'text/plain'});
+    downloadBlob(blob, '重命名结果.txt');
+    showToast('✅ 命名方案已生成！');
+  }
+
+  // ========== UTILS ==========
+  function downloadFile(buf, name) {
+    const blob = new Blob([buf], {type:'application/octet-stream'});
+    downloadBlob(blob, name);
+  }
+
+  function downloadBlob(blob, name) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = name; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // Init
+  excelSetupDropzone();
+  checkDailyLimit();
+  const savedUnlock = localStorage.getItem('toolkit_unlocked');
+  if (savedUnlock === 'true') adRemoved = true;
+  </script>
+</body>
+</html>
