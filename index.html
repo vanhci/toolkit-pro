@@ -6,6 +6,7 @@
   <title>ToolKit Pro — 免费在线工具箱</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -57,7 +58,7 @@
       <div class="flex gap-1 overflow-x-auto py-2" id="toolTabs">
         <button class="tab-btn tab-active px-4 py-2 rounded-lg text-sm font-medium transition" data-tool="excel">📊 Excel处理</button>
         <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="image">🖼️ 图片处理</button>
-        <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="rename">📂 文件重命名</button>
+        <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="rename">📂 文件处理</button>
       </div>
     </div>
   </nav>
@@ -103,6 +104,14 @@
       <!-- Excel 操作面板 -->
       <div id="excel-panel" class="bg-white rounded-2xl border border-gray-100 p-6">
         <div id="excel-mode-title" class="font-bold text-gray-900 mb-4 text-lg">选择功能 ↑</div>
+
+        <!-- 使用说明区域 -->
+        <div id="excel-guide" class="mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden">
+          <div id="excel-guide-title" class="font-bold text-blue-900 mb-2"></div>
+          <div id="excel-guide-steps" class="space-y-1"></div>
+          <div id="excel-guide-example" class="mt-3 p-3 bg-white rounded-lg border border-blue-100"></div>
+        </div>
+
         <div id="excel-dropzone" class="drop-zone rounded-xl p-10 text-center cursor-pointer mb-4" onclick="document.getElementById('excel-input').click()">
           <div class="text-4xl mb-3">📁</div>
           <p class="text-gray-700 font-medium">点击上传或拖拽文件到这里</p>
@@ -141,6 +150,14 @@
           <p class="text-xs text-gray-500 mt-1">PNG/JPG/WebP 互转</p>
         </div>
       </div>
+
+      <!-- Image 使用说明 -->
+      <div id="image-guide" class="mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden">
+        <div id="image-guide-title" class="font-bold text-blue-900 mb-2"></div>
+        <div id="image-guide-steps" class="space-y-1"></div>
+        <div id="image-guide-example" class="mt-3 p-3 bg-white rounded-lg border border-blue-100"></div>
+      </div>
+
       <div id="image-dropzone" class="drop-zone rounded-xl p-10 text-center cursor-pointer bg-white border border-gray-100 mb-4" onclick="document.getElementById('image-input').click()">
         <div class="text-4xl mb-3">🖼️</div>
         <p class="text-gray-700 font-medium">点击上传或拖拽图片</p>
@@ -153,10 +170,42 @@
       </button>
     </section>
 
-</main>
+    <!-- TOOL: FILE PROCESSING -->
     <section id="tool-rename" class="tool-content hidden">
+      <div class="grid md:grid-cols-2 gap-4 mb-6">
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="renameSetMode('rename')">
+          <div class="text-2xl mb-2">✏️</div>
+          <h3 class="font-semibold text-gray-900">批量重命名</h3>
+          <p class="text-xs text-gray-500 mt-1">按模板批量修改文件名</p>
+        </div>
+      </div>
+
+      <!-- Rename 使用说明 -->
+      <div id="rename-guide" class="mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800">
+        <div class="font-bold text-blue-900 mb-2">✏️ 批量文件重命名</div>
+        <div class="space-y-1 text-blue-700">
+          <p><strong>步骤：</strong></p>
+          <p>① 点击上传或拖拽任意文件（支持多选）</p>
+          <p>② 设置命名模板，如 <code class="bg-blue-100 px-1 rounded">{原名}_{编号}</code></p>
+          <p>③ 可选：勾选"全部小写"转换文件名</p>
+          <p>④ 点击"开始重命名"，生成重命名方案.txt</p>
+        </div>
+        <div class="mt-3 p-3 bg-white rounded-lg border border-blue-100 text-xs">
+          <p class="font-semibold text-blue-800 mb-1">模板变量说明：</p>
+          <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-blue-700">
+            <span><code class="bg-blue-100 px-1 rounded">{原名}</code> — 原文件名（不含扩展名）</span>
+            <span><code class="bg-blue-100 px-1 rounded">{编号}</code> — 001, 002, 003…</span>
+            <span><code class="bg-blue-100 px-1 rounded">{日期}</code> — 2026-05-17</span>
+            <span><code class="bg-blue-100 px-1 rounded">{年份}</code> — 2026</span>
+            <span><code class="bg-blue-100 px-1 rounded">{月份}</code> — 05</span>
+            <span><code class="bg-blue-100 px-1 rounded">{日}</code> — 17</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rename 操作面板 -->
       <div class="bg-white rounded-2xl border border-gray-100 p-6 max-w-lg">
-        <h3 class="font-bold text-gray-900 mb-4 text-lg">📂 批量文件重命名</h3>
+        <div id="rename-mode-title" class="font-bold text-gray-900 mb-4 text-lg">✏️ 批量重命名</div>
         <div id="rename-dropzone" class="drop-zone rounded-xl p-8 text-center cursor-pointer mb-4" onclick="document.getElementById('rename-input').click()">
           <div class="text-4xl mb-2">📁</div>
           <p class="text-gray-700 font-medium">点击上传或拖拽文件</p>
@@ -299,6 +348,117 @@
   }
 
   // ========== EXCEL ==========
+  const excelGuides = {
+    merge: {
+      title: '🔀 合并表格 — 将多个表格合并为一个',
+      steps: [
+        '① 上传多个 Excel 或 CSV 文件（支持多选）',
+        '② 系统自动识别每张表的第一行作为表头',
+        '③ 点击"开始处理"，自动合并所有数据',
+        '④ 下载合并后的 Excel 文件'
+      ],
+      example: '<p class="text-xs text-gray-600 mb-1">示例：</p><div class="grid grid-cols-2 gap-2 text-xs"><div class="bg-blue-50 p-2 rounded"><span class="font-semibold">文件1.xlsx</span><br>表头：姓名 | 手机 | 城市<br>行：刘备 | 1381... | 成都<br>行：关羽 | 1392... | 成都</div><div class="bg-green-50 p-2 rounded"><span class="font-semibold">文件2.csv</span><br>表头：姓名 | 手机 | 城市<br>行：张飞 | 1378... | 成都</div><div class="bg-indigo-50 p-2 rounded col-span-2"><span class="font-semibold">合并结果.xlsx</span><br>表头：姓名 | 手机 | 城市<br>行：刘备、关羽、张飞（共3行数据）</div></div>'
+    },
+    clean: {
+      title: '🧹 清洗数据 — 去除空行、空白字符、重复项',
+      steps: [
+        '① 上传需要清洗的 Excel/CSV 文件',
+        '② 系统自动扫描全部数据',
+        '③ 整行为空（所有单元格为空）的记录会被删除',
+        '④ 单元格内容的前后空白会被自动去除',
+        '⑤ 下载清洗后的干净数据'
+      ],
+      example: '<p class="text-xs text-gray-600 mb-1">处理效果：</p><div class="space-y-1 text-xs"><div class="flex gap-2"><span class="text-red-400">✗</span><span class="text-gray-500 line-through">张三 | 1381... |   | 备注  </span><span class="text-red-400 text-xs">→ 空行被删除</span></div><div class="flex gap-2"><span class="text-red-400">✗</span><span class="text-gray-500 line-through">  李四  | 1392... | 杭州  </span><span class="text-red-400 text-xs">→ 前后空格被清理</span></div><div class="flex gap-2"><span class="text-green-400">✓</span><span>王五 | 1378... | 西安</span></div></div>'
+    },
+    search: {
+      title: '🔍 搜索筛选 — 按关键词过滤出符合条件的行',
+      steps: [
+        '① 上传 Excel/CSV 文件',
+        '② 在搜索框输入关键词（如"成都"、"1381"）',
+        '③ 支持模糊匹配：关键词会出现在任意单元格中即匹配',
+        '④ 点击"开始处理"，只保留匹配的行',
+        '⑤ 下载筛选结果'
+      ],
+      example: '<p class="text-xs text-gray-600 mb-1">示例：关键词 = "成都"</p><div class="text-xs space-y-1"><div class="bg-green-50 p-2 rounded">✓ 刘备 | 1381... | <span class="bg-yellow-200">成都</span> | 已报名</div><div class="bg-green-50 p-2 rounded">✓ 关羽 | 1392... | <span class="bg-yellow-200">成都</span> | 需回访</div><div class="bg-gray-100 p-2 rounded text-gray-400 line-through">✗ 张飞 | 1378... | 西安 | — （不符合）</div></div>'
+    },
+    dedup: {
+      title: '🗂️ 去重客户 — 按指定列去除重复记录',
+      steps: [
+        '① 上传 Excel/CSV 文件（支持多文件合并去重）',
+        '② 输入去重依据：列名（如"姓名"）或列号（如"0"代表第一列）',
+        '③ 不填则按整行完全相同去重',
+        '④ 点击"开始处理"，保留每组第一条记录',
+        '⑤ 下载去重后的数据 + 显示移除的重复条数'
+      ],
+      example: '<p class="text-xs text-gray-600 mb-1">示例：按"姓名"列去重</p><div class="text-xs space-y-1"><div class="flex gap-2"><span class="text-gray-400">第1条</span><span>刘备 | 1381...</span> <span class="text-green-500">✓ 保留</span></div><div class="flex gap-2"><span class="text-gray-400">第2条</span><span class="text-gray-500 line-through">刘备 | 1399...</span> <span class="text-red-400 text-xs">✗ 重复，被移除</span></div><div class="flex gap-2"><span class="text-gray-400">第3条</span><span>张飞 | 1378...</span> <span class="text-green-500">✓ 保留</span></div></div>'
+    },
+    split: {
+      title: '📂 拆分表格 — 按列值将数据拆分为多个文件',
+      steps: [
+        '① 上传单个 Excel/CSV 文件',
+        '② 输入拆分依据列（如"城市"、"部门"等列名，或列号A/B）',
+        '③ 系统按该列的不同值分组，每组生成一个独立的 Excel',
+        '④ 输出为 ZIP 压缩包，解压后包含所有拆分文件',
+        '⑤ 例如：按城市拆分 → 成都.xlsx、杭州.xlsx、上海.xlsx'
+      ],
+      example: '<p class="text-xs text-gray-600 mb-1">示例：按"城市"列拆分</p><div class="text-xs space-y-1"><div class="bg-blue-50 p-2 rounded">📄 <strong>成都.xlsx</strong> — 包含刘备、关羽（共2行）</div><div class="bg-green-50 p-2 rounded">📄 <strong>西安.xlsx</strong> — 包含王五、张三（共2行）</div><div class="bg-purple-50 p-2 rounded">📄 <strong>杭州.xlsx</strong> — 包含李四（共1行）</div></div>'
+    },
+    compare: {
+      title: '⚖️ 对比差异 — 找出两个表格之间的差异行',
+      steps: [
+        '① 上传两个 Excel/CSV 文件（文件1为基准）',
+        '② 系统对比两个文件的每一行',
+        '③ 找出在文件2中存在、文件1中不存在的新增行',
+        '④ 找出在文件1中存在、文件2中不存在的删除行',
+        '⑤ 下载对比结果（新增行、删除行分别标注）'
+      ],
+      example: '<p class="text-xs text-gray-600 mb-1">示例：对比"客户表_V1" 和 "客户表_V2"</p><div class="text-xs space-y-1"><div class="bg-green-50 p-2 rounded">✓ 刘备、关羽 — 两表都有（相同）</div><div class="bg-red-50 p-2 rounded">🆕 张飞 — V2新增（V1无）</div><div class="bg-orange-50 p-2 rounded">🗑️ 赵云 — V1有、V2已删除</div></div>'
+    }
+  };
+
+  const imageGuides = {
+    resize: {
+      title: '📐 调整尺寸 — 批量缩放图片到指定像素',
+      steps: [
+        '① 上传一张或多张图片（支持 PNG/JPG/WebP/GIF）',
+        '② 设置目标宽度和高度（单位：像素）',
+        '③ 点击"开始处理"，所有图片按尺寸输出',
+        '④ 图片自动下载到本地'
+      ],
+      example: '<p class="text-xs text-gray-600 mb-1">示例：设置宽800 × 高600</p><div class="grid grid-cols-2 gap-2 text-xs"><div class="text-center"><div class="bg-gray-100 rounded border-2 border-dashed w-16 h-12 flex items-center justify-center text-xs text-gray-400 mx-auto">原图<br>1920×1080</div><div class="mt-1">1920×1080<br><span class="text-gray-400">原始尺寸</span></div></div><div class="text-center"><div class="bg-blue-50 rounded border-2 border-blue-200 w-16 h-12 flex items-center justify-center text-xs text-blue-600 mx-auto">→</div><div class="mt-1">800×600<br><span class="text-green-500">调整为新尺寸</span></div></div></div>'
+    },
+    compress: {
+      title: '🗜️ 压缩图片 — 减小文件体积，保持清晰度',
+      steps: [
+        '① 上传一张或多张图片',
+        '② 拖动质量滑块设置压缩率（10%~100%）',
+        '③ 质量越低文件越小，100%为无损',
+        '④ 点击"开始处理"，输出压缩后的图片'
+      ],
+      example: '<p class="text-xs text-gray-600 mb-1">示例：压缩质量 = 70%</p><div class="grid grid-cols-2 gap-2 text-xs"><div class="bg-gray-50 p-2 rounded text-center"><div class="text-3xl">🖼️</div><div class="font-semibold">original.jpg</div><div class="text-gray-400">2.4 MB</div></div><div class="bg-green-50 p-2 rounded text-center"><div class="text-3xl">📦</div><div class="font-semibold">original_压缩.jpg</div><div class="text-green-600">890 KB <span class="text-xs text-gray-400">(-63%)</span></div></div></div>'
+    },
+    watermark: {
+      title: '💧 添加水印 — 为图片添加文字或图片水印',
+      steps: [
+        '① 上传一张或多张图片',
+        '② 在水印文字框输入要显示的文字',
+        '③ 位置固定在左下角，文字半透明白色',
+        '④ 点击"开始处理"，导出带水印的图片'
+      ],
+      example: '<p class="text-xs text-gray-600 mb-1">示例：水印文字 = © ToolKit Pro</p><div class="text-xs"><div class="bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg h-24 flex items-end justify-start p-3 border">\n  <span class="bg-white/60 text-gray-600 text-xs px-2 py-1 rounded">© ToolKit Pro</span>\n</div><div class="text-center text-gray-400 mt-1">水印位置：左下角，半透明</div></div>'
+    },
+    convert: {
+      title: '🔄 格式转换 — PNG ↔ JPG ↔ WebP 互转',
+      steps: [
+        '① 上传一张或多张图片',
+        '② 从下拉菜单选择目标格式',
+        '③ 点击"开始处理"，图片自动转换为目标格式',
+        '④ 输出文件扩展名自动更新'
+      ],
+      example: '<p class="text-xs text-gray-600 mb-1">示例：转换为 WebP</p><div class="grid grid-cols-3 gap-2 text-xs items-center"><div class="text-center"><div class="text-3xl">🖼️</div><div>photo.png</div><div class="text-gray-400">2.1 MB</div></div><div class="text-center text-xl">→</div><div class="text-center"><div class="text-3xl">🆕</div><div>photo.webp</div><div class="text-green-600">480 KB (-77%)</div></div></div>'
+    }
+  };
+
   function excelSetMode(mode) {
     excelMode = mode;
     document.getElementById('excel-mode-title').textContent = {merge:'🔀 合并表格',split:'📂 拆分表格',clean:'🧹 清洗数据',search:'🔍 搜索筛选',compare:'⚖️ 对比差异',dedup:'🗂️ 去重'}[mode];
@@ -306,6 +466,18 @@
     excelFiles = []; excelData = [];
     document.getElementById('excel-files').innerHTML = '';
     excelSetupDropzone();
+
+    // 显示使用说明
+    const guide = excelGuides[mode];
+    const guideEl = document.getElementById('excel-guide');
+    if (guide) {
+      guideEl.classList.remove('hidden');
+      document.getElementById('excel-guide-title').innerHTML = guide.title;
+      document.getElementById('excel-guide-steps').innerHTML = guide.steps.map(s => `<p>${s}</p>`).join('');
+      document.getElementById('excel-guide-example').innerHTML = guide.example;
+    } else {
+      guideEl.classList.add('hidden');
+    }
   }
 
   function excelSetupDropzone() {
@@ -345,86 +517,231 @@
     document.getElementById('excel-run').classList.remove('hidden');
   }
 
-  function excelRun() {
+  async function excelRun() {
     if (!adRemoved && dailyUses >= FREE_DAILY_LIMIT) {
       document.getElementById('paywall-modal').classList.remove('hidden'); return;
     }
-    if (!excelData.length) return;
+    if (!excelData.length) { showToast('请先上传文件'); return; }
     recordUse();
-    let result, outputName;
+    showToast('处理中...');
     try {
+      let result, outputName;
+
       if (excelMode === 'merge') {
-        const all = [];
+        // 收集所有文件的全部数据（保留表头）
+        const allSheets = [];
         for (const d of excelData) {
           for (const sn of d.wb.SheetNames) {
-            const rows = XLSX.utils.sheet_to_json(d.wb.Sheets[sn], {header:1});
-            all.push(...rows.slice(1));
+            const aoa = XLSX.utils.sheet_to_json(d.wb.Sheets[sn], {header: 1});
+            if (aoa.length > 0) allSheets.push({ name: d.name, sheetName: sn, aoa });
           }
         }
-        const ws = XLSX.utils.aoa_to_sheet([...excelData[0].wb.Sheets[excelData[0].wb.SheetNames[0]] ? XLSX.utils.sheet_to_json(excelData[0].wb.Sheets[excelData[0].wb.SheetNames[0]],{header:1}).slice(0,1) : []].concat(all));
-        // Simple: just use first sheet headers
-        let headers = [];
-        if (excelData[0].wb.SheetNames.length > 0) {
-          const sh = excelData[0].wb.Sheets[excelData[0].wb.SheetNames[0]];
-          const firstRows = XLSX.utils.sheet_to_json(sh, {header:1});
-          if (firstRows.length) headers = firstRows[0];
-        }
-        const mergedData = [headers];
-        for (const d of excelData) {
-          for (const sn of d.wb.SheetNames) {
-            mergedData.push(...XLSX.utils.sheet_to_json(d.wb.Sheets[sn]).slice(0));
+        if (!allSheets.length) { showToast('没有数据'); return; }
+
+        // 取第一张表的表头作为统一表头
+        const headers = allSheets[0].aoa[0] || [];
+        const headerLen = headers.length;
+        const mergedAOA = [headers];
+
+        // 合并所有数据行（跳过每张表的第一行表头）
+        // 每行都填充到与表头等长，不足的补空，多余的截断
+        for (const sh of allSheets) {
+          for (let i = 1; i < sh.aoa.length; i++) {
+            const row = sh.aoa[i];
+            const padded = [];
+            for (let c = 0; c < headerLen; c++) {
+              padded.push(row[c] != null ? row[c] : '');
+            }
+            mergedAOA.push(padded);
           }
         }
+
         const wb2 = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb2, XLSX.utils.json_to_sheet(mergedData), '合并结果');
+        const ws = XLSX.utils.aoa_to_sheet(mergedAOA);
+        // 设置列宽
+        ws['!cols'] = headers.map(() => ({ wch: 15 }));
+        XLSX.utils.book_append_sheet(wb2, ws, '合并结果');
         result = wb2; outputName = '合并结果.xlsx';
+        showToast(`✅ 合并完成，共 ${mergedAOA.length - 1} 行数据`);
+
       } else if (excelMode === 'clean') {
-        let allRows = [];
+        const allSheets = [];
         for (const d of excelData) {
           for (const sn of d.wb.SheetNames) {
-            allRows.push(...XLSX.utils.sheet_to_json(d.wb.Sheets[sn]));
+            const aoa = XLSX.utils.sheet_to_json(d.wb.Sheets[sn], {header: 1});
+            if (aoa.length > 0) allSheets.push({ aoa });
           }
         }
-        // Remove empty rows
-        allRows = allRows.filter(r => Object.values(r).some(v => v !== null && v !== undefined && String(v).trim()));
+        if (!allSheets.length) { showToast('没有数据'); return; }
+
+        const headers = allSheets[0].aoa[0] || [];
+        const cleanAOA = [headers];
+        const EMPTY_RE = /^\s*$/;
+
+        for (const sh of allSheets) {
+          for (let i = 1; i < sh.aoa.length; i++) {
+            const row = sh.aoa[i];
+            // 如果整行所有单元格都为空（或只有空白），跳过
+            const isEmptyRow = row.every(cell => cell == null || EMPTY_RE.test(String(cell)));
+            if (!isEmptyRow) cleanAOA.push(row);
+          }
+        }
+
         const wb2 = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb2, XLSX.utils.json_to_sheet(allRows), '清洗结果');
+        const ws = XLSX.utils.aoa_to_sheet(cleanAOA);
+        ws['!cols'] = headers.map(() => ({ wch: 15 }));
+        XLSX.utils.book_append_sheet(wb2, ws, '清洗结果');
         result = wb2; outputName = '清洗结果.xlsx';
+
       } else if (excelMode === 'search') {
-        const kw = document.getElementById('search-kw')?.value?.toLowerCase() || '';
-        let allRows = [];
+        const kw = (document.getElementById('search-kw')?.value || '').toLowerCase().trim();
+        if (!kw) { showToast('请输入关键词'); return; }
+
+        const allSheets = [];
         for (const d of excelData) {
           for (const sn of d.wb.SheetNames) {
-            allRows.push(...XLSX.utils.sheet_to_json(d.wb.Sheets[sn]));
+            const aoa = XLSX.utils.sheet_to_json(d.wb.Sheets[sn], {header: 1});
+            if (aoa.length > 0) allSheets.push({ aoa });
           }
         }
-        const filtered = allRows.filter(r => JSON.stringify(r).toLowerCase().includes(kw));
+        if (!allSheets.length) { showToast('没有数据'); return; }
+
+        const headers = allSheets[0].aoa[0] || [];
+        const filteredAOA = [headers];
+        let matchCount = 0;
+
+        for (const sh of allSheets) {
+          for (let i = 1; i < sh.aoa.length; i++) {
+            const row = sh.aoa[i];
+            const rowStr = row.map(c => String(c ?? '')).join('\t');
+            if (rowStr.toLowerCase().includes(kw)) {
+              filteredAOA.push(row);
+              matchCount++;
+            }
+          }
+        }
+
         const wb2 = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb2, XLSX.utils.json_to_sheet(filtered), '搜索结果');
+        const ws = XLSX.utils.aoa_to_sheet(filteredAOA);
+        ws['!cols'] = headers.map(() => ({ wch: 15 }));
+        XLSX.utils.book_append_sheet(wb2, ws, '搜索结果');
         result = wb2; outputName = '搜索结果.xlsx';
+        showToast(`找到 ${matchCount} 条匹配`);
+        if (matchCount === 0) { showToast('没有找到匹配'); return; }
+
       } else if (excelMode === 'dedup') {
-        let allRows = [];
+        const dedupCol = (document.getElementById('dedup-col')?.value || '').trim();
+        const allSheets = [];
         for (const d of excelData) {
           for (const sn of d.wb.SheetNames) {
-            allRows.push(...XLSX.utils.sheet_to_json(d.wb.Sheets[sn]));
+            const aoa = XLSX.utils.sheet_to_json(d.wb.Sheets[sn], {header: 1});
+            if (aoa.length > 0) allSheets.push({ aoa });
           }
         }
-        const seen = new Set();
-        allRows = allRows.filter(r => {
-          const key = JSON.stringify(r);
-          if (seen.has(key)) return false;
-          seen.add(key); return true;
-        });
+        if (!allSheets.length) { showToast('没有数据'); return; }
+
+        const headers = allSheets[0].aoa[0] || [];
+        const dataRows = [];
+        for (const sh of allSheets) {
+          for (let i = 1; i < sh.aoa.length; i++) {
+            dataRows.push(sh.aoa[i]);
+          }
+        }
+
+        let colIndex = -1;
+        if (dedupCol !== '') {
+          // 优先按列名匹配
+          const colLower = dedupCol.toLowerCase();
+          colIndex = headers.findIndex(h => String(h ?? '').toLowerCase() === colLower);
+          // 其次按数字列索引
+          if (colIndex === -1) {
+            const num = parseInt(dedupCol, 10);
+            if (!isNaN(num) && num >= 0 && num < headers.length) colIndex = num;
+          }
+        }
+
+        const seenKeys = new Set();
+        const dedupAOA = [headers];
+        let dupCount = 0;
+
+        for (const row of dataRows) {
+          let key;
+          if (colIndex >= 0) {
+            key = String(row[colIndex] ?? '').toLowerCase().trim();
+          } else {
+            key = row.map(c => String(c ?? '').toLowerCase().trim()).join('|');
+          }
+          if (!key || key === '') continue; // 跳过空键
+          if (seenKeys.has(key)) { dupCount++; continue; }
+          seenKeys.add(key);
+          dedupAOA.push(row);
+        }
+
         const wb2 = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb2, XLSX.utils.json_to_sheet(allRows), '去重结果');
+        const ws = XLSX.utils.aoa_to_sheet(dedupAOA);
+        ws['!cols'] = headers.map(() => ({ wch: 15 }));
+        XLSX.utils.book_append_sheet(wb2, ws, '去重结果');
         result = wb2; outputName = '去重结果.xlsx';
+        showToast(`去重完成，移除 ${dupCount} 条重复`);
+        if (dupCount === 0) showToast('没有重复');
+
+      } else if (excelMode === 'split') {
+        const splitCol = (document.getElementById('split-col')?.value || '').trim();
+        if (!splitCol) { showToast('请输入拆分列名或列号'); return; }
+        if (excelData.length !== 1) { showToast('拆分只能单文件'); return; }
+
+        const sn = excelData[0].wb.SheetNames[0];
+        const aoa = XLSX.utils.sheet_to_json(excelData[0].wb.Sheets[sn], {header: 1});
+        if (aoa.length < 2) { showToast('数据不足'); return; }
+
+        const headers = aoa[0];
+        const dataRows = aoa.slice(1);
+
+        // 找拆分列
+        let colIndex = -1;
+        const colLower = splitCol.toLowerCase();
+        colIndex = headers.findIndex(h => String(h ?? '').toLowerCase() === colLower);
+        if (colIndex === -1) {
+          const num = parseInt(splitCol, 10);
+          if (!isNaN(num) && num >= 0 && num < headers.length) colIndex = num;
+        }
+        if (colIndex === -1) { showToast('找不到拆分列'); return; }
+
+        // 按值分组
+        const groups = {};
+        for (const row of dataRows) {
+          const key = String(row[colIndex] ?? '_空_').trim();
+          if (!groups[key]) groups[key] = [headers, ...groups[key] ? [] : []];
+          groups[key].push(row);
+        }
+
+        // 生成 ZIP
+        const zip = new JSZip();
+        for (const [key, rows] of Object.entries(groups)) {
+          const wb2 = XLSX.utils.book_new();
+          const ws = XLSX.utils.aoa_to_sheet(rows);
+          ws['!cols'] = headers.map(() => ({ wch: 15 }));
+          XLSX.utils.book_append_sheet(wb2, ws, key.substring(0, 31));
+          const buf = XLSX.write(wb2, {bookType:'xlsx',type:'array'});
+          const safeName = key.replace(/[\\/:*?"<>|]/g, '_').substring(0, 50);
+          zip.file(`${safeName}.xlsx`, buf);
+        }
+
+        const zipBuf = await zip.generateAsync({type: 'array'});
+        downloadBlob(new Blob([zipBuf], {type:'application/zip'}), '拆分结果.zip');
+        showToast(`拆分为 ${Object.keys(groups).length} 个文件`);
+        return;
+
       } else {
         showToast('该功能开发中'); return;
       }
+
       const buf = XLSX.write(result, {bookType:'xlsx',type:'array'});
       downloadFile(buf, outputName);
-      showToast('✅ 处理完成！');
-    } catch(e) { showToast('处理失败: ' + e.message); }
+      if (excelMode !== 'search' && excelMode !== 'dedup' && excelMode !== 'split' && excelMode !== 'merge') {
+        showToast('✅ 处理完成！');
+      }
+    } catch(e) { showToast('处理失败: ' + e.message); console.error(e); }
   }
 
   // ========== IMAGE ==========
@@ -433,7 +750,7 @@
     const opts = document.getElementById('image-options');
     opts.classList.remove('hidden');
     opts.innerHTML = (mode === 'resize') ? `<div class="grid grid-cols-2 gap-3"><div><label class="block text-xs font-medium text-gray-600 mb-1">宽度(px)</label><input type="number" id="img-w" value="800" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm"></div><div><label class="block text-xs font-medium text-gray-600 mb-1">高度(px)</label><input type="number" id="img-h" value="600" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm"></div></div>` :
-      mode === 'compress' ? `<div><label class="block text-xs font-medium text-gray-600 mb-1">压缩质量 (%)</label><input type="range" id="img-quality" min="10" max="100" value="80" class="w-full"><div class="text-xs text-center text-gray-500 mt-1"><span id="quality-val">80</span>%</div></div><script>document.getElementById('img-quality').oninput = e => document.getElementById('quality-val').textContent = e.target.value;</scr`+`ipt>` :
+      mode === 'compress' ? `<div><label class="block text-xs font-medium text-gray-600 mb-1">压缩质量 (%)</label><input type="range" id="img-quality" min="10" max="100" value="80" class="w-full"><div class="text-xs text-center text-gray-500 mt-1"><span id="quality-val">80</span>%</div></div>` :
       mode === 'watermark' ? `<div><label class="block text-xs font-medium text-gray-600 mb-1">水印文字</label><input type="text" id="wm-text" value="© ToolKit" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm"></div>` :
       mode === 'convert' ? `<div><label class="block text-xs font-medium text-gray-600 mb-1">目标格式</label><select id="img-format" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm"><option value="image/png">PNG</option><option value="image/jpeg">JPEG</option><option value="image/webp">WebP</option></select></div>` : '';
     document.getElementById('image-run').classList.remove('hidden');
@@ -442,6 +759,18 @@
     dz.ondragleave = () => dz.classList.remove('dragover');
     dz.ondrop = e => { e.preventDefault(); dz.classList.remove('dragover'); imageFiles = Array.from(e.dataTransfer.files); showToast(`已上传 ${imageFiles.length} 张图片`); };
     document.getElementById('image-input').onchange = e => { imageFiles = Array.from(e.target.files); showToast(`已上传 ${imageFiles.length} 张图片`); };
+
+    // 显示使用说明
+    const guide = imageGuides[mode];
+    const guideEl = document.getElementById('image-guide');
+    if (guide) {
+      guideEl.classList.remove('hidden');
+      document.getElementById('image-guide-title').innerHTML = guide.title;
+      document.getElementById('image-guide-steps').innerHTML = guide.steps.map(s => `<p>${s}</p>`).join('');
+      document.getElementById('image-guide-example').innerHTML = guide.example;
+    } else {
+      guideEl.classList.add('hidden');
+    }
   }
 
   async function imageRun() {
@@ -654,6 +983,18 @@
   }
 
   // ========== RENAME ==========
+  let renameMode = 'rename';
+
+  function renameSetMode(mode) {
+    renameMode = mode;
+    document.getElementById('rename-mode-title').textContent = '✏️ 批量重命名';
+    // Reset UI
+    renameFiles = [];
+    document.getElementById('rename-files').innerHTML = '';
+    document.getElementById('rename-run').classList.add('hidden');
+    document.getElementById('rename-dropzone').style.display = '';
+  }
+
   document.getElementById('rename-input').onchange = e => {
     renameFiles = Array.from(e.target.files);
     const fl = document.getElementById('rename-files');
