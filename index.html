@@ -35,7 +35,6 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
 
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -207,29 +206,29 @@
         <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="renameSetMode('rename')">
           <div class="text-2xl mb-2">✏️</div>
           <h3 class="font-semibold text-gray-900">批量重命名</h3>
-          <p class="text-xs text-gray-500 mt-1">按模板批量修改文件名</p>
+          <p class="text-xs text-gray-500 mt-1" id="rename-card-desc">按模板批量修改文件名</p>
         </div>
       </div>
 
       <!-- Rename 使用说明 -->
       <div id="rename-guide" class="mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800">
-        <div class="font-bold text-blue-900 mb-2">✏️ 批量文件重命名</div>
+        <div class="font-bold text-blue-900 mb-2" id="rg-title">✏️ 批量文件重命名</div>
         <div class="space-y-1 text-blue-700">
-          <p><strong>步骤：</strong></p>
-          <p>① 点击上传或拖拽任意文件（支持多选）</p>
-          <p>② 设置命名模板，如 <code class="bg-blue-100 px-1 rounded">{原名}_{编号}</code></p>
-          <p>③ 可选：勾选"全部小写"转换文件名</p>
-          <p>④ 点击"开始重命名"，生成重命名方案.txt</p>
+          <p id="rg-steps-label"><strong>步骤：</strong></p>
+          <p id="rg-step1">① 点击上传或拖拽任意文件（支持多选）</p>
+          <p id="rg-step2">② 设置命名模板，如 <code class="bg-blue-100 px-1 rounded">{原名}_{编号}</code></p>
+          <p id="rg-step3">③ 可选：勾选"全部小写"转换文件名</p>
+          <p id="rg-step4">④ 点击"开始重命名"，生成重命名方案.txt</p>
         </div>
         <div class="mt-3 p-3 bg-white rounded-lg border border-blue-100 text-xs">
-          <p class="font-semibold text-blue-800 mb-1">模板变量说明：</p>
+          <p class="font-semibold text-blue-800 mb-1" id="rg-vars-label">模板变量说明：</p>
           <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-blue-700">
-            <span><code class="bg-blue-100 px-1 rounded">{原名}</code> — 原文件名（不含扩展名）</span>
-            <span><code class="bg-blue-100 px-1 rounded">{编号}</code> — 001, 002, 003…</span>
-            <span><code class="bg-blue-100 px-1 rounded">{日期}</code> — 2026-05-17</span>
-            <span><code class="bg-blue-100 px-1 rounded">{年份}</code> — 2026</span>
-            <span><code class="bg-blue-100 px-1 rounded">{月份}</code> — 05</span>
-            <span><code class="bg-blue-100 px-1 rounded">{日}</code> — 17</span>
+            <span id="rg-var1"><code class="bg-blue-100 px-1 rounded">{原名}</code> — 原文件名（不含扩展名）</span>
+            <span id="rg-var2"><code class="bg-blue-100 px-1 rounded">{编号}</code> — 001, 002, 003…</span>
+            <span id="rg-var3"><code class="bg-blue-100 px-1 rounded">{日期}</code> — 2026-05-17</span>
+            <span id="rg-var4"><code class="bg-blue-100 px-1 rounded">{年份}</code> — 2026</span>
+            <span id="rg-var5"><code class="bg-blue-100 px-1 rounded">{月份}</code> — 05</span>
+            <span id="rg-var6"><code class="bg-blue-100 px-1 rounded">{日}</code> — 17</span>
           </div>
         </div>
       </div>
@@ -239,23 +238,23 @@
         <div id="rename-mode-title" class="font-bold text-gray-900 mb-4 text-lg">✏️ 批量重命名</div>
         <div id="rename-dropzone" class="drop-zone rounded-xl p-8 text-center cursor-pointer mb-4" onclick="document.getElementById('rename-input').click()">
           <div class="text-4xl mb-2">📁</div>
-          <p class="text-gray-700 font-medium">点击上传或拖拽文件</p>
-          <p class="text-xs text-gray-400 mt-1">支持任意文件类型</p>
+          <p class="text-gray-700 font-medium" id="rg-drop-hint">点击上传或拖拽文件</p>
+          <p class="text-xs text-gray-400 mt-1" id="rg-drop-sub">支持任意文件类型</p>
           <input type="file" id="rename-input" class="hidden" multiple>
         </div>
         <div id="rename-files" class="space-y-2 mb-4"></div>
         <div class="space-y-3">
           <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">命名模板</label>
+            <label class="block text-xs font-medium text-gray-600 mb-1" id="rg-pattern-label">命名模板</label>
             <input type="text" id="rename-pattern" value="{原名}_{编号}" placeholder="{原名}_{编号}" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm">
-            <p class="text-xs text-gray-400 mt-1">可用：{原名} {编号} {日期} {年份} {月份} {日}</p>
+            <p class="text-xs text-gray-400 mt-1" id="rg-pattern-tip">可用：{原名} {编号} {日期} {年份} {月份} {日}</p>
           </div>
           <div class="flex gap-2 flex-wrap">
             <label class="flex items-center gap-1 text-xs text-gray-600">
-              <input type="checkbox" id="rename-lower" class="rounded"> 全部小写
+              <input type="checkbox" id="rename-lower" class="rounded"> <span id="rg-lower-label">全部小写</span>
             </label>
             <label class="flex items-center gap-1 text-xs text-gray-600">
-              <input type="checkbox" id="rename-date" class="rounded"> 加日期
+              <input type="checkbox" id="rename-date" class="rounded"> <span id="rg-date-label">加日期</span>
             </label>
           </div>
           <button id="rename-run" class="hidden w-full bg-indigo-600 text-white py-2.5 rounded-xl font-semibold hover:bg-indigo-700 transition" onclick="renameRun()">
@@ -288,10 +287,10 @@
         </div>
         <div class="text-xs text-gray-400 line-through" id="pw-original">原价 ¥29</div>
       </div>
-      <button onclick="alert('支付功能开发中，请联系微信：vanhci')" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition mb-3" id="pw-wechat">
+      <button class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition mb-3" id="pw-wechat">
         微信支付 ¥9.9
       </button>
-      <button onclick="alert('支付功能开发中，请联系微信：vanhci')" class="w-full bg-gray-100 text-gray-700 py-2.5 rounded-xl font-medium hover:bg-gray-200 transition" id="pw-alipay">
+      <button class="w-full bg-gray-100 text-gray-700 py-2.5 rounded-xl font-medium hover:bg-gray-200 transition" id="pw-alipay">
         支付宝支付 ¥9.9
       </button>
       <p class="text-xs text-gray-400 mt-4" id="pw-contact">支付后联系微信：vanhci 解锁 · 注明：工具站解锁</p>
@@ -320,6 +319,9 @@
   const FREE_DAILY_LIMIT = 3;
   const STORAGE_KEY = 'toolkit_daily_uses';
   const DATE_KEY = 'toolkit_date';
+  const MAX_FILE_SIZE = 5 * 1024 * 1024;
+  const XLSX_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.mjs';
+  let xlsxLoadPromise = null;
 
   // ========== LANGUAGE ==========
   const LANG = {
@@ -335,7 +337,7 @@
       fileTab: '📂 文件处理',
       tabs: {merge:'合并表格', split:'拆分表格', clean:'清洗数据', search:'搜索筛选', compare:'对比差异', dedup:'去重'},
       tabsTitle: {merge:'合并表格', split:'拆分表格', clean:'清洗数据', search:'搜索筛选', compare:'对比差异', dedup:'去重'},
-      tabsDesc: {merge:'将多个 Excel/CSV 合并为一个', split:'按列值拆成多个文件', clean:'去空行、空格、重复项', search:'按关键词过滤行', compare:'找出两个表格的区别', dedup:'按姓名/手机号去重'},
+      tabsDesc: {merge:'将多个 Excel/CSV 合并为一个', split:'按列值拆成多个文件', clean:'去空行、空格、重复项', search:'按关键词过滤行', compare:'找出两个表格的区别', dedup:'按姓名/手机号去重', rename:'按模板批量修改文件名'},
       imageTabs: {resize:'调整尺寸', compress:'压缩图片', watermark:'添加水印', convert:'格式转换'},
       imageTabsDesc: {resize:'批量缩放图片到指定尺寸', compress:'减小文件体积保持清晰度', watermark:'文字或图片水印', convert:'PNG/JPG/WebP 互转'},
       renameTab: '批量重命名',
@@ -362,9 +364,43 @@
       toastDone: '✅ 处理完成！',
       toastFail: '处理失败: ',
       toastUploaded: '已上传 {n} 张图片',
+      toastUploadImages: '请先上传图片',
+      toastStartProcess: '开始处理...',
+      toastNeedKeyword: '请输入关键词',
+      toastNoMatch: '没有找到匹配',
+      toastMatchCount: '找到 {n} 条匹配',
+      toastMergeDone: '✅ 合并完成，共 {n} 行数据',
+      toastDedupDone: '去重完成，移除 {n} 条重复',
+      toastNoDuplicate: '没有重复',
+      toastNeedSplitCol: '请输入拆分列名或列号',
+      toastSplitSingle: '拆分只能单文件',
+      toastInsufficientData: '数据不足',
+      toastSplitColNotFound: '找不到拆分列',
+      toastSplitDone: '拆分为 {n} 个文件',
+      toastFeaturePending: '该功能开发中',
+      toastNeedCompareFiles: '请上传两个文件进行对比',
+      toastCompareDone: '对比完成：新增 {added} 行，删除 {removed} 行，相同 {same} 行',
+      toastFileTooLarge: '文件超过 5MB：{name}',
+      toastXlsxLoading: '正在加载 Excel 处理模块...',
+      toastPaymentPending: '支付功能开发中，请联系微信：vanhci',
+      toastCoverDownloaded: '✅ 封面已下载！',
+      toastPdfGenerating: '正在生成 PDF...',
+      toastPdfDownloaded: '✅ PDF 已下载！',
+      toastRenameDone: '✅ 命名方案已生成！',
       kwPlaceholder: '输入要搜索的文字',
       colPlaceholder: '输入拆分列名或列号',
       dedupPlaceholder: '姓名 或 0（第一列）',
+      searchLabel: '搜索关键词',
+      splitLabel: '按哪列拆分（输入列名或字母，如A）',
+      dedupLabel: '去重依据列',
+      compareHint: '需上传两个文件（文件1为基准）',
+      imageOptions: {
+        width: '宽度(px)',
+        height: '高度(px)',
+        quality: '压缩质量 (%)',
+        watermark: '水印文字',
+        format: '目标格式',
+      },
       renamePatternTip: '可用：{原名} {编号} {日期} {年份} {月份} {日}',
       footer: 'ToolKit Pro · 免费在线工具箱 · © 2026',
       adSlot: '📢 广告位 — 728×90 Leaderboard',
@@ -381,7 +417,7 @@
       fileTab: '📂 File Tools',
       tabs: {merge:'Merge', split:'Split', clean:'Clean', search:'Search', compare:'Compare', dedup:'Dedupe'},
       tabsTitle: {merge:'Merge', split:'Split', clean:'Clean', search:'Search', compare:'Compare', dedup:'Dedupe'},
-      tabsDesc: {merge:'Merge multiple Excel/CSV files', split:'Split into multiple files by column', clean:'Remove empty rows, spaces, duplicates', search:'Filter rows by keyword', compare:'Find differences between two tables', dedup:'Deduplicate by name/phone'},
+      tabsDesc: {merge:'Merge multiple Excel/CSV files', split:'Split into multiple files by column', clean:'Remove empty rows, spaces, duplicates', search:'Filter rows by keyword', compare:'Find differences between two tables', dedup:'Deduplicate by name/phone', rename:'Batch rename files by template'},
       imageTabs: {resize:'Resize', compress:'Compress', watermark:'Watermark', convert:'Convert'},
       imageTabsDesc: {resize:'Batch resize images to target dimensions', compress:'Reduce file size, keep quality', watermark:'Add text or image watermark', convert:'PNG/JPG/WebP convert'},
       renameTab: 'Batch Rename',
@@ -408,12 +444,96 @@
       toastDone: '✅ Done!',
       toastFail: 'Failed: ',
       toastUploaded: '{n} image(s) uploaded',
+      toastUploadImages: 'Please upload images first',
+      toastStartProcess: 'Processing...',
+      toastNeedKeyword: 'Please enter a keyword',
+      toastNoMatch: 'No matches found',
+      toastMatchCount: 'Found {n} match(es)',
+      toastMergeDone: '✅ Merge complete, {n} data row(s)',
+      toastDedupDone: 'Dedupe complete, removed {n} duplicate row(s)',
+      toastNoDuplicate: 'No duplicates',
+      toastNeedSplitCol: 'Please enter a split column',
+      toastSplitSingle: 'Split supports one file only',
+      toastInsufficientData: 'Not enough data',
+      toastSplitColNotFound: 'Split column not found',
+      toastSplitDone: 'Split into {n} file(s)',
+      toastFeaturePending: 'This feature is under development',
+      toastNeedCompareFiles: 'Please upload two files to compare',
+      toastCompareDone: 'Compare complete: {added} added, {removed} removed, {same} unchanged',
+      toastFileTooLarge: 'File exceeds 5MB: {name}',
+      toastXlsxLoading: 'Loading Excel module...',
+      toastPaymentPending: 'Payment is under development. Contact WeChat: vanhci',
+      toastCoverDownloaded: '✅ Cover downloaded!',
+      toastPdfGenerating: 'Generating PDF...',
+      toastPdfDownloaded: '✅ PDF downloaded!',
+      toastRenameDone: '✅ Rename plan generated!',
       kwPlaceholder: 'Enter search keyword',
       colPlaceholder: 'Column name or number to split',
       dedupPlaceholder: 'Name or 0 (first column)',
+      searchLabel: 'Search keyword',
+      splitLabel: 'Column to split by (name or letter, e.g. A)',
+      dedupLabel: 'Dedup key column',
+      compareHint: 'Upload exactly two files (file 1 is baseline)',
+      imageOptions: {
+        width: 'Width (px)',
+        height: 'Height (px)',
+        quality: 'Quality (%)',
+        watermark: 'Watermark text',
+        format: 'Target format',
+      },
       renamePatternTip: 'Use: {原名} {编号} {日期} {年份} {月份} {日}',
       footer: 'ToolKit Pro · Free Online Toolkit · © 2026',
       adSlot: '📢 Ad Space — 728×90 Leaderboard',
+    }
+  };
+
+  // Rename guide content (used by applyLang for rename section)
+  const renameLang = {
+    zh: {
+      title: '✏️ 批量文件重命名',
+      stepsLabel: '步骤：',
+      step1: '① 点击上传或拖拽任意文件（支持多选）',
+      step2: '② 设置命名模板，如 {原名}_{编号}',
+      step3: '③ 可选：勾选"全部小写"转换文件名',
+      step4: '④ 点击"开始重命名"，生成重命名方案.txt',
+      varsLabel: '模板变量说明：',
+      var1: '{原名} — 原文件名（不含扩展名）',
+      var2: '{编号} — 001, 002, 003…',
+      var3: '{日期} — 2026-05-17',
+      var4: '{年份} — 2026',
+      var5: '{月份} — 05',
+      var6: '{日} — 17',
+      modeTitle: '✏️ 批量重命名',
+      dropHint: '点击上传或拖拽文件',
+      dropSub: '支持任意文件类型',
+      patternLabel: '命名模板',
+      patternTip: '可用：{原名} {编号} {日期} {年份} {月份} {日}',
+      lowerLabel: '全部小写',
+      dateLabel: '加日期',
+      runBtn: '开始重命名 →',
+    },
+    en: {
+      title: '✏️ Batch File Rename',
+      stepsLabel: 'Steps:',
+      step1: '① Click or drag files to upload (multi-select supported)',
+      step2: '② Set naming template, e.g. {原名}_{编号}',
+      step3: '③ Optional: check "All Lowercase" to convert filenames',
+      step4: '④ Click "Start Rename" — generates rename_plan.txt',
+      varsLabel: 'Template Variables:',
+      var1: '{原名} — Original filename (no extension)',
+      var2: '{编号} — 001, 002, 003…',
+      var3: '{日期} — 2026-05-17',
+      var4: '{年份} — 2026',
+      var5: '{月份} — 05',
+      var6: '{日} — 17',
+      modeTitle: '✏️ Batch Rename',
+      dropHint: 'Click or drag files here',
+      dropSub: 'Any file type supported',
+      patternLabel: 'Naming Template',
+      patternTip: 'Use: {原名} {编号} {日期} {年份} {月份} {日}',
+      lowerLabel: 'All Lowercase',
+      dateLabel: 'Add Date',
+      runBtn: 'Start Rename →',
     }
   };
 
@@ -427,6 +547,60 @@
 
   function t(key) {
     return LANG[currentLang][key] || LANG.zh[key] || key;
+  }
+
+  function formatMsg(key, params = {}) {
+    return Object.entries(params).reduce(
+      (msg, [name, value]) => msg.replaceAll(`{${name}}`, value),
+      t(key)
+    );
+  }
+
+  function safeReadJSON(key, fallback = {}) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (e) {
+      localStorage.removeItem(key);
+      return fallback;
+    }
+  }
+
+  function getUTCDateKey() {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  function isOversizeFile(file) {
+    return file.size > MAX_FILE_SIZE;
+  }
+
+  function renderFileList(container, files) {
+    container.textContent = '';
+    files.forEach(file => {
+      const row = document.createElement('div');
+      row.className = 'flex items-center gap-2 text-sm text-gray-700';
+      const icon = document.createElement('span');
+      icon.textContent = '📄';
+      const name = document.createElement('span');
+      name.textContent = file.name;
+      const size = document.createElement('span');
+      size.className = 'text-xs text-gray-400';
+      size.textContent = `${(file.size / 1024).toFixed(1)}KB`;
+      row.append(icon, name, size);
+      container.appendChild(row);
+    });
+  }
+
+  async function ensureXLSX() {
+    if (window.XLSX) return window.XLSX;
+    if (!xlsxLoadPromise) {
+      showToast(t('toastXlsxLoading'));
+      xlsxLoadPromise = import(XLSX_CDN).then(module => {
+        window.XLSX = module;
+        return module;
+      });
+    }
+    return xlsxLoadPromise;
   }
 
   function applyLang() {
@@ -452,7 +626,7 @@
     applyCardText('compress', lang.imageTabs.compress, lang.imageTabsDesc.compress);
     applyCardText('watermark', lang.imageTabs.watermark, lang.imageTabsDesc.watermark);
     applyCardText('convert', lang.imageTabs.convert, lang.imageTabsDesc.convert);
-    applyCardText('rename', lang.renameTab, '按模板批量修改文件名');
+    applyCardText('rename', lang.renameTab, lang.tabsDesc.rename);
     // Update dropzones
     const excelDropzone = document.querySelector('#excel-dropzone p:nth-child(2)');
     if (excelDropzone) excelDropzone.textContent = lang.dropHint;
@@ -484,6 +658,32 @@
     // Update rename mode title
     const renameModeTitle = document.getElementById('rename-mode-title');
     if (renameModeTitle) renameModeTitle.textContent = '✏️ ' + lang.renameTab;
+    const rg = renameLang[currentLang] || renameLang.zh;
+    const renameMap = {
+      'rg-title': rg.title,
+      'rg-steps-label': rg.stepsLabel,
+      'rg-step1': rg.step1,
+      'rg-step2': rg.step2,
+      'rg-step3': rg.step3,
+      'rg-step4': rg.step4,
+      'rg-vars-label': rg.varsLabel,
+      'rg-var1': rg.var1,
+      'rg-var2': rg.var2,
+      'rg-var3': rg.var3,
+      'rg-var4': rg.var4,
+      'rg-var5': rg.var5,
+      'rg-var6': rg.var6,
+      'rg-drop-hint': rg.dropHint,
+      'rg-drop-sub': rg.dropSub,
+      'rg-pattern-label': rg.patternLabel,
+      'rg-pattern-tip': rg.patternTip,
+      'rg-lower-label': rg.lowerLabel,
+      'rg-date-label': rg.dateLabel,
+    };
+    Object.entries(renameMap).forEach(([id, text]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    });
     // Update ad slots
     document.querySelectorAll('.ad-slot').forEach(el => {
       el.textContent = lang.adSlot;
@@ -543,8 +743,8 @@
   });
 
   function checkDailyLimit() {
-    const today = new Date().toDateString();
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    const today = getUTCDateKey();
+    const stored = safeReadJSON(STORAGE_KEY, {});
     if (stored.date !== today) {
       dailyUses = 0;
       localStorage.setItem(STORAGE_KEY, JSON.stringify({date: today, count: 0}));
@@ -556,22 +756,9 @@
 
   function recordUse() {
     dailyUses++;
-    const today = new Date().toDateString();
+    const today = getUTCDateKey();
     localStorage.setItem(STORAGE_KEY, JSON.stringify({date: today, count: dailyUses}));
     updateUseIndicator();
-  }
-
-  function updateUseIndicator() {
-    const el = document.getElementById('use-indicator');
-    if (el) {
-      if (dailyUses >= FREE_DAILY_LIMIT) {
-        el.textContent = `⚠️ 今日已用 ${dailyUses}/${FREE_DAILY_LIMIT} 次`;
-        el.className = 'text-xs font-medium text-red-500';
-      } else {
-        el.textContent = `今日已用 ${dailyUses}/${FREE_DAILY_LIMIT} 次`;
-        el.className = 'text-xs font-medium text-gray-400';
-      }
-    }
   }
 
   // ========== TAB SWITCHING ==========
@@ -587,9 +774,12 @@
 
   // ========== AD REMOVAL ==========
   document.getElementById('removeAdBtn').addEventListener('click', () => {
-    if (adRemoved) { showToast('已解锁！'); return; }
+    if (adRemoved) { showToast(t('unlocked')); return; }
     document.getElementById('paywall-modal').classList.remove('hidden');
   });
+
+  document.getElementById('pw-wechat')?.addEventListener('click', () => showToast(t('toastPaymentPending')));
+  document.getElementById('pw-alipay')?.addEventListener('click', () => showToast(t('toastPaymentPending')));
 
   // ========== TOAST ==========
   function showToast(msg) {
@@ -660,7 +850,7 @@
     excelMode = mode;
     document.getElementById('excel-options').classList.add('hidden');
     excelFiles = []; excelData = [];
-    document.getElementById('excel-files').innerHTML = '';
+    document.getElementById('excel-files').textContent = '';
     excelSetupDropzone();
 
     // 显示使用说明
@@ -700,10 +890,19 @@
 
   async function handleExcelFiles(files) {
     excelFiles = Array.from(files);
-    if (!excelMode) { showToast('请先选择功能'); return; }
+    if (!excelMode) { showToast(t('toastSelect')); return; }
+    const oversized = excelFiles.find(isOversizeFile);
+    if (oversized) {
+      excelFiles = [];
+      excelData = [];
+      document.getElementById('excel-files').textContent = '';
+      showToast(formatMsg('toastFileTooLarge', {name: oversized.name}));
+      return;
+    }
     const fl = document.getElementById('excel-files');
-    fl.innerHTML = excelFiles.map(f => `<div class="flex items-center gap-2 text-sm text-gray-700"><span>📄</span><span>${f.name}</span><span class="text-xs text-gray-400">${(f.size/1024).toFixed(1)}KB</span></div>`).join('');
+    renderFileList(fl, excelFiles);
     excelData = [];
+    const XLSX = await ensureXLSX();
     for (const f of excelFiles) {
       const buf = await f.arrayBuffer();
       const wb = XLSX.read(buf, {type:'array'});
@@ -714,13 +913,22 @@
 
   function showExcelOptions() {
     const opt = document.getElementById('excel-options');
+    const lang = LANG[currentLang];
     opt.classList.remove('hidden');
     if (excelMode === 'search') {
-      opt.innerHTML = `<label class="block text-xs font-medium text-gray-600 mb-1">搜索关键词</label><input type="text" id="search-kw" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm" placeholder="输入要搜索的文字">`;
+      opt.innerHTML = `<label class="block text-xs font-medium text-gray-600 mb-1" for="search-kw"></label><input type="text" id="search-kw" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm">`;
+      opt.querySelector('label').textContent = lang.searchLabel;
+      opt.querySelector('input').placeholder = lang.kwPlaceholder;
     } else if (excelMode === 'split') {
-      opt.innerHTML = `<label class="block text-xs font-medium text-gray-600 mb-1">按哪列拆分（输入列名或字母，如A）</label><input type="text" id="split-col" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm" placeholder="A">`;
+      opt.innerHTML = `<label class="block text-xs font-medium text-gray-600 mb-1" for="split-col"></label><input type="text" id="split-col" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm" placeholder="A">`;
+      opt.querySelector('label').textContent = lang.splitLabel;
     } else if (excelMode === 'dedup') {
-      opt.innerHTML = `<label class="block text-xs font-medium text-gray-600 mb-1">去重依据列</label><input type="text" id="dedup-col" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm" placeholder="姓名 或 0（第一列）">`;
+      opt.innerHTML = `<label class="block text-xs font-medium text-gray-600 mb-1" for="dedup-col"></label><input type="text" id="dedup-col" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm">`;
+      opt.querySelector('label').textContent = lang.dedupLabel;
+      opt.querySelector('input').placeholder = lang.dedupPlaceholder;
+    } else if (excelMode === 'compare') {
+      opt.innerHTML = `<p class="text-xs text-gray-500 mb-2"></p>`;
+      opt.querySelector('p').textContent = lang.compareHint;
     } else {
       opt.classList.add('hidden');
     }
@@ -731,9 +939,9 @@
     if (!adRemoved && dailyUses >= FREE_DAILY_LIMIT) {
       document.getElementById('paywall-modal').classList.remove('hidden'); return;
     }
-    if (!excelData.length) { showToast('请先上传文件'); return; }
-    recordUse();
-    showToast('处理中...');
+    if (!excelData.length) { showToast(t('toastUpload')); return; }
+    const XLSX = await ensureXLSX();
+    showToast(t('toastProcess'));
     try {
       let result, outputName;
 
@@ -746,7 +954,7 @@
             if (aoa.length > 0) allSheets.push({ name: d.name, sheetName: sn, aoa });
           }
         }
-        if (!allSheets.length) { showToast('没有数据'); return; }
+        if (!allSheets.length) { showToast(t('toastNoData')); return; }
 
         // 取第一张表的表头作为统一表头
         const headers = allSheets[0].aoa[0] || [];
@@ -770,9 +978,9 @@
         const ws = XLSX.utils.aoa_to_sheet(mergedAOA);
         // 设置列宽
         ws['!cols'] = headers.map(() => ({ wch: 15 }));
-        XLSX.utils.book_append_sheet(wb2, ws, '合并结果');
-        result = wb2; outputName = '合并结果.xlsx';
-        showToast(`✅ 合并完成，共 ${mergedAOA.length - 1} 行数据`);
+        XLSX.utils.book_append_sheet(wb2, ws, currentLang === 'en' ? 'Merged' : '合并结果');
+        result = wb2; outputName = currentLang === 'en' ? 'merged.xlsx' : '合并结果.xlsx';
+        showToast(formatMsg('toastMergeDone', {n: mergedAOA.length - 1}));
 
       } else if (excelMode === 'clean') {
         const allSheets = [];
@@ -782,7 +990,7 @@
             if (aoa.length > 0) allSheets.push({ aoa });
           }
         }
-        if (!allSheets.length) { showToast('没有数据'); return; }
+        if (!allSheets.length) { showToast(t('toastNoData')); return; }
 
         const headers = allSheets[0].aoa[0] || [];
         const cleanAOA = [headers];
@@ -800,12 +1008,12 @@
         const wb2 = XLSX.utils.book_new();
         const ws = XLSX.utils.aoa_to_sheet(cleanAOA);
         ws['!cols'] = headers.map(() => ({ wch: 15 }));
-        XLSX.utils.book_append_sheet(wb2, ws, '清洗结果');
-        result = wb2; outputName = '清洗结果.xlsx';
+        XLSX.utils.book_append_sheet(wb2, ws, currentLang === 'en' ? 'Cleaned' : '清洗结果');
+        result = wb2; outputName = currentLang === 'en' ? 'cleaned.xlsx' : '清洗结果.xlsx';
 
       } else if (excelMode === 'search') {
         const kw = (document.getElementById('search-kw')?.value || '').toLowerCase().trim();
-        if (!kw) { showToast('请输入关键词'); return; }
+        if (!kw) { showToast(t('toastNeedKeyword')); return; }
 
         const allSheets = [];
         for (const d of excelData) {
@@ -814,7 +1022,7 @@
             if (aoa.length > 0) allSheets.push({ aoa });
           }
         }
-        if (!allSheets.length) { showToast('没有数据'); return; }
+        if (!allSheets.length) { showToast(t('toastNoData')); return; }
 
         const headers = allSheets[0].aoa[0] || [];
         const filteredAOA = [headers];
@@ -834,10 +1042,10 @@
         const wb2 = XLSX.utils.book_new();
         const ws = XLSX.utils.aoa_to_sheet(filteredAOA);
         ws['!cols'] = headers.map(() => ({ wch: 15 }));
-        XLSX.utils.book_append_sheet(wb2, ws, '搜索结果');
-        result = wb2; outputName = '搜索结果.xlsx';
-        showToast(`找到 ${matchCount} 条匹配`);
-        if (matchCount === 0) { showToast('没有找到匹配'); return; }
+        XLSX.utils.book_append_sheet(wb2, ws, currentLang === 'en' ? 'Search Results' : '搜索结果');
+        result = wb2; outputName = currentLang === 'en' ? 'search_results.xlsx' : '搜索结果.xlsx';
+        if (matchCount === 0) { showToast(t('toastNoMatch')); return; }
+        showToast(formatMsg('toastMatchCount', {n: matchCount}));
 
       } else if (excelMode === 'dedup') {
         const dedupCol = (document.getElementById('dedup-col')?.value || '').trim();
@@ -848,7 +1056,7 @@
             if (aoa.length > 0) allSheets.push({ aoa });
           }
         }
-        if (!allSheets.length) { showToast('没有数据'); return; }
+        if (!allSheets.length) { showToast(t('toastNoData')); return; }
 
         const headers = allSheets[0].aoa[0] || [];
         const dataRows = [];
@@ -890,19 +1098,18 @@
         const wb2 = XLSX.utils.book_new();
         const ws = XLSX.utils.aoa_to_sheet(dedupAOA);
         ws['!cols'] = headers.map(() => ({ wch: 15 }));
-        XLSX.utils.book_append_sheet(wb2, ws, '去重结果');
-        result = wb2; outputName = '去重结果.xlsx';
-        showToast(`去重完成，移除 ${dupCount} 条重复`);
-        if (dupCount === 0) showToast('没有重复');
+        XLSX.utils.book_append_sheet(wb2, ws, currentLang === 'en' ? 'Dedupe Results' : '去重结果');
+        result = wb2; outputName = currentLang === 'en' ? 'dedupe_results.xlsx' : '去重结果.xlsx';
+        showToast(dupCount === 0 ? t('toastNoDuplicate') : formatMsg('toastDedupDone', {n: dupCount}));
 
       } else if (excelMode === 'split') {
         const splitCol = (document.getElementById('split-col')?.value || '').trim();
-        if (!splitCol) { showToast('请输入拆分列名或列号'); return; }
-        if (excelData.length !== 1) { showToast('拆分只能单文件'); return; }
+        if (!splitCol) { showToast(t('toastNeedSplitCol')); return; }
+        if (excelData.length !== 1) { showToast(t('toastSplitSingle')); return; }
 
         const sn = excelData[0].wb.SheetNames[0];
         const aoa = XLSX.utils.sheet_to_json(excelData[0].wb.Sheets[sn], {header: 1});
-        if (aoa.length < 2) { showToast('数据不足'); return; }
+        if (aoa.length < 2) { showToast(t('toastInsufficientData')); return; }
 
         const headers = aoa[0];
         const dataRows = aoa.slice(1);
@@ -915,19 +1122,19 @@
           const num = parseInt(splitCol, 10);
           if (!isNaN(num) && num >= 0 && num < headers.length) colIndex = num;
         }
-        if (colIndex === -1) { showToast('找不到拆分列'); return; }
+        if (colIndex === -1) { showToast(t('toastSplitColNotFound')); return; }
 
         // 按值分组
-        const groups = {};
+        const groups = new Map();
         for (const row of dataRows) {
           const key = String(row[colIndex] ?? '_空_').trim();
-          if (!groups[key]) groups[key] = [headers, ...groups[key] ? [] : []];
-          groups[key].push(row);
+          if (!groups.has(key)) groups.set(key, [headers]);
+          groups.get(key).push(row);
         }
 
         // 生成 ZIP
         const zip = new JSZip();
-        for (const [key, rows] of Object.entries(groups)) {
+        for (const [key, rows] of groups.entries()) {
           const wb2 = XLSX.utils.book_new();
           const ws = XLSX.utils.aoa_to_sheet(rows);
           ws['!cols'] = headers.map(() => ({ wch: 15 }));
@@ -938,37 +1145,95 @@
         }
 
         const zipBuf = await zip.generateAsync({type: 'array'});
-        downloadBlob(new Blob([zipBuf], {type:'application/zip'}), '拆分结果.zip');
-        showToast(`拆分为 ${Object.keys(groups).length} 个文件`);
+        recordUse();
+        downloadBlob(new Blob([zipBuf], {type:'application/zip'}), currentLang === 'en' ? 'split_results.zip' : '拆分结果.zip');
+        showToast(formatMsg('toastSplitDone', {n: groups.size}));
         return;
 
+      } else if (excelMode === 'compare') {
+        if (excelData.length !== 2) { showToast(t('toastNeedCompareFiles')); return; }
+
+        const readFirstSheet = data => {
+          const sheetName = data.wb.SheetNames[0];
+          return XLSX.utils.sheet_to_json(data.wb.Sheets[sheetName], {header: 1});
+        };
+        const left = readFirstSheet(excelData[0]);
+        const right = readFirstSheet(excelData[1]);
+        if (left.length < 1 || right.length < 1) { showToast(t('toastNoData')); return; }
+
+        const headers = left[0] || right[0] || [];
+        const normalizeRow = row => row.map(c => String(c ?? '').trim()).join('\t');
+        const leftRows = left.slice(1);
+        const rightRows = right.slice(1);
+        const leftKeys = new Set(leftRows.map(normalizeRow));
+        const rightKeys = new Set(rightRows.map(normalizeRow));
+        const sameRows = leftRows.filter(row => rightKeys.has(normalizeRow(row)));
+        const removedRows = leftRows.filter(row => !rightKeys.has(normalizeRow(row)));
+        const addedRows = rightRows.filter(row => !leftKeys.has(normalizeRow(row)));
+        const statusHeader = currentLang === 'en' ? 'Status' : '状态';
+        const compareAOA = [[statusHeader, ...headers]];
+        sameRows.forEach(row => compareAOA.push([currentLang === 'en' ? 'Unchanged' : '相同', ...row]));
+        addedRows.forEach(row => compareAOA.push([currentLang === 'en' ? 'Added' : '新增', ...row]));
+        removedRows.forEach(row => compareAOA.push([currentLang === 'en' ? 'Removed' : '删除', ...row]));
+
+        const wb2 = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet(compareAOA);
+        ws['!cols'] = compareAOA[0].map(() => ({ wch: 15 }));
+        XLSX.utils.book_append_sheet(wb2, ws, currentLang === 'en' ? 'Compare Results' : '对比结果');
+        result = wb2; outputName = currentLang === 'en' ? 'compare_results.xlsx' : '对比结果.xlsx';
+        showToast(formatMsg('toastCompareDone', {added: addedRows.length, removed: removedRows.length, same: sameRows.length}));
+
       } else {
-        showToast('该功能开发中'); return;
+        showToast(t('toastFeaturePending')); return;
       }
 
       const buf = XLSX.write(result, {bookType:'xlsx',type:'array'});
+      recordUse();
       downloadFile(buf, outputName);
-      if (excelMode !== 'search' && excelMode !== 'dedup' && excelMode !== 'split' && excelMode !== 'merge') {
-        showToast('✅ 处理完成！');
-      }
-    } catch(e) { showToast('处理失败: ' + e.message); console.error(e); }
+    } catch(e) { showToast(t('toastFail') + e.message); console.error(e); }
   }
 
   // ========== IMAGE ==========
   function imageSetMode(mode) {
     imageMode = mode;
     const opts = document.getElementById('image-options');
+    const labels = LANG[currentLang].imageOptions;
     opts.classList.remove('hidden');
-    opts.innerHTML = (mode === 'resize') ? `<div class="grid grid-cols-2 gap-3"><div><label class="block text-xs font-medium text-gray-600 mb-1">宽度(px)</label><input type="number" id="img-w" value="800" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm"></div><div><label class="block text-xs font-medium text-gray-600 mb-1">高度(px)</label><input type="number" id="img-h" value="600" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm"></div></div>` :
-      mode === 'compress' ? `<div><label class="block text-xs font-medium text-gray-600 mb-1">压缩质量 (%)</label><input type="range" id="img-quality" min="10" max="100" value="80" class="w-full"><div class="text-xs text-center text-gray-500 mt-1"><span id="quality-val">80</span>%</div></div>` :
-      mode === 'watermark' ? `<div><label class="block text-xs font-medium text-gray-600 mb-1">水印文字</label><input type="text" id="wm-text" value="© ToolKit" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm"></div>` :
-      mode === 'convert' ? `<div><label class="block text-xs font-medium text-gray-600 mb-1">目标格式</label><select id="img-format" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm"><option value="image/png">PNG</option><option value="image/jpeg">JPEG</option><option value="image/webp">WebP</option></select></div>` : '';
+    opts.innerHTML = (mode === 'resize') ? `<div class="grid grid-cols-2 gap-3"><div><label class="block text-xs font-medium text-gray-600 mb-1" for="img-w"></label><input type="number" id="img-w" value="800" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm"></div><div><label class="block text-xs font-medium text-gray-600 mb-1" for="img-h"></label><input type="number" id="img-h" value="600" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm"></div></div>` :
+      mode === 'compress' ? `<div><label class="block text-xs font-medium text-gray-600 mb-1" for="img-quality"></label><input type="range" id="img-quality" min="10" max="100" value="80" class="w-full"><div class="text-xs text-center text-gray-500 mt-1"><span id="quality-val">80</span>%</div></div>` :
+      mode === 'watermark' ? `<div><label class="block text-xs font-medium text-gray-600 mb-1" for="wm-text"></label><input type="text" id="wm-text" value="© ToolKit" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm"></div>` :
+      mode === 'convert' ? `<div><label class="block text-xs font-medium text-gray-600 mb-1" for="img-format"></label><select id="img-format" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm"><option value="image/png">PNG</option><option value="image/jpeg">JPEG</option><option value="image/webp">WebP</option></select></div>` : '';
+    if (mode === 'resize') {
+      const optionLabels = opts.querySelectorAll('label');
+      optionLabels[0].textContent = labels.width;
+      optionLabels[1].textContent = labels.height;
+    } else if (mode === 'compress') {
+      opts.querySelector('label').textContent = labels.quality;
+      const quality = document.getElementById('img-quality');
+      quality.addEventListener('input', () => {
+        document.getElementById('quality-val').textContent = quality.value;
+      });
+    } else if (mode === 'watermark') {
+      opts.querySelector('label').textContent = labels.watermark;
+    } else if (mode === 'convert') {
+      opts.querySelector('label').textContent = labels.format;
+    }
     document.getElementById('image-run').classList.remove('hidden');
     const dz = document.getElementById('image-dropzone');
     dz.ondragover = e => { e.preventDefault(); dz.classList.add('dragover'); };
     dz.ondragleave = () => dz.classList.remove('dragover');
-    dz.ondrop = e => { e.preventDefault(); dz.classList.remove('dragover'); imageFiles = Array.from(e.dataTransfer.files); showToast(`已上传 ${imageFiles.length} 张图片`); };
-    document.getElementById('image-input').onchange = e => { imageFiles = Array.from(e.target.files); showToast(`已上传 ${imageFiles.length} 张图片`); };
+    const handleImages = files => {
+      imageFiles = Array.from(files);
+      const oversized = imageFiles.find(isOversizeFile);
+      if (oversized) {
+        imageFiles = [];
+        showToast(formatMsg('toastFileTooLarge', {name: oversized.name}));
+        return;
+      }
+      showToast(formatMsg('toastUploaded', {n: imageFiles.length}));
+    };
+    dz.ondrop = e => { e.preventDefault(); dz.classList.remove('dragover'); handleImages(e.dataTransfer.files); };
+    document.getElementById('image-input').onchange = e => handleImages(e.target.files);
 
     // 显示使用说明
     const guide = imageGuides[mode];
@@ -987,9 +1252,9 @@
     if (!adRemoved && dailyUses >= FREE_DAILY_LIMIT) {
       document.getElementById('paywall-modal').classList.remove('hidden'); return;
     }
-    if (!imageFiles.length) { showToast('请先上传图片'); return; }
+    if (!imageFiles.length) { showToast(t('toastUploadImages')); return; }
     recordUse();
-    showToast('开始处理...');
+    showToast(t('toastStartProcess'));
     for (const f of imageFiles) {
       const img = await loadImage(f);
       let canvas = document.createElement('canvas');
@@ -1023,7 +1288,7 @@
       }
       canvas.toBlob(blob => downloadBlob(blob, f.name), 'image/png');
     }
-    showToast('✅ 处理完成！');
+    showToast(t('toastDone'));
   }
 
   function loadImage(file) {
@@ -1116,7 +1381,7 @@
   function coverDownload() {
     const canvas = document.getElementById('cover-canvas');
     canvas.toBlob(blob => downloadBlob(blob, `${coverPreset}_封面_${Date.now()}.png`), 'image/png');
-    showToast('✅ 封面已下载！');
+    showToast(t('toastCoverDownloaded'));
   }
 
   // ========== PDF ==========
@@ -1132,7 +1397,7 @@
     const days = parseInt(document.getElementById('pdf-days').value) || 30;
     const template = document.getElementById('pdf-template').value;
 
-    showToast('正在生成 PDF...');
+    showToast(t('toastPdfGenerating'));
     await new Promise(r => setTimeout(r, 100));
 
     const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
@@ -1182,7 +1447,7 @@
     }
 
     doc.save(`${goal}_${days}天计划.pdf`);
-    showToast('✅ PDF 已下载！');
+    showToast(t('toastPdfDownloaded'));
   }
 
   function hexToRgb(hex) {
@@ -1197,18 +1462,26 @@
 
   function renameSetMode(mode) {
     renameMode = mode;
-    document.getElementById('rename-mode-title').textContent = '✏️ 批量重命名';
+    document.getElementById('rename-mode-title').textContent = (renameLang[currentLang] || renameLang.zh).modeTitle;
     // Reset UI
     renameFiles = [];
-    document.getElementById('rename-files').innerHTML = '';
+    document.getElementById('rename-files').textContent = '';
     document.getElementById('rename-run').classList.add('hidden');
     document.getElementById('rename-dropzone').style.display = '';
   }
 
   document.getElementById('rename-input').onchange = e => {
     renameFiles = Array.from(e.target.files);
+    const oversized = renameFiles.find(isOversizeFile);
+    if (oversized) {
+      renameFiles = [];
+      document.getElementById('rename-files').textContent = '';
+      document.getElementById('rename-run').classList.add('hidden');
+      showToast(formatMsg('toastFileTooLarge', {name: oversized.name}));
+      return;
+    }
     const fl = document.getElementById('rename-files');
-    fl.innerHTML = renameFiles.map(f => `<div class="text-sm text-gray-700">📄 ${f.name}</div>`).join('');
+    renderFileList(fl, renameFiles);
     if (renameFiles.length) document.getElementById('rename-run').classList.remove('hidden');
   };
 
@@ -1221,13 +1494,22 @@
     const pattern = document.getElementById('rename-pattern').value || '{原名}_{编号}';
     const lower = document.getElementById('rename-lower').checked;
     const renameResults = renameFiles.map((f, i) => {
+      const baseName = f.name.replace(/\.[^.]+$/, '');
+      const num = String(i+1).padStart(3,'0');
+      const today = new Date().toISOString().slice(0,10);
       let name = pattern
-        .replace('{原名}', f.name.replace(/\.[^.]+$/, ''))
-        .replace('{编号}', String(i+1).padStart(3,'0'))
-        .replace('{日期}', new Date().toISOString().slice(0,10))
-        .replace('{年份}', new Date().getFullYear())
-        .replace('{月份}', String(new Date().getMonth()+1).padStart(2,'0'))
-        .replace('{日}', String(new Date().getDate()).padStart(2,'0'));
+        .replaceAll('{原名}', baseName)
+        .replaceAll('{name}', baseName)
+        .replaceAll('{编号}', num)
+        .replaceAll('{num}', num)
+        .replaceAll('{日期}', today)
+        .replaceAll('{date}', today)
+        .replaceAll('{年份}', new Date().getFullYear())
+        .replaceAll('{year}', new Date().getFullYear())
+        .replaceAll('{月份}', String(new Date().getMonth()+1).padStart(2,'0'))
+        .replaceAll('{month}', String(new Date().getMonth()+1).padStart(2,'0'))
+        .replaceAll('{日}', String(new Date().getDate()).padStart(2,'0'))
+        .replaceAll('{day}', String(new Date().getDate()).padStart(2,'0'));
       if (lower) name = name.toLowerCase();
       name += f.name.match(/\.[^.]+$/)?.[0] || '';
       return {orig: f.name, new: name, file: f};
@@ -1237,7 +1519,7 @@
     const text = renameResults.map(r => `${r.orig} → ${r.new}`).join('\n');
     const blob = new Blob([text], {type:'text/plain'});
     downloadBlob(blob, '重命名结果.txt');
-    showToast('✅ 命名方案已生成！');
+    showToast(t('toastRenameDone'));
   }
 
   // ========== UTILS ==========
