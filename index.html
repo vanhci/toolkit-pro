@@ -3,7 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO Meta Tags - Chinese -->
   <title>ToolKit Pro — 免费在线工具箱</title>
+  <meta name="description" content="免费的在线工具箱 - Excel合并/拆分/清洗/搜索/去重、图片压缩/水印/格式转换、文件批量重命名。无需注册，即开即用。">
+  <meta name="keywords" content="Excel合并,Excel拆分,数据清洗,图片压缩,水印添加,文件重命名,免费在线工具,无需注册">
+  <meta name="author" content="ToolKit Pro">
+  <meta name="robots" content="index, follow">
+
+  <!-- SEO Meta Tags - English -->
+  <title>ToolKit Pro — Free Online Toolkit</title>
+  <meta name="description" lang="en" content="Free online toolkit - Excel merge/split/clean/search/dedup, image compress/resize/watermark/convert, batch file rename. No registration required.">
+  <meta name="keywords" lang="en" content="Excel merge, Excel split, data cleaning, image compressor, watermark, batch rename, free online tools, no signup">
+
+  <!-- Open Graph / Social -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ToolKit Pro — Free Online Toolkit / 免费在线工具箱">
+  <meta property="og:description" content="Free Excel & image processing tools. No registration. Excel merge, clean, search, dedup. Image resize, compress, watermark.">
+  <meta property="og:url" content="https://tools.vanhci.top">
+  <meta property="og:site_name" content="ToolKit Pro">
+
+  <!-- Hreflang for multi-language -->
+  <link rel="alternate" hreflang="zh-CN" href="https://tools.vanhci.top/?lang=zh">
+  <link rel="alternate" hreflang="en" href="https://tools.vanhci.top/?lang=en">
+  <link rel="alternate" hreflang="x-default" href="https://tools.vanhci.top/">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://tools.vanhci.top">
+
+  <!-- Favicon (simple emoji) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -41,12 +71,13 @@
         <h1 class="text-xl font-bold text-gray-900 flex items-center gap-2">
           🛠️ ToolKit Pro
         </h1>
-        <p class="text-xs text-gray-500 mt-0.5">免费在线工具箱 · 无需注册 · 永不过期</p>
+        <p class="text-xs text-gray-500 mt-0.5" id="header-subtitle">免费在线工具箱 · 无需注册 · 永不过期</p>
       </div>
       <div class="flex items-center gap-3">
+        <button id="lang-toggle" onclick="toggleLang()" class="text-xs px-2 py-1 border border-gray-300 rounded-lg hover:bg-gray-100 transition">🌐 EN/中</button>
         <span id="use-indicator" class="text-xs font-medium text-gray-400">今日已用 0/3 次</span>
         <button id="removeAdBtn" class="pro-badge text-white text-xs font-semibold px-3 py-1.5 rounded-full hover:opacity-90 transition">
-          ⭐ 升级解锁 ¥9.9
+          ⭐ <span id="upgrade-btn-text">升级解锁 ¥9.9</span>
         </button>
       </div>
     </div>
@@ -248,22 +279,22 @@
   <div id="paywall-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
     <div class="modal-content bg-white rounded-2xl p-8 max-w-sm w-full text-center">
       <div class="text-5xl mb-4">⭐</div>
-      <h2 class="text-xl font-bold text-gray-900 mb-2">升级解锁</h2>
-      <p class="text-sm text-gray-500 mb-6">每日免费3次，升级后无限制使用所有工具<br>一次付费，永久解锁，无需订阅。</p>
+      <h2 class="text-xl font-bold text-gray-900 mb-2" id="pw-title">升级解锁</h2>
+      <p class="text-sm text-gray-500 mb-6" id="pw-desc">每日免费3次，升级后无限制使用所有工具<br>一次付费，永久解锁，无需订阅。</p>
       <div class="bg-gray-50 rounded-xl p-4 mb-6">
         <div class="flex justify-between items-center mb-2">
-          <span class="text-gray-500">终身解锁</span>
+          <span class="text-gray-500" id="pw-lifetime">终身解锁</span>
           <span class="font-bold text-2xl text-gray-900">¥9.9</span>
         </div>
-        <div class="text-xs text-gray-400 line-through">原价 ¥29</div>
+        <div class="text-xs text-gray-400 line-through" id="pw-original">原价 ¥29</div>
       </div>
-      <button onclick="alert('支付功能开发中，请联系微信：vanhci')" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition mb-3">
+      <button onclick="alert('支付功能开发中，请联系微信：vanhci')" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition mb-3" id="pw-wechat">
         微信支付 ¥9.9
       </button>
-      <button onclick="alert('支付功能开发中，请联系微信：vanhci')" class="w-full bg-gray-100 text-gray-700 py-2.5 rounded-xl font-medium hover:bg-gray-200 transition">
+      <button onclick="alert('支付功能开发中，请联系微信：vanhci')" class="w-full bg-gray-100 text-gray-700 py-2.5 rounded-xl font-medium hover:bg-gray-200 transition" id="pw-alipay">
         支付宝支付 ¥9.9
       </button>
-      <p class="text-xs text-gray-400 mt-4">支付后联系微信：vanhci 解锁 · 注明：工具站解锁</p>
+      <p class="text-xs text-gray-400 mt-4" id="pw-contact">支付后联系微信：vanhci 解锁 · 注明：工具站解锁</p>
     </div>
   </div>
 
@@ -289,6 +320,227 @@
   const FREE_DAILY_LIMIT = 3;
   const STORAGE_KEY = 'toolkit_daily_uses';
   const DATE_KEY = 'toolkit_date';
+
+  // ========== LANGUAGE ==========
+  const LANG = {
+    zh: {
+      headerSub: '免费在线工具箱 · 无需注册 · 永不过期',
+      useText: '今日已用 {n}/3 次',
+      useWarn: '⚠️ 今日已用 {n}/3 次',
+      upgradeBtn: '升级解锁 ¥9.9',
+      unlocked: '已解锁！',
+      adRemoved: '广告位已隐藏',
+      excelTab: '📊 Excel处理',
+      imageTab: '🖼️ 图片处理',
+      fileTab: '📂 文件处理',
+      tabs: {merge:'合并表格', split:'拆分表格', clean:'清洗数据', search:'搜索筛选', compare:'对比差异', dedup:'去重'},
+      tabsTitle: {merge:'合并表格', split:'拆分表格', clean:'清洗数据', search:'搜索筛选', compare:'对比差异', dedup:'去重'},
+      tabsDesc: {merge:'将多个 Excel/CSV 合并为一个', split:'按列值拆成多个文件', clean:'去空行、空格、重复项', search:'按关键词过滤行', compare:'找出两个表格的区别', dedup:'按姓名/手机号去重'},
+      imageTabs: {resize:'调整尺寸', compress:'压缩图片', watermark:'添加水印', convert:'格式转换'},
+      imageTabsDesc: {resize:'批量缩放图片到指定尺寸', compress:'减小文件体积保持清晰度', watermark:'文字或图片水印', convert:'PNG/JPG/WebP 互转'},
+      renameTab: '批量重命名',
+      dropHint: '点击上传或拖拽文件到这里',
+      dropHintImg: '点击上传或拖拽图片',
+      dropHintFile: '点击上传或拖拽文件',
+      dropSub: '支持 .xlsx .xls .csv',
+      dropSubImg: '支持 PNG, JPG, WebP, GIF',
+      dropSubFile: '支持任意文件类型',
+      runBtn: '开始处理 →',
+      renameBtn: '开始重命名 →',
+      selectFirst: '选择功能 ↑',
+      paywallTitle: '升级解锁',
+      paywallDesc: '每日免费3次，升级后无限制使用所有工具<br>一次付费，永久解锁，无需订阅。',
+      lifetime: '终身解锁',
+      original: '原价 ¥29',
+      wechatPay: '微信支付 ¥9.9',
+      alipay: '支付宝支付 ¥9.9',
+      contact: '支付后联系微信：vanhci 解锁 · 注明：工具站解锁',
+      toastSelect: '请先选择功能',
+      toastUpload: '请先上传文件',
+      toastNoData: '没有数据',
+      toastProcess: '处理中...',
+      toastDone: '✅ 处理完成！',
+      toastFail: '处理失败: ',
+      toastUploaded: '已上传 {n} 张图片',
+      kwPlaceholder: '输入要搜索的文字',
+      colPlaceholder: '输入拆分列名或列号',
+      dedupPlaceholder: '姓名 或 0（第一列）',
+      renamePatternTip: '可用：{原名} {编号} {日期} {年份} {月份} {日}',
+      footer: 'ToolKit Pro · 免费在线工具箱 · © 2026',
+      adSlot: '📢 广告位 — 728×90 Leaderboard',
+    },
+    en: {
+      headerSub: 'Free Online Toolkit · No Registration · Forever Free',
+      useText: 'Used {n}/3 times today',
+      useWarn: '⚠️ Used {n}/3 times today',
+      upgradeBtn: 'Upgrade ¥9.9',
+      unlocked: 'Unlocked!',
+      adRemoved: 'Ad removed',
+      excelTab: '📊 Excel Tools',
+      imageTab: '🖼️ Image Tools',
+      fileTab: '📂 File Tools',
+      tabs: {merge:'Merge', split:'Split', clean:'Clean', search:'Search', compare:'Compare', dedup:'Dedupe'},
+      tabsTitle: {merge:'Merge', split:'Split', clean:'Clean', search:'Search', compare:'Compare', dedup:'Dedupe'},
+      tabsDesc: {merge:'Merge multiple Excel/CSV files', split:'Split into multiple files by column', clean:'Remove empty rows, spaces, duplicates', search:'Filter rows by keyword', compare:'Find differences between two tables', dedup:'Deduplicate by name/phone'},
+      imageTabs: {resize:'Resize', compress:'Compress', watermark:'Watermark', convert:'Convert'},
+      imageTabsDesc: {resize:'Batch resize images to target dimensions', compress:'Reduce file size, keep quality', watermark:'Add text or image watermark', convert:'PNG/JPG/WebP convert'},
+      renameTab: 'Batch Rename',
+      dropHint: 'Click or drag files here',
+      dropHintImg: 'Click or drag images here',
+      dropHintFile: 'Click or drag files here',
+      dropSub: 'Supports .xlsx .xls .csv',
+      dropSubImg: 'Supports PNG, JPG, WebP, GIF',
+      dropSubFile: 'Any file type',
+      runBtn: 'Start →',
+      renameBtn: 'Start Rename →',
+      selectFirst: 'Select a tool ↑',
+      paywallTitle: 'Upgrade',
+      paywallDesc: '3 free uses daily, unlimited after upgrade<br>One-time payment, lifetime access, no subscription.',
+      lifetime: 'Lifetime',
+      original: 'Original ¥29',
+      wechatPay: 'WeChat Pay ¥9.9',
+      alipay: 'Alipay ¥9.9',
+      contact: 'Contact WeChat: vanhci to unlock · Note: toolkit unlock',
+      toastSelect: 'Please select a function first',
+      toastUpload: 'Please upload files first',
+      toastNoData: 'No data',
+      toastProcess: 'Processing...',
+      toastDone: '✅ Done!',
+      toastFail: 'Failed: ',
+      toastUploaded: '{n} image(s) uploaded',
+      kwPlaceholder: 'Enter search keyword',
+      colPlaceholder: 'Column name or number to split',
+      dedupPlaceholder: 'Name or 0 (first column)',
+      renamePatternTip: 'Use: {原名} {编号} {日期} {年份} {月份} {日}',
+      footer: 'ToolKit Pro · Free Online Toolkit · © 2026',
+      adSlot: '📢 Ad Space — 728×90 Leaderboard',
+    }
+  };
+
+  let currentLang = localStorage.getItem('toolkit_lang') || 'zh';
+
+  function toggleLang() {
+    currentLang = currentLang === 'zh' ? 'en' : 'zh';
+    localStorage.setItem('toolkit_lang', currentLang);
+    applyLang();
+  }
+
+  function t(key) {
+    return LANG[currentLang][key] || LANG.zh[key] || key;
+  }
+
+  function applyLang() {
+    const lang = LANG[currentLang];
+    document.getElementById('header-subtitle').textContent = lang.headerSub;
+    updateUseIndicator();
+    document.getElementById('upgrade-btn-text').textContent = lang.upgradeBtn;
+    // Update tabs
+    const excelBtn = document.querySelector('[data-tool="excel"]');
+    const imageBtn = document.querySelector('[data-tool="image"]');
+    const renameBtn = document.querySelector('[data-tool="rename"]');
+    if (excelBtn) excelBtn.textContent = lang.excelTab;
+    if (imageBtn) imageBtn.textContent = lang.imageTab;
+    if (renameBtn) renameBtn.textContent = lang.fileTab;
+    // Update tool cards (title + description)
+    applyCardText('merge', lang.tabs.merge, lang.tabsDesc.merge);
+    applyCardText('split', lang.tabs.split, lang.tabsDesc.split);
+    applyCardText('clean', lang.tabs.clean, lang.tabsDesc.clean);
+    applyCardText('search', lang.tabs.search, lang.tabsDesc.search);
+    applyCardText('compare', lang.tabs.compare, lang.tabsDesc.compare);
+    applyCardText('dedup', lang.tabs.dedup, lang.tabsDesc.dedup);
+    applyCardText('resize', lang.imageTabs.resize, lang.imageTabsDesc.resize);
+    applyCardText('compress', lang.imageTabs.compress, lang.imageTabsDesc.compress);
+    applyCardText('watermark', lang.imageTabs.watermark, lang.imageTabsDesc.watermark);
+    applyCardText('convert', lang.imageTabs.convert, lang.imageTabsDesc.convert);
+    applyCardText('rename', lang.renameTab, '按模板批量修改文件名');
+    // Update dropzones
+    const excelDropzone = document.querySelector('#excel-dropzone p:nth-child(2)');
+    if (excelDropzone) excelDropzone.textContent = lang.dropHint;
+    const excelSub = document.querySelector('#excel-dropzone p:last-child');
+    if (excelSub) excelSub.textContent = lang.dropSub;
+    const imageDropzone = document.querySelector('#image-dropzone p:nth-child(2)');
+    if (imageDropzone) imageDropzone.textContent = lang.dropHintImg;
+    const imageSub = document.querySelector('#image-dropzone p:last-child');
+    if (imageSub) imageSub.textContent = lang.dropSubImg;
+    const renameDropzone = document.querySelector('#rename-dropzone p:nth-child(2)');
+    if (renameDropzone) renameDropzone.textContent = lang.dropHintFile;
+    const renameSub = document.querySelector('#rename-dropzone p:last-child');
+    if (renameSub) renameSub.textContent = lang.dropSubFile;
+    // Update buttons
+    const excelRunBtn = document.getElementById('excel-run');
+    if (excelRunBtn) excelRunBtn.textContent = lang.runBtn;
+    const imageRunBtn = document.getElementById('image-run');
+    if (imageRunBtn) imageRunBtn.textContent = lang.runBtn;
+    const renameRunBtn = document.getElementById('rename-run');
+    if (renameRunBtn) renameRunBtn.textContent = lang.renameBtn;
+    // Update mode title
+    const modeTitle = document.getElementById('excel-mode-title');
+    if (modeTitle && excelMode) {
+      const modeMap = {merge:'🔀', split:'📂', clean:'🧹', search:'🔍', compare:'⚖️', dedup:'🗂️'};
+      modeTitle.textContent = modeMap[excelMode] + ' ' + lang.tabs[excelMode];
+    } else if (modeTitle) {
+      modeTitle.textContent = lang.selectFirst;
+    }
+    // Update rename mode title
+    const renameModeTitle = document.getElementById('rename-mode-title');
+    if (renameModeTitle) renameModeTitle.textContent = '✏️ ' + lang.renameTab;
+    // Update ad slots
+    document.querySelectorAll('.ad-slot').forEach(el => {
+      el.textContent = lang.adSlot;
+    });
+    // Update footer
+    const footer = document.querySelector('footer p');
+    if (footer) footer.textContent = lang.footer;
+    // Update rename pattern tip
+    const renameTip = document.getElementById('rename-pattern');
+    if (renameTip) renameTip.placeholder = lang.renamePatternTip;
+    // Apply to paywall
+    const pwTitle = document.getElementById('pw-title');
+    if (pwTitle) pwTitle.textContent = lang.paywallTitle;
+    const pwDesc = document.getElementById('pw-desc');
+    if (pwDesc) pwDesc.innerHTML = lang.paywallDesc;
+    const pwLifetime = document.getElementById('pw-lifetime');
+    if (pwLifetime) pwLifetime.textContent = lang.lifetime;
+    const pwOriginal = document.getElementById('pw-original');
+    if (pwOriginal) pwOriginal.textContent = lang.original;
+    const pwWechat = document.getElementById('pw-wechat');
+    if (pwWechat) pwWechat.textContent = lang.wechatPay;
+    const pwAlipay = document.getElementById('pw-alipay');
+    if (pwAlipay) pwAlipay.textContent = lang.alipay;
+    const pwContact = document.getElementById('pw-contact');
+    if (pwContact) pwContact.textContent = lang.contact;
+  }
+
+  function applyCardText(mode, title, desc) {
+    const cards = document.querySelectorAll('.tool-card');
+    cards.forEach(card => {
+      const onclick = card.getAttribute('onclick') || '';
+      if (onclick.includes(mode)) {
+        const h3 = card.querySelector('h3');
+        const p = card.querySelector('p.text-xs');
+        if (h3) h3.textContent = title;
+        if (p) p.textContent = desc;
+      }
+    });
+  }
+
+  function updateUseIndicator() {
+    const el = document.getElementById('use-indicator');
+    if (!el) return;
+    const lang = LANG[currentLang];
+    if (dailyUses >= FREE_DAILY_LIMIT) {
+      el.textContent = lang.useWarn.replace('{n}', dailyUses);
+      el.className = 'text-xs font-medium text-red-500';
+    } else {
+      el.textContent = lang.useText.replace('{n}', dailyUses);
+      el.className = 'text-xs font-medium text-gray-400';
+    }
+  }
+
+  // Apply language on load
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(applyLang, 50);
+  });
 
   function checkDailyLimit() {
     const today = new Date().toDateString();
@@ -350,118 +602,62 @@
   // ========== EXCEL ==========
   const excelGuides = {
     merge: {
-      title: '🔀 合并表格 — 将多个表格合并为一个',
-      steps: [
-        '① 上传多个 Excel 或 CSV 文件（支持多选）',
-        '② 系统自动识别每张表的第一行作为表头',
-        '③ 点击"开始处理"，自动合并所有数据',
-        '④ 下载合并后的 Excel 文件'
-      ],
-      example: '<p class="text-xs text-gray-600 mb-1">示例：</p><div class="grid grid-cols-2 gap-2 text-xs"><div class="bg-blue-50 p-2 rounded"><span class="font-semibold">文件1.xlsx</span><br>表头：姓名 | 手机 | 城市<br>行：刘备 | 1381... | 成都<br>行：关羽 | 1392... | 成都</div><div class="bg-green-50 p-2 rounded"><span class="font-semibold">文件2.csv</span><br>表头：姓名 | 手机 | 城市<br>行：张飞 | 1378... | 成都</div><div class="bg-indigo-50 p-2 rounded col-span-2"><span class="font-semibold">合并结果.xlsx</span><br>表头：姓名 | 手机 | 城市<br>行：刘备、关羽、张飞（共3行数据）</div></div>'
+      title: {zh:'🔀 合并表格 — 将多个表格合并为一个', en:'🔀 Merge — Combine multiple tables into one'},
+      steps: {zh:['① 上传多个 Excel 或 CSV 文件（支持多选）','② 系统自动识别每张表的第一行作为表头','③ 点击"开始处理"，自动合并所有数据','④ 下载合并后的 Excel 文件'], en:['① Upload multiple Excel/CSV files (multi-select supported)','② System uses the first row of each sheet as header','③ Click "Start" to merge all data automatically','④ Download the merged Excel file']},
+      example: {zh:'<p class="text-xs text-gray-600 mb-1">示例：</p><div class="grid grid-cols-2 gap-2 text-xs"><div class="bg-blue-50 p-2 rounded"><span class="font-semibold">文件1.xlsx</span><br>表头：姓名 | 手机 | 城市<br>行：刘备 | 1381... | 成都<br>行：关羽 | 1392... | 成都</div><div class="bg-green-50 p-2 rounded"><span class="font-semibold">文件2.csv</span><br>表头：姓名 | 手机 | 城市<br>行：张飞 | 1378... | 成都</div><div class="bg-indigo-50 p-2 rounded col-span-2"><span class="font-semibold">合并结果.xlsx</span><br>表头：姓名 | 手机 | 城市<br>行：刘备、关羽、张飞（共3行数据）</div></div>', en:'<p class="text-xs text-gray-600 mb-1">Example:</p><div class="grid grid-cols-2 gap-2 text-xs"><div class="bg-blue-50 p-2 rounded"><span class="font-semibold">file1.xlsx</span><br>Header: Name | Phone | City<br>Row: Liu Bei | 1381... | Chengdu<br>Row: Guan Yu | 1392... | Chengdu</div><div class="bg-green-50 p-2 rounded"><span class="font-semibold">file2.csv</span><br>Header: Name | Phone | City<br>Row: Zhang Fei | 1378... | Chengdu</div><div class="bg-indigo-50 p-2 rounded col-span-2"><span class="font-semibold">merged.xlsx</span><br>Header: Name | Phone | City<br>Rows: Liu Bei, Guan Yu, Zhang Fei (3 rows)</div></div>'}
     },
     clean: {
-      title: '🧹 清洗数据 — 去除空行、空白字符、重复项',
-      steps: [
-        '① 上传需要清洗的 Excel/CSV 文件',
-        '② 系统自动扫描全部数据',
-        '③ 整行为空（所有单元格为空）的记录会被删除',
-        '④ 单元格内容的前后空白会被自动去除',
-        '⑤ 下载清洗后的干净数据'
-      ],
-      example: '<p class="text-xs text-gray-600 mb-1">处理效果：</p><div class="space-y-1 text-xs"><div class="flex gap-2"><span class="text-red-400">✗</span><span class="text-gray-500 line-through">张三 | 1381... |   | 备注  </span><span class="text-red-400 text-xs">→ 空行被删除</span></div><div class="flex gap-2"><span class="text-red-400">✗</span><span class="text-gray-500 line-through">  李四  | 1392... | 杭州  </span><span class="text-red-400 text-xs">→ 前后空格被清理</span></div><div class="flex gap-2"><span class="text-green-400">✓</span><span>王五 | 1378... | 西安</span></div></div>'
+      title: {zh:'🧹 清洗数据 — 去除空行、空白字符、重复项', en:'🧹 Clean — Remove empty rows, spaces, duplicates'},
+      steps: {zh:['① 上传需要清洗的 Excel/CSV 文件','② 系统自动扫描全部数据','③ 整行为空（所有单元格为空）的记录会被删除','④ 单元格内容的前后空白会被自动去除','⑤ 下载清洗后的干净数据'], en:['① Upload Excel/CSV files to clean','② System scans all data automatically','③ Rows where ALL cells are empty will be deleted','④ Leading/trailing spaces in cell content will be trimmed','⑤ Download the cleaned data']},
+      example: {zh:'<p class="text-xs text-gray-600 mb-1">处理效果：</p><div class="space-y-1 text-xs"><div class="flex gap-2"><span class="text-red-400">✗</span><span class="text-gray-500 line-through">张三 | 1381... |   | 备注  </span><span class="text-red-400 text-xs">→ 空行被删除</span></div><div class="flex gap-2"><span class="text-red-400">✗</span><span class="text-gray-500 line-through">  李四  | 1392... | 杭州  </span><span class="text-red-400 text-xs">→ 前后空格被清理</span></div><div class="flex gap-2"><span class="text-green-400">✓</span><span>王五 | 1378... | 西安</span></div></div>', en:'<p class="text-xs text-gray-600 mb-1">Effect:</p><div class="space-y-1 text-xs"><div class="flex gap-2"><span class="text-red-400">✗</span><span class="text-gray-500 line-through">Zhang San | 1381... |   | 备注  </span><span class="text-red-400 text-xs">→ Empty row removed</span></div><div class="flex gap-2"><span class="text-red-400">✗</span><span class="text-gray-500 line-through">  Li Si  | 1392... | Hangzhou  </span><span class="text-red-400 text-xs">→ Spaces trimmed</span></div><div class="flex gap-2"><span class="text-green-400">✓</span><span>Wang Wu | 1378... | Xian</span></div></div>'}
     },
     search: {
-      title: '🔍 搜索筛选 — 按关键词过滤出符合条件的行',
-      steps: [
-        '① 上传 Excel/CSV 文件',
-        '② 在搜索框输入关键词（如"成都"、"1381"）',
-        '③ 支持模糊匹配：关键词会出现在任意单元格中即匹配',
-        '④ 点击"开始处理"，只保留匹配的行',
-        '⑤ 下载筛选结果'
-      ],
-      example: '<p class="text-xs text-gray-600 mb-1">示例：关键词 = "成都"</p><div class="text-xs space-y-1"><div class="bg-green-50 p-2 rounded">✓ 刘备 | 1381... | <span class="bg-yellow-200">成都</span> | 已报名</div><div class="bg-green-50 p-2 rounded">✓ 关羽 | 1392... | <span class="bg-yellow-200">成都</span> | 需回访</div><div class="bg-gray-100 p-2 rounded text-gray-400 line-through">✗ 张飞 | 1378... | 西安 | — （不符合）</div></div>'
+      title: {zh:'🔍 搜索筛选 — 按关键词过滤出符合条件的行', en:'🔍 Search — Filter rows by keyword'},
+      steps: {zh:['① 上传 Excel/CSV 文件','② 在搜索框输入关键词（如"成都"、"1381"）','③ 支持模糊匹配：关键词会出现在任意单元格中即匹配','④ 点击"开始处理"，只保留匹配的行','⑤ 下载筛选结果'], en:['① Upload Excel/CSV file','② Enter keyword in search box (e.g. "Chengdu", "1381")','③ Fuzzy match: row matches if any cell contains the keyword','④ Click "Start" to keep only matching rows','⑤ Download filtered results']},
+      example: {zh:'<p class="text-xs text-gray-600 mb-1">示例：关键词 = "成都"</p><div class="text-xs space-y-1"><div class="bg-green-50 p-2 rounded">✓ 刘备 | 1381... | <span class="bg-yellow-200">成都</span> | 已报名</div><div class="bg-green-50 p-2 rounded">✓ 关羽 | 1392... | <span class="bg-yellow-200">成都</span> | 需回访</div><div class="bg-gray-100 p-2 rounded text-gray-400 line-through">✗ 张飞 | 1378... | 西安 | — （不符合）</div></div>', en:'<p class="text-xs text-gray-600 mb-1">Example: keyword = "Chengdu"</p><div class="text-xs space-y-1"><div class="bg-green-50 p-2 rounded">✓ Liu Bei | 1381... | <span class="bg-yellow-200">Chengdu</span> | Enrolled</div><div class="bg-green-50 p-2 rounded">✓ Guan Yu | 1392... | <span class="bg-yellow-200">Chengdu</span> | Needs callback</div><div class="bg-gray-100 p-2 rounded text-gray-400 line-through">✗ Zhang Fei | 1378... | Xian | — (no match)</div></div>'}
     },
     dedup: {
-      title: '🗂️ 去重客户 — 按指定列去除重复记录',
-      steps: [
-        '① 上传 Excel/CSV 文件（支持多文件合并去重）',
-        '② 输入去重依据：列名（如"姓名"）或列号（如"0"代表第一列）',
-        '③ 不填则按整行完全相同去重',
-        '④ 点击"开始处理"，保留每组第一条记录',
-        '⑤ 下载去重后的数据 + 显示移除的重复条数'
-      ],
-      example: '<p class="text-xs text-gray-600 mb-1">示例：按"姓名"列去重</p><div class="text-xs space-y-1"><div class="flex gap-2"><span class="text-gray-400">第1条</span><span>刘备 | 1381...</span> <span class="text-green-500">✓ 保留</span></div><div class="flex gap-2"><span class="text-gray-400">第2条</span><span class="text-gray-500 line-through">刘备 | 1399...</span> <span class="text-red-400 text-xs">✗ 重复，被移除</span></div><div class="flex gap-2"><span class="text-gray-400">第3条</span><span>张飞 | 1378...</span> <span class="text-green-500">✓ 保留</span></div></div>'
+      title: {zh:'🗂️ 去重客户 — 按指定列去除重复记录', en:'🗂️ Dedupe — Remove duplicate records by column'},
+      steps: {zh:['① 上传 Excel/CSV 文件（支持多文件合并去重）','② 输入去重依据：列名（如"姓名"）或列号（如"0"代表第一列）','③ 不填则按整行完全相同去重','④ 点击"开始处理"，保留每组第一条记录','⑤ 下载去重后的数据 + 显示移除的重复条数'], en:['① Upload Excel/CSV files (multi-file dedup supported)','② Enter dedup key: column name (e.g. "Name") or number (e.g. "0" for first column)','③ If empty, dedup by exact full row match','④ Click "Start" — keeps first record in each group','⑤ Download deduped data + count of removed duplicates']},
+      example: {zh:'<p class="text-xs text-gray-600 mb-1">示例：按"姓名"列去重</p><div class="text-xs space-y-1"><div class="flex gap-2"><span class="text-gray-400">第1条</span><span>刘备 | 1381...</span> <span class="text-green-500">✓ 保留</span></div><div class="flex gap-2"><span class="text-gray-400">第2条</span><span class="text-gray-500 line-through">刘备 | 1399...</span> <span class="text-red-400 text-xs">✗ 重复，被移除</span></div><div class="flex gap-2"><span class="text-gray-400">第3条</span><span>张飞 | 1378...</span> <span class="text-green-500">✓ 保留</span></div></div>', en:'<p class="text-xs text-gray-600 mb-1">Example: dedup by "Name" column</p><div class="text-xs space-y-1"><div class="flex gap-2"><span class="text-gray-400">Row 1</span><span>Liu Bei | 1381...</span> <span class="text-green-500">✓ Kept</span></div><div class="flex gap-2"><span class="text-gray-400">Row 2</span><span class="text-gray-500 line-through">Liu Bei | 1399...</span> <span class="text-red-400 text-xs">✗ Duplicate removed</span></div><div class="flex gap-2"><span class="text-gray-400">Row 3</span><span>Zhang Fei | 1378...</span> <span class="text-green-500">✓ Kept</span></div></div>'}
     },
     split: {
-      title: '📂 拆分表格 — 按列值将数据拆分为多个文件',
-      steps: [
-        '① 上传单个 Excel/CSV 文件',
-        '② 输入拆分依据列（如"城市"、"部门"等列名，或列号A/B）',
-        '③ 系统按该列的不同值分组，每组生成一个独立的 Excel',
-        '④ 输出为 ZIP 压缩包，解压后包含所有拆分文件',
-        '⑤ 例如：按城市拆分 → 成都.xlsx、杭州.xlsx、上海.xlsx'
-      ],
-      example: '<p class="text-xs text-gray-600 mb-1">示例：按"城市"列拆分</p><div class="text-xs space-y-1"><div class="bg-blue-50 p-2 rounded">📄 <strong>成都.xlsx</strong> — 包含刘备、关羽（共2行）</div><div class="bg-green-50 p-2 rounded">📄 <strong>西安.xlsx</strong> — 包含王五、张三（共2行）</div><div class="bg-purple-50 p-2 rounded">📄 <strong>杭州.xlsx</strong> — 包含李四（共1行）</div></div>'
+      title: {zh:'📂 拆分表格 — 按列值将数据拆分为多个文件', en:'📂 Split — Split data by column value into multiple files'},
+      steps: {zh:['① 上传单个 Excel/CSV 文件','② 输入拆分依据列（如"城市"、"部门"等列名，或列号A/B）','③ 系统按该列的不同值分组，每组生成一个独立的 Excel','④ 输出为 ZIP 压缩包，解压后包含所有拆分文件','⑤ 例如：按城市拆分 → 成都.xlsx、杭州.xlsx、上海.xlsx'], en:['① Upload a single Excel/CSV file','② Enter the split-by column (e.g. "City", "Department" or column number)','③ System groups rows by unique values in that column, one Excel per group','④ Output as a ZIP archive containing all split files','⑤ Example: split by City → Chengdu.xlsx, Hangzhou.xlsx, Xian.xlsx']},
+      example: {zh:'<p class="text-xs text-gray-600 mb-1">示例：按"城市"列拆分</p><div class="text-xs space-y-1"><div class="bg-blue-50 p-2 rounded">📄 <strong>成都.xlsx</strong> — 包含刘备、关羽（共2行）</div><div class="bg-green-50 p-2 rounded">📄 <strong>西安.xlsx</strong> — 包含王五、张三（共2行）</div><div class="bg-purple-50 p-2 rounded">📄 <strong>杭州.xlsx</strong> — 包含李四（共1行）</div></div>', en:'<p class="text-xs text-gray-600 mb-1">Example: split by "City" column</p><div class="text-xs space-y-1"><div class="bg-blue-50 p-2 rounded">📄 <strong>Chengdu.xlsx</strong> — Liu Bei, Guan Yu (2 rows)</div><div class="bg-green-50 p-2 rounded">📄 <strong>Xian.xlsx</strong> — Wang Wu, Zhang San (2 rows)</div><div class="bg-purple-50 p-2 rounded">📄 <strong>Hangzhou.xlsx</strong> — Li Si (1 row)</div></div>'}
     },
     compare: {
-      title: '⚖️ 对比差异 — 找出两个表格之间的差异行',
-      steps: [
-        '① 上传两个 Excel/CSV 文件（文件1为基准）',
-        '② 系统对比两个文件的每一行',
-        '③ 找出在文件2中存在、文件1中不存在的新增行',
-        '④ 找出在文件1中存在、文件2中不存在的删除行',
-        '⑤ 下载对比结果（新增行、删除行分别标注）'
-      ],
-      example: '<p class="text-xs text-gray-600 mb-1">示例：对比"客户表_V1" 和 "客户表_V2"</p><div class="text-xs space-y-1"><div class="bg-green-50 p-2 rounded">✓ 刘备、关羽 — 两表都有（相同）</div><div class="bg-red-50 p-2 rounded">🆕 张飞 — V2新增（V1无）</div><div class="bg-orange-50 p-2 rounded">🗑️ 赵云 — V1有、V2已删除</div></div>'
+      title: {zh:'⚖️ 对比差异 — 找出两个表格之间的差异行', en:'⚖️ Compare — Find differences between two tables'},
+      steps: {zh:['① 上传两个 Excel/CSV 文件（文件1为基准）','② 系统对比两个文件的每一行','③ 找出在文件2中存在、文件1中不存在的新增行','④ 找出在文件1中存在、文件2中不存在的删除行','⑤ 下载对比结果（新增行、删除行分别标注）'], en:['① Upload two Excel/CSV files (file 1 = baseline)','② System compares every row between the two files','③ Identifies rows new in file 2 but missing in file 1','④ Identifies rows deleted from file 1 that exist in file 2','⑤ Download comparison results with added/removed rows labeled']},
+      example: {zh:'<p class="text-xs text-gray-600 mb-1">示例：对比"客户表_V1" 和 "客户表_V2"</p><div class="text-xs space-y-1"><div class="bg-green-50 p-2 rounded">✓ 刘备、关羽 — 两表都有（相同）</div><div class="bg-red-50 p-2 rounded">🆕 张飞 — V2新增（V1无）</div><div class="bg-orange-50 p-2 rounded">🗑️ 赵云 — V1有、V2已删除</div></div>', en:'<p class="text-xs text-gray-600 mb-1">Example: compare "clients_v1" vs "clients_v2"</p><div class="text-xs space-y-1"><div class="bg-green-50 p-2 rounded">✓ Liu Bei, Guan Yu — same in both</div><div class="bg-red-50 p-2 rounded">🆕 Zhang Fei — new in v2 (not in v1)</div><div class="bg-orange-50 p-2 rounded">🗑️ Zhao Yun — in v1, deleted in v2</div></div>'}
     }
   };
 
   const imageGuides = {
     resize: {
-      title: '📐 调整尺寸 — 批量缩放图片到指定像素',
-      steps: [
-        '① 上传一张或多张图片（支持 PNG/JPG/WebP/GIF）',
-        '② 设置目标宽度和高度（单位：像素）',
-        '③ 点击"开始处理"，所有图片按尺寸输出',
-        '④ 图片自动下载到本地'
-      ],
-      example: '<p class="text-xs text-gray-600 mb-1">示例：设置宽800 × 高600</p><div class="grid grid-cols-2 gap-2 text-xs"><div class="text-center"><div class="bg-gray-100 rounded border-2 border-dashed w-16 h-12 flex items-center justify-center text-xs text-gray-400 mx-auto">原图<br>1920×1080</div><div class="mt-1">1920×1080<br><span class="text-gray-400">原始尺寸</span></div></div><div class="text-center"><div class="bg-blue-50 rounded border-2 border-blue-200 w-16 h-12 flex items-center justify-center text-xs text-blue-600 mx-auto">→</div><div class="mt-1">800×600<br><span class="text-green-500">调整为新尺寸</span></div></div></div>'
+      title: {zh:'📐 调整尺寸 — 批量缩放图片到指定像素', en:'📐 Resize — Batch resize images to target dimensions'},
+      steps: {zh:['① 上传一张或多张图片（支持 PNG/JPG/WebP/GIF）','② 设置目标宽度和高度（单位：像素）','③ 点击"开始处理"，所有图片按尺寸输出','④ 图片自动下载到本地'], en:['① Upload one or more images (PNG/JPG/WebP/GIF)','② Set target width and height (in pixels)','③ Click "Start" — all images output at target size','④ Images download automatically to your device']},
+      example: {zh:'<p class="text-xs text-gray-600 mb-1">示例：设置宽800 × 高600</p><div class="grid grid-cols-2 gap-2 text-xs"><div class="text-center"><div class="bg-gray-100 rounded border-2 border-dashed w-16 h-12 flex items-center justify-center text-xs text-gray-400 mx-auto">原图<br>1920×1080</div><div class="mt-1">1920×1080<br><span class="text-gray-400">原始尺寸</span></div></div><div class="text-center"><div class="bg-blue-50 rounded border-2 border-blue-200 w-16 h-12 flex items-center justify-center text-xs text-blue-600 mx-auto">→</div><div class="mt-1">800×600<br><span class="text-green-500">调整为新尺寸</span></div></div></div>', en:'<p class="text-xs text-gray-600 mb-1">Example: set width 800 × height 600</p><div class="grid grid-cols-2 gap-2 text-xs"><div class="text-center"><div class="bg-gray-100 rounded border-2 border-dashed w-16 h-12 flex items-center justify-center text-xs text-gray-400 mx-auto">Original<br>1920×1080</div><div class="mt-1">1920×1080<br><span class="text-gray-400">Original size</span></div></div><div class="text-center"><div class="bg-blue-50 rounded border-2 border-blue-200 w-16 h-12 flex items-center justify-center text-xs text-blue-600 mx-auto">→</div><div class="mt-1">800×600<br><span class="text-green-500">Resized to new size</span></div></div></div>'}
     },
     compress: {
-      title: '🗜️ 压缩图片 — 减小文件体积，保持清晰度',
-      steps: [
-        '① 上传一张或多张图片',
-        '② 拖动质量滑块设置压缩率（10%~100%）',
-        '③ 质量越低文件越小，100%为无损',
-        '④ 点击"开始处理"，输出压缩后的图片'
-      ],
-      example: '<p class="text-xs text-gray-600 mb-1">示例：压缩质量 = 70%</p><div class="grid grid-cols-2 gap-2 text-xs"><div class="bg-gray-50 p-2 rounded text-center"><div class="text-3xl">🖼️</div><div class="font-semibold">original.jpg</div><div class="text-gray-400">2.4 MB</div></div><div class="bg-green-50 p-2 rounded text-center"><div class="text-3xl">📦</div><div class="font-semibold">original_压缩.jpg</div><div class="text-green-600">890 KB <span class="text-xs text-gray-400">(-63%)</span></div></div></div>'
+      title: {zh:'🗜️ 压缩图片 — 减小文件体积，保持清晰度', en:'🗜️ Compress — Reduce file size, keep quality'},
+      steps: {zh:['① 上传一张或多张图片','② 拖动质量滑块设置压缩率（10%~100%）','③ 质量越低文件越小，100%为无损','④ 点击"开始处理"，输出压缩后的图片'], en:['① Upload one or more images','② Drag the quality slider (10%~100%)','③ Lower quality = smaller file, 100% = lossless','④ Click "Start" to output compressed images']},
+      example: {zh:'<p class="text-xs text-gray-600 mb-1">示例：压缩质量 = 70%</p><div class="grid grid-cols-2 gap-2 text-xs"><div class="bg-gray-50 p-2 rounded text-center"><div class="text-3xl">🖼️</div><div class="font-semibold">original.jpg</div><div class="text-gray-400">2.4 MB</div></div><div class="bg-green-50 p-2 rounded text-center"><div class="text-3xl">📦</div><div class="font-semibold">original_压缩.jpg</div><div class="text-green-600">890 KB <span class="text-xs text-gray-400">(-63%)</span></div></div></div>', en:'<p class="text-xs text-gray-600 mb-1">Example: quality = 70%</p><div class="grid grid-cols-2 gap-2 text-xs"><div class="bg-gray-50 p-2 rounded text-center"><div class="text-3xl">🖼️</div><div class="font-semibold">original.jpg</div><div class="text-gray-400">2.4 MB</div></div><div class="bg-green-50 p-2 rounded text-center"><div class="text-3xl">📦</div><div class="font-semibold">original_compressed.jpg</div><div class="text-green-600">890 KB <span class="text-xs text-gray-400">(-63%)</span></div></div></div>'}
     },
     watermark: {
-      title: '💧 添加水印 — 为图片添加文字或图片水印',
-      steps: [
-        '① 上传一张或多张图片',
-        '② 在水印文字框输入要显示的文字',
-        '③ 位置固定在左下角，文字半透明白色',
-        '④ 点击"开始处理"，导出带水印的图片'
-      ],
-      example: '<p class="text-xs text-gray-600 mb-1">示例：水印文字 = © ToolKit Pro</p><div class="text-xs"><div class="bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg h-24 flex items-end justify-start p-3 border">\n  <span class="bg-white/60 text-gray-600 text-xs px-2 py-1 rounded">© ToolKit Pro</span>\n</div><div class="text-center text-gray-400 mt-1">水印位置：左下角，半透明</div></div>'
+      title: {zh:'💧 添加水印 — 为图片添加文字或图片水印', en:'💧 Watermark — Add text or image watermark'},
+      steps: {zh:['① 上传一张或多张图片','② 在水印文字框输入要显示的文字','③ 位置固定在左下角，文字半透明白色','④ 点击"开始处理"，导出带水印的图片'], en:['① Upload one or more images','② Enter watermark text in the text field','③ Position: bottom-left corner, semi-transparent white text','④ Click "Start" to export watermarked images']},
+      example: {zh:'<p class="text-xs text-gray-600 mb-1">示例：水印文字 = © ToolKit Pro</p><div class="text-xs"><div class="bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg h-24 flex items-end justify-start p-3 border"><span class="bg-white/60 text-gray-600 text-xs px-2 py-1 rounded">© ToolKit Pro</span></div><div class="text-center text-gray-400 mt-1">水印位置：左下角，半透明</div></div>', en:'<p class="text-xs text-gray-600 mb-1">Example: watermark = © ToolKit Pro</p><div class="text-xs"><div class="bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg h-24 flex items-end justify-start p-3 border"><span class="bg-white/60 text-gray-600 text-xs px-2 py-1 rounded">© ToolKit Pro</span></div><div class="text-center text-gray-400 mt-1">Position: bottom-left, semi-transparent</div></div>'}
     },
     convert: {
-      title: '🔄 格式转换 — PNG ↔ JPG ↔ WebP 互转',
-      steps: [
-        '① 上传一张或多张图片',
-        '② 从下拉菜单选择目标格式',
-        '③ 点击"开始处理"，图片自动转换为目标格式',
-        '④ 输出文件扩展名自动更新'
-      ],
-      example: '<p class="text-xs text-gray-600 mb-1">示例：转换为 WebP</p><div class="grid grid-cols-3 gap-2 text-xs items-center"><div class="text-center"><div class="text-3xl">🖼️</div><div>photo.png</div><div class="text-gray-400">2.1 MB</div></div><div class="text-center text-xl">→</div><div class="text-center"><div class="text-3xl">🆕</div><div>photo.webp</div><div class="text-green-600">480 KB (-77%)</div></div></div>'
+      title: {zh:'🔄 格式转换 — PNG ↔ JPG ↔ WebP 互转', en:'🔄 Convert — PNG ↔ JPG ↔ WebP format conversion'},
+      steps: {zh:['① 上传一张或多张图片','② 从下拉菜单选择目标格式','③ 点击"开始处理"，图片自动转换为目标格式','④ 输出文件扩展名自动更新'], en:['① Upload one or more images','② Select target format from the dropdown menu','③ Click "Start" — images convert to target format automatically','④ Output file extension updates automatically']},
+      example: {zh:'<p class="text-xs text-gray-600 mb-1">示例：转换为 WebP</p><div class="grid grid-cols-3 gap-2 text-xs items-center"><div class="text-center"><div class="text-3xl">🖼️</div><div>photo.png</div><div class="text-gray-400">2.1 MB</div></div><div class="text-center text-xl">→</div><div class="text-center"><div class="text-3xl">🆕</div><div>photo.webp</div><div class="text-green-600">480 KB (-77%)</div></div></div>', en:'<p class="text-xs text-gray-600 mb-1">Example: convert to WebP</p><div class="grid grid-cols-3 gap-2 text-xs items-center"><div class="text-center"><div class="text-3xl">🖼️</div><div>photo.png</div><div class="text-gray-400">2.1 MB</div></div><div class="text-center text-xl">→</div><div class="text-center"><div class="text-3xl">🆕</div><div>photo.webp</div><div class="text-green-600">480 KB (-77%)</div></div></div>'}
     }
   };
 
   function excelSetMode(mode) {
     excelMode = mode;
-    document.getElementById('excel-mode-title').textContent = {merge:'🔀 合并表格',split:'📂 拆分表格',clean:'🧹 清洗数据',search:'🔍 搜索筛选',compare:'⚖️ 对比差异',dedup:'🗂️ 去重'}[mode];
     document.getElementById('excel-options').classList.add('hidden');
     excelFiles = []; excelData = [];
     document.getElementById('excel-files').innerHTML = '';
@@ -472,11 +668,25 @@
     const guideEl = document.getElementById('excel-guide');
     if (guide) {
       guideEl.classList.remove('hidden');
-      document.getElementById('excel-guide-title').innerHTML = guide.title;
-      document.getElementById('excel-guide-steps').innerHTML = guide.steps.map(s => `<p>${s}</p>`).join('');
-      document.getElementById('excel-guide-example').innerHTML = guide.example;
+      document.getElementById('excel-guide-title').innerHTML = guide.title[currentLang] || guide.title.zh;
+      document.getElementById('excel-guide-steps').innerHTML = (guide.steps[currentLang] || guide.steps.zh).map(s => `<p>${s}</p>`).join('');
+      document.getElementById('excel-guide-example').innerHTML = guide.example[currentLang] || guide.example.zh;
     } else {
       guideEl.classList.add('hidden');
+    }
+
+    // 更新标题（用当前语言）
+    const lang = LANG[currentLang];
+    const modeMap = {merge:'🔀', split:'📂', clean:'🧹', search:'🔍', compare:'⚖️', dedup:'🗂️'};
+    document.getElementById('excel-mode-title').textContent = modeMap[mode] + ' ' + lang.tabs[mode];
+
+    // 更新卡片标题和描述
+    const card = document.querySelector(`.tool-card[onclick*="excelSetMode('${mode}')"]`);
+    if (card) {
+      const h3 = card.querySelector('h3');
+      const desc = card.querySelector('p.text-xs');
+      if (h3) h3.textContent = lang.tabs[mode];
+      if (desc && lang.tabsDesc && lang.tabsDesc[mode]) desc.textContent = lang.tabsDesc[mode];
     }
   }
 
@@ -765,9 +975,9 @@
     const guideEl = document.getElementById('image-guide');
     if (guide) {
       guideEl.classList.remove('hidden');
-      document.getElementById('image-guide-title').innerHTML = guide.title;
-      document.getElementById('image-guide-steps').innerHTML = guide.steps.map(s => `<p>${s}</p>`).join('');
-      document.getElementById('image-guide-example').innerHTML = guide.example;
+      document.getElementById('image-guide-title').innerHTML = guide.title[currentLang] || guide.title.zh;
+      document.getElementById('image-guide-steps').innerHTML = (guide.steps[currentLang] || guide.steps.zh).map(s => `<p>${s}</p>`).join('');
+      document.getElementById('image-guide-example').innerHTML = guide.example[currentLang] || guide.example.zh;
     } else {
       guideEl.classList.add('hidden');
     }

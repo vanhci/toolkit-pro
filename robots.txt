@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow:
+
+# Sitemap
+Sitemap: https://tools.vanhci.top/sitemap.xml
+
+# Crawl delay (optional, be nice to the crawler)
+Crawl-delay: 1
