@@ -1,0 +1,8 @@
+name = "toolkit-pro"
+compatibility_date = "2024-01-01"
+
+pages_build_output_dir = "."
+
+[[kv_namespaces]]
+binding = "TOOLKIT_KV"
+id = "4ac504acc7314562874006dadebf6822"
