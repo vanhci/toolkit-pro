@@ -918,7 +918,7 @@
     const btn = document.getElementById('lic-send-btn');
     btn.textContent = '获取中...'; btn.disabled = true;
     try {
-      const resp = await fetch('https://toolkit-api-production.vanhci.workers.dev/email', {
+      const resp = await fetch('/api/email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -963,7 +963,7 @@
     const btn = document.getElementById('lic-activate-btn');
     btn.textContent = '激活中...'; btn.disabled = true;
     try {
-      const resp = await fetch('https://toolkit-api-production.vanhci.workers.dev/activate', {
+      const resp = await fetch('/api/activate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, key })
