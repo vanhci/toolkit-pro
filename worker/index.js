@@ -1,5 +1,5 @@
 addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request));
+  event.respondWith(handleRequest(event.request, event.env));
 });
 
 function generateKey() {
@@ -7,7 +7,7 @@ function generateKey() {
   return 'TKP-' + part() + '-' + part();
 }
 
-async function handleRequest(request) {
+async function handleRequest(request, env) {
   const corsHeaders = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' };
 
   if (request.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
@@ -27,13 +27,6 @@ async function handleRequest(request) {
 
     // Store in KV
     await TOOLKIT_KV.put(key, JSON.stringify({ email, createdAt: Date.now(), activated: false }));
-
-    // Send email
-    fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + env.RESEND_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from: 'onboarding@resend.dev', to: email, subject: 'Your ToolKit Pro License Key', html: '<p>Your code: ' + key + '</p>' })
-    }).catch(() => {});
 
     return new Response(JSON.stringify({ success: true, key }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }

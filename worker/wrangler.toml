@@ -8,6 +8,7 @@ binding = "TOOLKIT_KV"
 id = "4ac504acc7314562874006dadebf6822"
 
 [env.production]
+workers_dev = true
 routes = [
   { pattern = "api.tools.vanhci.top", zone_name = "vanhci.top" }
 ]

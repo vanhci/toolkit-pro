@@ -343,11 +343,15 @@
       </div>
 
       <div id="lic-step-key" class="lic-step hidden">
-        <input type="text" id="lic-key" placeholder="TKP-XXXXXX-XXXXXX" class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm mb-3 font-mono" style="letter-spacing:2px">
+        <p class="text-xs text-green-600 font-medium mb-2">✅ 激活码获取成功！请复制以下激活码：</p>
+        <div class="flex gap-2 mb-3">
+          <input type="text" id="lic-key" placeholder="TKP-XXXXXX-XXXXXX" class="flex-1 px-4 py-3 border border-gray-200 rounded-xl text-sm font-mono" style="letter-spacing:2px" readonly>
+          <button id="lic-copy-btn" class="bg-indigo-600 text-white px-4 py-3 rounded-xl font-medium hover:bg-indigo-700 transition text-sm">复制</button>
+        </div>
         <button id="lic-activate-btn" class="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition">
           激活解锁
         </button>
-        <p class="text-xs text-gray-400 mt-2">没收到？检查垃圾邮件</p>
+        <p class="text-xs text-gray-400 mt-2">复制激活码 → 粘贴到其他设备激活 · 已激活设备无需重复激活</p>
       </div>
 
       <div id="lic-success" class="lic-step hidden">
@@ -912,36 +916,54 @@
     const email = document.getElementById('lic-email').value.trim();
     if (!email || !email.includes('@')) { showToast('请输入有效邮箱'); return; }
     const btn = document.getElementById('lic-send-btn');
-    btn.textContent = '发送中...'; btn.disabled = true;
+    btn.textContent = '获取中...'; btn.disabled = true;
     try {
-      const tab = document.querySelector('.pay-tab.active')?.dataset.tab || 'wechat';
-      const method = tab === 'paypal' ? 'PayPal' : tab === 'alipay' ? 'Alipay' : 'WeChat';
-      const resp = await fetch('https://toolkit-api.vanhci.workers.dev/email', {
+      const resp = await fetch('https://toolkit-api-production.vanhci.workers.dev/email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, paymentMethod: method })
+        body: JSON.stringify({ email })
       });
       const data = await resp.json();
       if (data.success) {
-        showToast('激活码已发送！');
+        // Show key directly — copy button
+        const key = data.key;
         document.getElementById('lic-step-email').classList.add('hidden');
-        document.getElementById('lic-step-key').classList.remove('hidden');
+        const stepKey = document.getElementById('lic-step-key');
+        stepKey.classList.remove('hidden');
+        document.getElementById('lic-key').value = key;
+        // Store email for activation
+        stepKey.dataset.email = email;
       } else {
-        showToast(data.error || '发送失败');
+        showToast(data.message || '获取失败');
       }
-    } catch(e) { showToast('发送失败: ' + e.message); }
+    } catch(e) { showToast('获取失败: ' + e.message); }
     btn.textContent = '发送激活码'; btn.disabled = false;
+  });
+
+  // Copy key button
+  document.getElementById('lic-copy-btn')?.addEventListener('click', () => {
+    const key = document.getElementById('lic-key').value;
+    navigator.clipboard.writeText(key).then(() => {
+      showToast('已复制！去粘贴激活');
+    }).catch(() => {
+      // Fallback
+      const input = document.getElementById('lic-key');
+      input.select();
+      document.execCommand('copy');
+      showToast('已复制！去粘贴激活');
+    });
   });
 
   // Activate with license key
   document.getElementById('lic-activate-btn')?.addEventListener('click', async () => {
-    const email = document.getElementById('lic-email').value.trim();
+    const stepKey = document.getElementById('lic-step-key');
+    const email = stepKey.dataset.email || document.getElementById('lic-email').value.trim();
     const key = document.getElementById('lic-key').value.trim().toUpperCase();
     if (!email || !key) { showToast('请填写邮箱和激活码'); return; }
     const btn = document.getElementById('lic-activate-btn');
     btn.textContent = '激活中...'; btn.disabled = true;
     try {
-      const resp = await fetch('https://toolkit-api.vanhci.workers.dev/activate', {
+      const resp = await fetch('https://toolkit-api-production.vanhci.workers.dev/activate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, key })
@@ -955,7 +977,7 @@
         document.getElementById('lic-step-key').classList.add('hidden');
         document.getElementById('lic-success').classList.remove('hidden');
       } else {
-        showToast(data.error || '激活失败');
+        showToast(data.message || '激活失败');
       }
     } catch(e) { showToast('激活失败: ' + e.message); }
     btn.textContent = '激活解锁'; btn.disabled = false;
