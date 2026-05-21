@@ -1744,11 +1744,11 @@
     URL.revokeObjectURL(url);
   }
 
-  // Init
-  excelSetupDropzone();
-  checkDailyLimit();
+  // Init (order matters: adRemoved must be set before checkDailyLimit)
   const savedUnlock = localStorage.getItem('toolkit_unlocked');
   if (savedUnlock === 'true') adRemoved = true;
+  excelSetupDropzone();
+  checkDailyLimit();
   </script>
 </body>
 </html>
