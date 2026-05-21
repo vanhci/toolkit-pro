@@ -80,7 +80,7 @@
       </div>
       <div class="flex items-center gap-3">
         <button id="lang-toggle" onclick="toggleLang()" class="text-xs px-2 py-1 border border-gray-300 rounded-lg hover:bg-gray-100 transition">🌐 EN/中</button>
-        <span id="use-indicator" class="text-xs font-medium text-gray-400">今日已用 0/3 次</span>
+        <span id="use-indicator" class="text-xs font-medium text-gray-400"></span>
         <button id="removeAdBtn" class="pro-badge text-white text-xs font-semibold px-3 py-1.5 rounded-full hover:opacity-90 transition">
           ⭐ <span id="upgrade-btn-text">升级解锁 ¥9.9</span>
         </button>
@@ -304,7 +304,7 @@
       <div id="qr-wechat" class="qr-panel">
         <p class="text-xs text-gray-500 mb-3">截图二维码，用微信扫一扫支付</p>
         <img src="assets/wechat-pay.jpg" alt="微信支付" class="mx-auto rounded-xl w-52">
-        <p class="text-xs text-gray-400 mt-2">微信昵称：vanhci(超)</p>
+        <p class="text-xs text-gray-400 mt-2">联系邮箱：hcw43446@gmail.com</p>
       </div>
 
       <!-- Alipay QR -->
@@ -321,7 +321,7 @@
         <p class="text-xs text-gray-400 mt-2">汇率约 ¥22，以 PayPal 显示为准（$2.99 USD）</p>
       </div>
 
-      <p class="text-xs text-gray-400 mt-4" id="pw-contact">支付后联系微信：vanhci 解锁</p>
+      <p class="text-xs text-gray-400 mt-4" id="pw-contact">支付后点击"已付款，获取激活码"即可</p>
       <button id="pw-activate-btn" class="mt-3 text-xs text-indigo-600 hover:text-indigo-800 underline">已付款，获取激活码 →</button>
     </div>
   </div>
@@ -428,7 +428,7 @@
       original: '原价 ¥29',
       wechatPay: '微信支付 ¥9.9',
       alipay: '支付宝支付 ¥9.9',
-      contact: '支付后联系微信：vanhci 解锁 · 注明：工具站解锁',
+      contact: '支付后点击"已付款，获取激活码"即可，无需额外联系',
       toastSelect: '请先选择功能',
       toastUpload: '请先上传文件',
       toastNoData: '没有数据',
@@ -454,7 +454,7 @@
       toastCompareDone: '对比完成：新增 {added} 行，删除 {removed} 行，相同 {same} 行',
       toastFileTooLarge: '文件超过 5MB：{name}',
       toastXlsxLoading: '正在加载 Excel 处理模块...',
-      toastPaymentPending: '支付功能开发中，请联系微信：vanhci',
+      toastPaymentPending: '支付功能开发中，支付后直接获取激活码',
       toastCoverDownloaded: '✅ 封面已下载！',
       toastPdfGenerating: '正在生成 PDF...',
       toastPdfDownloaded: '✅ PDF 已下载！',
@@ -514,7 +514,7 @@
       original: 'Original ¥29',
       wechatPay: 'WeChat Pay ¥9.9',
       alipay: 'Alipay ¥9.9',
-      contact: 'Contact WeChat: vanhci to unlock · Note: toolkit unlock',
+      contact: 'Click "Paid, get activation code" after payment — no extra contact needed',
       toastSelect: 'Please select a function first',
       toastUpload: 'Please upload files first',
       toastNoData: 'No data',
@@ -540,7 +540,7 @@
       toastCompareDone: 'Compare complete: {added} added, {removed} removed, {same} unchanged',
       toastFileTooLarge: 'File exceeds 5MB: {name}',
       toastXlsxLoading: 'Loading Excel module...',
-      toastPaymentPending: 'Payment is under development. Contact WeChat: vanhci',
+      toastPaymentPending: 'Payment under development — get activation code directly after payment',
       toastCoverDownloaded: '✅ Cover downloaded!',
       toastPdfGenerating: 'Generating PDF...',
       toastPdfDownloaded: '✅ PDF downloaded!',
@@ -813,6 +813,7 @@
   function updateUseIndicator() {
     const el = document.getElementById('use-indicator');
     if (!el) return;
+    if (adRemoved) { el.textContent = ''; return; }
     const lang = LANG[currentLang];
     if (dailyUses >= FREE_DAILY_LIMIT) {
       el.textContent = lang.useWarn.replace('{n}', dailyUses);
