@@ -37,6 +37,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -62,6 +64,21 @@
     .pro-badge { background: linear-gradient(135deg, #f59e0b, #d97706); }
     .canvas-preview { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
     .output-card { border: 1px solid #e2e8f0; }
+    .code-output { overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
+    .json-key { color: #7c3aed; }
+    .json-string { color: #047857; }
+    .json-number { color: #dc2626; }
+    .json-bool { color: #2563eb; }
+    .json-null { color: #6b7280; }
+    .markdown-preview h1 { font-size: 1.5rem; font-weight: 800; margin: .7rem 0 .4rem; }
+    .markdown-preview h2 { font-size: 1.25rem; font-weight: 700; margin: .65rem 0 .35rem; }
+    .markdown-preview h3 { font-size: 1.1rem; font-weight: 700; margin: .6rem 0 .3rem; }
+    .markdown-preview ul { list-style: disc; padding-left: 1.4rem; }
+    .markdown-preview ol { list-style: decimal; padding-left: 1.4rem; }
+    .markdown-preview code { background: #f3f4f6; border-radius: .35rem; padding: .1rem .3rem; }
+    .markdown-preview pre { background: #111827; color: white; border-radius: .75rem; padding: 1rem; overflow-x: auto; }
+    .markdown-preview table { width: 100%; border-collapse: collapse; margin: .75rem 0; }
+    .markdown-preview th, .markdown-preview td { border: 1px solid #e5e7eb; padding: .45rem; text-align: left; }
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -95,6 +112,17 @@
         <button class="tab-btn tab-active px-4 py-2 rounded-lg text-sm font-medium transition" data-tool="excel">📊 Excel处理</button>
         <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="image">🖼️ 图片处理</button>
         <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="rename">📂 文件处理</button>
+        <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="password">🔑 密码</button>
+        <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="json">📋 JSON</button>
+        <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="base64-img">🎨 Base64</button>
+        <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="markdown">📝 Markdown</button>
+        <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="color">🔄 颜色</button>
+        <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="wordcount">📊 字数</button>
+        <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="uuid">🔒 UUID</button>
+        <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="qrcode">📦 二维码</button>
+        <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="ip">🌐 IP</button>
+        <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="pdf-img">📁 PDF</button>
+        <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="convert">🔤 繁简</button>
       </div>
     </div>
   </nav>
@@ -268,6 +296,106 @@
           </button>
         </div>
       </div>
+    </section>
+
+    <!-- TOOL: PASSWORD -->
+    <section id="tool-password" class="tool-content hidden max-w-3xl mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="passwordSetMode('random')"><div class="text-2xl mb-2">🔑</div><h3 class="font-semibold text-gray-900" data-i18n="passwordTitle">密码生成器</h3><p class="text-xs text-gray-500 mt-1" data-i18n="passwordDesc">在线密码生成器、随机密码生成</p></div>
+      </div>
+      <div id="password-guide" class="mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="passwordGuide">设置长度和字符类型，一次生成 5 个随机密码。</div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6">
+        <label class="block text-sm font-medium text-gray-700 mb-2"><span data-i18n="lengthLabel">长度</span>: <span id="password-length-val">16</span></label>
+        <input id="password-length" type="range" min="8" max="64" value="16" class="w-full min-h-[44px]" oninput="document.getElementById('password-length-val').textContent=this.value">
+        <div class="grid grid-cols-2 gap-3 my-4 text-sm text-gray-700">
+          <label class="min-h-[44px] flex items-center gap-2"><input id="password-upper" type="checkbox" checked> <span data-i18n="upperLabel">大写</span></label>
+          <label class="min-h-[44px] flex items-center gap-2"><input id="password-lower" type="checkbox" checked> <span data-i18n="lowerLabel">小写</span></label>
+          <label class="min-h-[44px] flex items-center gap-2"><input id="password-number" type="checkbox" checked> <span data-i18n="numberLabel">数字</span></label>
+          <label class="min-h-[44px] flex items-center gap-2"><input id="password-symbol" type="checkbox" checked> <span data-i18n="symbolLabel">特殊字符</span></label>
+        </div>
+        <button id="password-run" class="hidden w-full md:w-auto bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold" onclick="passwordRun()" data-i18n="generateBtn">生成</button>
+        <div id="password-output" class="mt-5 space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- TOOL: JSON -->
+    <section id="tool-json" class="tool-content hidden max-w-3xl mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="jsonSetMode('format')"><div class="text-2xl mb-2">📋</div><h3 class="font-semibold text-gray-900" data-i18n="jsonTitle">JSON 格式化</h3><p class="text-xs text-gray-500 mt-1" data-i18n="jsonDesc">json格式化在线、json美化</p></div></div>
+      <div id="json-guide" class="mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="jsonGuide">粘贴 JSON 后可格式化、压缩或校验。</div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
+        <textarea id="json-input" rows="8" placeholder="粘贴 JSON..." class="w-full border border-gray-200 rounded-xl text-sm p-3"></textarea>
+        <div class="flex flex-col md:flex-row gap-2"><button class="w-full md:w-auto bg-indigo-600 text-white px-5 py-3 rounded-xl" onclick="jsonRun('format')" data-i18n="formatBtn">格式化</button><button class="w-full md:w-auto bg-indigo-600 text-white px-5 py-3 rounded-xl" onclick="jsonRun('minify')" data-i18n="minifyBtn">压缩</button><button class="w-full md:w-auto bg-indigo-600 text-white px-5 py-3 rounded-xl" onclick="jsonRun('validate')" data-i18n="validateBtn">校验</button></div>
+        <pre id="json-output" class="code-output min-h-[140px] bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm"></pre>
+      </div>
+    </section>
+
+    <!-- TOOL: IMAGE TO BASE64 -->
+    <section id="tool-base64-img" class="tool-content hidden max-w-3xl mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="base64ImgSetMode('encode')"><div class="text-2xl mb-2">🎨</div><h3 class="font-semibold text-gray-900" data-i18n="base64Title">图片转 Base64</h3><p class="text-xs text-gray-500 mt-1" data-i18n="base64Desc">图片转base64、base64编码在线</p></div></div>
+      <div id="base64-img-guide" class="mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="base64Guide">上传图片后输出 Data URI 或纯 Base64。</div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
+        <div id="base64-dropzone" class="drop-zone rounded-xl p-10 text-center cursor-pointer" onclick="document.getElementById('base64-input').click()"><div class="text-4xl mb-3">🖼️</div><p class="text-gray-700 font-medium" data-i18n="uploadImage">点击上传或拖拽图片</p><input id="base64-input" type="file" accept="image/*" class="hidden"></div>
+        <label class="min-h-[44px] flex items-center gap-2 text-sm"><input id="base64-datauri" type="checkbox" checked> <span data-i18n="dataUriLabel">输出为 data URI 格式</span></label>
+        <img id="base64-preview" class="hidden max-h-40 rounded-xl border border-gray-200" alt="preview">
+        <textarea id="base64-output" rows="8" class="w-full border border-gray-200 rounded-xl text-sm p-3 code-output" readonly></textarea>
+        <button class="w-full md:w-auto bg-indigo-600 text-white px-5 py-3 rounded-xl" onclick="copyText('base64-output')" data-i18n="copyBtn">复制</button>
+      </div>
+    </section>
+
+    <!-- TOOL: MARKDOWN -->
+    <section id="tool-markdown" class="tool-content hidden max-w-3xl mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="markdownSetMode('preview')"><div class="text-2xl mb-2">📝</div><h3 class="font-semibold text-gray-900" data-i18n="markdownTitle">Markdown 预览</h3><p class="text-xs text-gray-500 mt-1" data-i18n="markdownDesc">markdown在线编辑器、markdown预览</p></div></div>
+      <div id="markdown-guide" class="mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="markdownGuide">左侧输入 Markdown，右侧实时预览。</div>
+      <div class="grid md:grid-cols-2 gap-4"><textarea id="markdown-input" rows="16" class="w-full border border-gray-200 rounded-xl text-sm p-3" oninput="markdownRender()"># ToolKit Pro&#10;&#10;- **实时预览**&#10;- `code`&#10;&#10;| A | B |&#10;|---|---|&#10;| 1 | 2 |</textarea><div id="markdown-output" class="markdown-preview bg-white rounded-2xl border border-gray-100 p-5 overflow-x-auto min-h-[280px]"></div></div>
+    </section>
+
+    <!-- TOOL: COLOR -->
+    <section id="tool-color" class="tool-content hidden max-w-3xl mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="colorSetMode('convert')"><div class="text-2xl mb-2">🔄</div><h3 class="font-semibold text-gray-900" data-i18n="colorTitle">颜色转换</h3><p class="text-xs text-gray-500 mt-1" data-i18n="colorDesc">rgb转hex、颜色转换器在线</p></div></div>
+      <div id="color-guide" class="mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="colorGuide">输入 HEX 或 RGB，自动转换为 HEX、RGB、HSL。</div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-4"><div class="flex flex-col md:flex-row gap-3"><input id="color-picker" type="color" value="#4f46e5" class="w-full md:w-20 h-12 border border-gray-200 rounded-xl" oninput="colorFromPicker()"><input id="color-input" value="#4f46e5" class="w-full border border-gray-200 rounded-xl text-sm px-3" oninput="colorConvert()"></div><div id="color-preview" class="h-24 rounded-xl border border-gray-200"></div><div id="color-output" class="space-y-2"></div></div>
+    </section>
+
+    <!-- TOOL: WORDCOUNT -->
+    <section id="tool-wordcount" class="tool-content hidden max-w-3xl mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="wordcountSetMode('count')"><div class="text-2xl mb-2">📊</div><h3 class="font-semibold text-gray-900" data-i18n="wordcountTitle">字数统计</h3><p class="text-xs text-gray-500 mt-1" data-i18n="wordcountDesc">在线字数统计、字数计算器</p></div></div>
+      <div id="wordcount-guide" class="mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="wordcountGuide">输入文本后实时统计字符、单词、中文、段落和行数。</div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-4"><textarea id="wordcount-input" rows="10" class="w-full border border-gray-200 rounded-xl text-sm p-3" oninput="wordcountRun()"></textarea><div id="wordcount-output" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div></div>
+    </section>
+
+    <!-- TOOL: UUID -->
+    <section id="tool-uuid" class="tool-content hidden max-w-3xl mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="uuidSetMode('generate')"><div class="text-2xl mb-2">🔒</div><h3 class="font-semibold text-gray-900" data-i18n="uuidTitle">UUID 生成器</h3><p class="text-xs text-gray-500 mt-1" data-i18n="uuidDesc">在线uuid生成器、uuid随机生成</p></div></div>
+      <div id="uuid-guide" class="mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="uuidGuide">选择版本、数量和格式后批量生成 UUID。</div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-4"><div class="grid md:grid-cols-4 gap-3"><select id="uuid-version" class="w-full border border-gray-200 rounded-xl text-sm px-3 min-h-[44px]"><option value="v4">v4</option><option value="v5">v5</option></select><input id="uuid-count" type="number" min="1" max="100" value="5" class="w-full border border-gray-200 rounded-xl text-sm px-3 min-h-[44px]"><select id="uuid-hyphen" class="w-full border border-gray-200 rounded-xl text-sm px-3 min-h-[44px]"><option value="yes" data-i18n="withHyphen">有连字符</option><option value="no" data-i18n="withoutHyphen">无连字符</option></select><select id="uuid-case" class="w-full border border-gray-200 rounded-xl text-sm px-3 min-h-[44px]"><option value="lower" data-i18n="lowerCase">小写</option><option value="upper" data-i18n="upperCase">大写</option></select></div><div class="flex flex-col md:flex-row gap-2"><button class="w-full md:w-auto bg-indigo-600 text-white px-5 py-3 rounded-xl" onclick="uuidRun()" data-i18n="generateBtn">生成</button><button class="w-full md:w-auto bg-indigo-600 text-white px-5 py-3 rounded-xl" onclick="copyGeneratedUuids()" data-i18n="copyAllBtn">复制全部</button></div><div id="uuid-output" class="space-y-2"></div></div>
+    </section>
+
+    <!-- TOOL: QRCODE -->
+    <section id="tool-qrcode" class="tool-content hidden max-w-3xl mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="qrcodeSetMode('make')"><div class="text-2xl mb-2">📦</div><h3 class="font-semibold text-gray-900" data-i18n="qrcodeTitle">二维码生成</h3><p class="text-xs text-gray-500 mt-1" data-i18n="qrcodeDesc">二维码在线生成、生成二维码</p></div></div>
+      <div id="qrcode-guide" class="mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="qrcodeGuide">输入文本或 URL，自定义尺寸和颜色后生成二维码。</div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-4"><textarea id="qrcode-text" rows="3" class="w-full border border-gray-200 rounded-xl text-sm p-3" placeholder="https://tools.vanhci.top"></textarea><div class="grid md:grid-cols-3 gap-3"><input id="qrcode-size" type="number" min="128" max="1024" value="256" class="w-full border border-gray-200 rounded-xl text-sm px-3 min-h-[44px]"><input id="qrcode-fg" type="color" value="#111827" class="w-full h-12 border border-gray-200 rounded-xl"><input id="qrcode-bg" type="color" value="#ffffff" class="w-full h-12 border border-gray-200 rounded-xl"></div><div class="flex flex-col md:flex-row gap-2"><button class="w-full md:w-auto bg-indigo-600 text-white px-5 py-3 rounded-xl" onclick="qrcodeRun()" data-i18n="generateBtn">生成</button><button class="w-full md:w-auto bg-indigo-600 text-white px-5 py-3 rounded-xl" onclick="qrcodeDownload()" data-i18n="downloadBtn">下载</button></div><canvas id="qrcode-canvas" class="border border-gray-200 rounded-xl max-w-full"></canvas></div>
+    </section>
+
+    <!-- TOOL: IP -->
+    <section id="tool-ip" class="tool-content hidden max-w-3xl mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="ipSetMode('query')"><div class="text-2xl mb-2">🌐</div><h3 class="font-semibold text-gray-900" data-i18n="ipTitle">IP 查询</h3><p class="text-xs text-gray-500 mt-1" data-i18n="ipDesc">查看我的ip、ip地址查询</p></div></div>
+      <div id="ip-guide" class="mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="ipGuide">打开工具时自动查询公网 IP。</div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6"><div class="text-sm text-gray-500" data-i18n="publicIp">公网 IP</div><div id="ip-address" class="text-3xl font-bold text-gray-900 mt-2 break-all">--</div><div id="ip-time" class="text-xs text-gray-400 mt-3">--</div><button class="mt-5 w-full md:w-auto bg-indigo-600 text-white px-5 py-3 rounded-xl" onclick="ipRun()" data-i18n="refreshBtn">刷新</button></div>
+    </section>
+
+    <!-- TOOL: PDF TO IMAGE -->
+    <section id="tool-pdf-img" class="tool-content hidden max-w-3xl mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="pdfImgSetMode('convert')"><div class="text-2xl mb-2">📁</div><h3 class="font-semibold text-gray-900" data-i18n="pdfImgTitle">PDF 转图片</h3><p class="text-xs text-gray-500 mt-1" data-i18n="pdfImgDesc">pdf转图片在线、pdf转png</p></div></div>
+      <div id="pdf-img-guide" class="mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="pdfImgGuide">上传 PDF 后逐页渲染为 PNG，可打包下载 ZIP。</div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-4"><div id="pdf-img-dropzone" class="drop-zone rounded-xl p-10 text-center cursor-pointer" onclick="document.getElementById('pdf-img-input').click()"><div class="text-4xl mb-3">📄</div><p class="text-gray-700 font-medium" data-i18n="uploadPdf">点击上传或拖拽 PDF</p><input id="pdf-img-input" type="file" accept="application/pdf" class="hidden"></div><button class="w-full md:w-auto bg-indigo-600 text-white px-5 py-3 rounded-xl hidden" id="pdf-img-run" onclick="pdfImgRun()" data-i18n="convertBtn">转换</button><button class="w-full md:w-auto bg-indigo-600 text-white px-5 py-3 rounded-xl hidden" id="pdf-img-download" onclick="pdfImgDownloadZip()" data-i18n="downloadZipBtn">全部下载 ZIP</button><div id="pdf-img-output" class="space-y-4"></div></div>
+    </section>
+
+    <!-- TOOL: CONVERT -->
+    <section id="tool-convert" class="tool-content hidden max-w-3xl mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="convertSetMode('text')"><div class="text-2xl mb-2">🔤</div><h3 class="font-semibold text-gray-900" data-i18n="convertTitle">繁简转换</h3><p class="text-xs text-gray-500 mt-1" data-i18n="convertDesc">繁体转简体在线、简繁转换</p></div></div>
+      <div id="convert-guide" class="mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="convertGuide">使用内置常用字典进行繁简文本转换。</div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-4"><textarea id="convert-input" rows="7" class="w-full border border-gray-200 rounded-xl text-sm p-3"></textarea><div class="flex flex-col md:flex-row gap-2"><button class="w-full md:w-auto bg-indigo-600 text-white px-5 py-3 rounded-xl" onclick="convertRun('t2s')" data-i18n="t2sBtn">繁→简</button><button class="w-full md:w-auto bg-indigo-600 text-white px-5 py-3 rounded-xl" onclick="convertRun('s2t')" data-i18n="s2tBtn">简→繁</button></div><textarea id="convert-output" rows="7" class="w-full border border-gray-200 rounded-xl text-sm p-3" readonly></textarea></div>
     </section>
 
   </main>
@@ -622,6 +750,41 @@
     }
   };
 
+  const toolLang = {
+    zh: {
+      passwordTab:'🔑 密码', jsonTab:'📋 JSON', base64ImgTab:'🎨 Base64', markdownTab:'📝 Markdown', colorTab:'🔄 颜色', wordcountTab:'📊 字数', uuidTab:'🔒 UUID', qrcodeTab:'📦 二维码', ipTab:'🌐 IP', pdfImgTab:'📁 PDF', convertTab:'🔤 繁简',
+      passwordTitle:'密码生成器', passwordDesc:'在线密码生成器、随机密码生成', passwordGuide:'设置长度和字符类型，一次生成 5 个随机密码。', lengthLabel:'长度', upperLabel:'大写', lowerLabel:'小写', numberLabel:'数字', symbolLabel:'特殊字符',
+      jsonTitle:'JSON 格式化', jsonDesc:'json格式化在线、json美化', jsonGuide:'粘贴 JSON 后可格式化、压缩或校验。', formatBtn:'格式化', minifyBtn:'压缩', validateBtn:'校验',
+      base64Title:'图片转 Base64', base64Desc:'图片转base64、base64编码在线', base64Guide:'上传图片后输出 Data URI 或纯 Base64。', uploadImage:'点击上传或拖拽图片', dataUriLabel:'输出为 data URI 格式',
+      markdownTitle:'Markdown 预览', markdownDesc:'markdown在线编辑器、markdown预览', markdownGuide:'左侧输入 Markdown，右侧实时预览。',
+      colorTitle:'颜色转换', colorDesc:'rgb转hex、颜色转换器在线', colorGuide:'输入 HEX 或 RGB，自动转换为 HEX、RGB、HSL。',
+      wordcountTitle:'字数统计', wordcountDesc:'在线字数统计、字数计算器', wordcountGuide:'输入文本后实时统计字符、单词、中文、段落和行数。', chars:'字符数', words:'单词数', cnChars:'中文字数', paragraphs:'段落数', lines:'行数',
+      uuidTitle:'UUID 生成器', uuidDesc:'在线uuid生成器、uuid随机生成', uuidGuide:'选择版本、数量和格式后批量生成 UUID。', withHyphen:'有连字符', withoutHyphen:'无连字符', lowerCase:'小写', upperCase:'大写',
+      qrcodeTitle:'二维码生成', qrcodeDesc:'二维码在线生成、生成二维码', qrcodeGuide:'输入文本或 URL，自定义尺寸和颜色后生成二维码。',
+      ipTitle:'IP 查询', ipDesc:'查看我的ip、ip地址查询', ipGuide:'打开工具时自动查询公网 IP。', publicIp:'公网 IP',
+      pdfImgTitle:'PDF 转图片', pdfImgDesc:'pdf转图片在线、pdf转png', pdfImgGuide:'上传 PDF 后逐页渲染为 PNG，可打包下载 ZIP。', uploadPdf:'点击上传或拖拽 PDF',
+      convertTitle:'繁简转换', convertDesc:'繁体转简体在线、简繁转换', convertGuide:'使用内置常用字典进行繁简文本转换。',
+      generateBtn:'生成', copyBtn:'复制', copyAllBtn:'复制全部', downloadBtn:'下载', refreshBtn:'刷新', convertBtn:'转换', downloadZipBtn:'全部下载 ZIP', t2sBtn:'繁→简', s2tBtn:'简→繁',
+      copied:'已复制', generated:'已生成', validJson:'JSON 有效', invalidJson:'JSON 无效：', needInput:'请输入内容', uploadDone:'已上传', pdfRendered:'PDF 转换完成', ipFail:'IP 查询失败', qrFail:'二维码生成失败'
+    },
+    en: {
+      passwordTab:'🔑 Password', jsonTab:'📋 JSON', base64ImgTab:'🎨 Base64', markdownTab:'📝 Markdown', colorTab:'🔄 Color', wordcountTab:'📊 Count', uuidTab:'🔒 UUID', qrcodeTab:'📦 QR Code', ipTab:'🌐 IP', pdfImgTab:'📁 PDF', convertTab:'🔤 Convert',
+      passwordTitle:'Password Generator', passwordDesc:'Online password generator, random passwords', passwordGuide:'Set length and character types, then generate 5 passwords at once.', lengthLabel:'Length', upperLabel:'Uppercase', lowerLabel:'Lowercase', numberLabel:'Numbers', symbolLabel:'Symbols',
+      jsonTitle:'JSON Formatter', jsonDesc:'Format and beautify JSON online', jsonGuide:'Paste JSON to format, minify, or validate.', formatBtn:'Format', minifyBtn:'Minify', validateBtn:'Validate',
+      base64Title:'Image to Base64', base64Desc:'Image to Base64, online Base64 encoder', base64Guide:'Upload an image and output Data URI or plain Base64.', uploadImage:'Click or drag image here', dataUriLabel:'Output as data URI',
+      markdownTitle:'Markdown Preview', markdownDesc:'Online Markdown editor and preview', markdownGuide:'Edit Markdown on the left and preview it live on the right.',
+      colorTitle:'Color Converter', colorDesc:'RGB to HEX, online color converter', colorGuide:'Enter HEX or RGB and convert to HEX, RGB, and HSL.',
+      wordcountTitle:'Word Count', wordcountDesc:'Online word counter and text calculator', wordcountGuide:'Type text to count characters, words, Chinese characters, paragraphs, and lines.', chars:'Characters', words:'Words', cnChars:'Chinese', paragraphs:'Paragraphs', lines:'Lines',
+      uuidTitle:'UUID Generator', uuidDesc:'Online UUID generator, random UUIDs', uuidGuide:'Choose version, count, and format to generate UUIDs.', withHyphen:'Hyphenated', withoutHyphen:'No hyphens', lowerCase:'Lowercase', upperCase:'Uppercase',
+      qrcodeTitle:'QR Code Generator', qrcodeDesc:'Generate QR codes online', qrcodeGuide:'Enter text or URL, customize size and colors, then generate a QR code.',
+      ipTitle:'IP Lookup', ipDesc:'Check my IP, IP address lookup', ipGuide:'Automatically queries your public IP when opened.', publicIp:'Public IP',
+      pdfImgTitle:'PDF to Image', pdfImgDesc:'PDF to image online, PDF to PNG', pdfImgGuide:'Upload a PDF and render each page as PNG, downloadable as ZIP.', uploadPdf:'Click or drag PDF here',
+      convertTitle:'Simplified/Traditional', convertDesc:'Traditional to Simplified Chinese converter', convertGuide:'Convert text with a built-in common character dictionary.',
+      generateBtn:'Generate', copyBtn:'Copy', copyAllBtn:'Copy All', downloadBtn:'Download', refreshBtn:'Refresh', convertBtn:'Convert', downloadZipBtn:'Download ZIP', t2sBtn:'Traditional → Simplified', s2tBtn:'Simplified → Traditional',
+      copied:'Copied', generated:'Generated', validJson:'Valid JSON', invalidJson:'Invalid JSON: ', needInput:'Please enter content', uploadDone:'Uploaded', pdfRendered:'PDF converted', ipFail:'IP lookup failed', qrFail:'QR generation failed'
+    }
+  };
+
   let currentLang = localStorage.getItem('toolkit_lang') || 'zh';
 
   function toggleLang() {
@@ -632,6 +795,10 @@
 
   function t(key) {
     return LANG[currentLang][key] || LANG.zh[key] || key;
+  }
+
+  function tt(key) {
+    return (toolLang[currentLang] && toolLang[currentLang][key]) || toolLang.zh[key] || key;
   }
 
   function formatMsg(key, params = {}) {
@@ -706,6 +873,16 @@
     if (excelBtn) excelBtn.textContent = lang.excelTab;
     if (imageBtn) imageBtn.textContent = lang.imageTab;
     if (renameBtn) renameBtn.textContent = lang.fileTab;
+    const toolTabKeys = {password:'passwordTab', json:'jsonTab', 'base64-img':'base64ImgTab', markdown:'markdownTab', color:'colorTab', wordcount:'wordcountTab', uuid:'uuidTab', qrcode:'qrcodeTab', ip:'ipTab', 'pdf-img':'pdfImgTab', convert:'convertTab'};
+    Object.entries(toolTabKeys).forEach(([tool, key]) => {
+      const btn = document.querySelector(`[data-tool="${tool}"]`);
+      if (btn) btn.textContent = tt(key);
+    });
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const value = tt(el.dataset.i18n);
+      if (el.tagName === 'OPTION') el.textContent = value;
+      else el.textContent = value;
+    });
     // Update tool cards (title + description)
     applyCardText('merge', lang.tabs.merge, lang.tabsDesc.merge);
     applyCardText('split', lang.tabs.split, lang.tabsDesc.split);
@@ -814,7 +991,7 @@
     const cards = document.querySelectorAll('.tool-card');
     cards.forEach(card => {
       const onclick = card.getAttribute('onclick') || '';
-      if (onclick.includes(mode)) {
+      if (onclick.includes(`'${mode}'`) || onclick.includes(`"${mode}"`)) {
         const h3 = card.querySelector('h3');
         const p = card.querySelector('p.text-xs');
         if (h3) h3.textContent = title;
@@ -840,6 +1017,7 @@
   // Apply language on load
   document.addEventListener('DOMContentLoaded', () => {
     setTimeout(applyLang, 50);
+    ipRun();
   });
 
   function checkDailyLimit() {
@@ -1768,6 +1946,283 @@
     const blob = new Blob([text], {type:'text/plain'});
     downloadBlob(blob, '重命名结果.txt');
     showToast(t('toastRenameDone'));
+  }
+
+  // ========== NEW TOOLS ==========
+  function showGuide(id) { document.getElementById(id)?.classList.remove('hidden'); }
+  function passwordSetMode() { showGuide('password-guide'); document.getElementById('password-run').classList.remove('hidden'); }
+  function passwordRun() {
+    const length = parseInt(document.getElementById('password-length').value, 10);
+    const sets = [
+      ['password-upper', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'],
+      ['password-lower', 'abcdefghijklmnopqrstuvwxyz'],
+      ['password-number', '0123456789'],
+      ['password-symbol', '!@#$%^&*()-_=+[]{};:,.?/']
+    ].filter(([id]) => document.getElementById(id).checked).map(([, chars]) => chars);
+    if (!sets.length) { showToast(tt('needInput')); return; }
+    const all = sets.join('');
+    const pick = chars => chars[crypto.getRandomValues(new Uint32Array(1))[0] % chars.length];
+    const output = document.getElementById('password-output');
+    output.textContent = '';
+    for (let i = 0; i < 5; i++) {
+      const chars = sets.map(pick);
+      while (chars.length < length) chars.push(pick(all));
+      chars.sort(() => crypto.getRandomValues(new Uint32Array(1))[0] - 2147483648);
+      addCopyRow(output, chars.join(''));
+    }
+    showToast(tt('generated'));
+  }
+
+  function jsonSetMode() { showGuide('json-guide'); }
+  function jsonRun(action) {
+    const out = document.getElementById('json-output');
+    try {
+      const value = JSON.parse(document.getElementById('json-input').value);
+      if (action === 'validate') {
+        out.textContent = tt('validJson');
+      } else {
+        const text = JSON.stringify(value, null, action === 'minify' ? 0 : 2);
+        out.innerHTML = highlightJson(text);
+      }
+      showToast(action === 'validate' ? tt('validJson') : tt('generated'));
+    } catch (e) {
+      out.textContent = tt('invalidJson') + e.message;
+      showToast(tt('invalidJson') + e.message);
+    }
+  }
+  function highlightJson(text) {
+    return escapeHTML(text).replace(/("(\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*"(\\s*:)?|\b(true|false)\b|\bnull\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, match => {
+      let cls = 'json-number';
+      if (/^"/.test(match)) cls = /:$/.test(match) ? 'json-key' : 'json-string';
+      else if (/true|false/.test(match)) cls = 'json-bool';
+      else if (/null/.test(match)) cls = 'json-null';
+      return `<span class="${cls}">${match}</span>`;
+    });
+  }
+
+  let base64File = null;
+  function base64ImgSetMode() { showGuide('base64-img-guide'); setupFileDrop('base64-dropzone', 'base64-input', handleBase64File); }
+  function handleBase64File(files) {
+    base64File = files[0];
+    if (!base64File) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const data = reader.result;
+      document.getElementById('base64-preview').src = data;
+      document.getElementById('base64-preview').classList.remove('hidden');
+      document.getElementById('base64-output').value = document.getElementById('base64-datauri').checked ? data : String(data).split(',')[1];
+      showToast(tt('uploadDone'));
+    };
+    reader.readAsDataURL(base64File);
+  }
+  document.getElementById('base64-datauri')?.addEventListener('change', () => { if (base64File) handleBase64File([base64File]); });
+
+  function markdownSetMode() { showGuide('markdown-guide'); markdownRender(); }
+  function markdownRender() {
+    const src = document.getElementById('markdown-input').value;
+    document.getElementById('markdown-output').innerHTML = markdownToHtml(src);
+  }
+  function markdownToHtml(src) {
+    const blocks = [];
+    let text = escapeHTML(src).replace(/```([\s\S]*?)```/g, (_, code) => {
+      blocks.push(`<pre><code>${code.trim()}</code></pre>`);
+      return `\n@@CODE${blocks.length - 1}@@\n`;
+    });
+    text = text.replace(/^\|(.+)\|\n\|([\s:-]+)\|\n((?:\|.*\|\n?)+)/gm, (_, head, sep, rows) => {
+      const th = head.split('|').map(c => `<th>${inlineMd(c.trim())}</th>`).join('');
+      const trs = rows.trim().split('\n').map(row => `<tr>${row.slice(1, -1).split('|').map(c => `<td>${inlineMd(c.trim())}</td>`).join('')}</tr>`).join('');
+      return `<table><thead><tr>${th}</tr></thead><tbody>${trs}</tbody></table>`;
+    });
+    text = text.replace(/^### (.*)$/gm, '<h3>$1</h3>').replace(/^## (.*)$/gm, '<h2>$1</h2>').replace(/^# (.*)$/gm, '<h1>$1</h1>');
+    text = text.replace(/^\d+\. (.*)$/gm, '<li>$1</li>').replace(/^- (.*)$/gm, '<li>$1</li>');
+    text = text.replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m}</ul>`);
+    text = text.split(/\n{2,}/).map(p => /^<|@@CODE/.test(p.trim()) ? p : `<p>${inlineMd(p).replace(/\n/g, '<br>')}</p>`).join('');
+    return text.replace(/@@CODE(\d+)@@/g, (_, i) => blocks[i]);
+  }
+  function inlineMd(text) {
+    return text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="max-w-full rounded-xl">')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a class="text-indigo-600 underline" href="$2" target="_blank" rel="noopener">$1</a>')
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>');
+  }
+
+  function colorSetMode() { showGuide('color-guide'); colorConvert(); }
+  function colorFromPicker() { document.getElementById('color-input').value = document.getElementById('color-picker').value; colorConvert(); }
+  function colorConvert() {
+    const rgb = parseColor(document.getElementById('color-input').value.trim());
+    if (!rgb) return;
+    const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+    const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+    document.getElementById('color-picker').value = hex;
+    document.getElementById('color-preview').style.background = hex;
+    const values = [hex.toUpperCase(), `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`, `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`];
+    const out = document.getElementById('color-output');
+    out.textContent = '';
+    values.forEach(v => addCopyRow(out, v));
+  }
+  function parseColor(value) {
+    if (/^#?[0-9a-f]{6}$/i.test(value)) {
+      const hex = value.replace('#', '');
+      return {r: parseInt(hex.slice(0,2),16), g: parseInt(hex.slice(2,4),16), b: parseInt(hex.slice(4,6),16)};
+    }
+    const m = value.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+    return m ? {r:+m[1], g:+m[2], b:+m[3]} : null;
+  }
+  function rgbToHex(r,g,b) { return '#' + [r,g,b].map(n => Math.max(0, Math.min(255, n)).toString(16).padStart(2,'0')).join(''); }
+  function rgbToHsl(r,g,b) {
+    r/=255; g/=255; b/=255; const max=Math.max(r,g,b), min=Math.min(r,g,b); let h=0, s=0, l=(max+min)/2;
+    if (max !== min) { const d=max-min; s=l>.5 ? d/(2-max-min) : d/(max+min); h=max===r ? (g-b)/d+(g<b?6:0) : max===g ? (b-r)/d+2 : (r-g)/d+4; h/=6; }
+    return {h:Math.round(h*360), s:Math.round(s*100), l:Math.round(l*100)};
+  }
+
+  function wordcountSetMode() { showGuide('wordcount-guide'); wordcountRun(); }
+  function wordcountRun() {
+    const text = document.getElementById('wordcount-input').value;
+    const stats = [
+      [tt('chars'), text.length],
+      [tt('words'), (text.match(/[A-Za-z0-9]+(?:[-'][A-Za-z0-9]+)?/g) || []).length],
+      [tt('cnChars'), (text.match(/[\u4e00-\u9fff]/g) || []).length],
+      [tt('paragraphs'), text.trim() ? text.trim().split(/\n\s*\n/).length : 0],
+      [tt('lines'), text ? text.split(/\n/).length : 0]
+    ];
+    document.getElementById('wordcount-output').innerHTML = stats.map(([label, val]) => `<div class="bg-gray-50 border border-gray-200 rounded-xl p-3"><div class="text-xs text-gray-500">${label}</div><div class="text-xl font-bold text-gray-900">${val}</div></div>`).join('');
+  }
+
+  let generatedUuids = [];
+  function uuidSetMode() { showGuide('uuid-guide'); }
+  function uuidRun() {
+    const count = Math.max(1, Math.min(100, parseInt(document.getElementById('uuid-count').value, 10) || 1));
+    const version = document.getElementById('uuid-version').value;
+    const hyphen = document.getElementById('uuid-hyphen').value === 'yes';
+    const upper = document.getElementById('uuid-case').value === 'upper';
+    generatedUuids = Array.from({length: count}, () => formatUuid(version === 'v5' ? uuidV5Like() : crypto.randomUUID(), hyphen, upper));
+    const out = document.getElementById('uuid-output');
+    out.textContent = '';
+    generatedUuids.forEach(id => addCopyRow(out, id));
+  }
+  function uuidV5Like() {
+    const bytes = crypto.getRandomValues(new Uint8Array(16));
+    bytes[6] = (bytes[6] & 0x0f) | 0x50;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    const hex = [...bytes].map(b => b.toString(16).padStart(2,'0')).join('');
+    return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
+  }
+  function formatUuid(id, hyphen, upper) { let v = hyphen ? id : id.replaceAll('-', ''); return upper ? v.toUpperCase() : v.toLowerCase(); }
+  function copyGeneratedUuids() { copyRaw(generatedUuids.join('\n')); }
+
+  function qrcodeSetMode() { showGuide('qrcode-guide'); }
+  function qrcodeRun() {
+    try {
+      const text = document.getElementById('qrcode-text').value.trim();
+      if (!text) { showToast(tt('needInput')); return; }
+      const qr = qrcode(0, 'M');
+      qr.addData(text);
+      qr.make();
+      const size = Math.max(128, Math.min(1024, parseInt(document.getElementById('qrcode-size').value, 10) || 256));
+      const canvas = document.getElementById('qrcode-canvas');
+      const ctx = canvas.getContext('2d');
+      const count = qr.getModuleCount();
+      const cell = Math.floor(size / count);
+      const pad = Math.floor((size - cell * count) / 2);
+      canvas.width = size; canvas.height = size;
+      ctx.fillStyle = document.getElementById('qrcode-bg').value; ctx.fillRect(0,0,size,size);
+      ctx.fillStyle = document.getElementById('qrcode-fg').value;
+      for (let r = 0; r < count; r++) for (let c = 0; c < count; c++) if (qr.isDark(r,c)) ctx.fillRect(pad + c * cell, pad + r * cell, cell, cell);
+      showToast(tt('generated'));
+    } catch (e) { showToast(tt('qrFail')); }
+  }
+  function qrcodeDownload() { document.getElementById('qrcode-canvas').toBlob(blob => downloadBlob(blob, 'qrcode.png'), 'image/png'); }
+
+  let ipLoaded = false;
+  function ipSetMode() { showGuide('ip-guide'); if (!ipLoaded) ipRun(); }
+  async function ipRun() {
+    try {
+      const res = await fetch('https://api.ipify.org?format=json');
+      const data = await res.json();
+      document.getElementById('ip-address').textContent = data.ip || '--';
+      document.getElementById('ip-time').textContent = new Date().toLocaleString();
+      ipLoaded = true;
+    } catch (e) { showToast(tt('ipFail')); }
+  }
+
+  let pdfImgFile = null, pdfImgPages = [];
+  function pdfImgSetMode() { showGuide('pdf-img-guide'); setupFileDrop('pdf-img-dropzone', 'pdf-img-input', files => { pdfImgFile = files[0]; document.getElementById('pdf-img-run').classList.toggle('hidden', !pdfImgFile); showToast(tt('uploadDone')); }); }
+  async function pdfImgRun() {
+    if (!pdfImgFile) return;
+    const pdfjsLib = window.pdfjsLib;
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    const bytes = await pdfImgFile.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({data: bytes}).promise;
+    const out = document.getElementById('pdf-img-output');
+    out.textContent = ''; pdfImgPages = [];
+    for (let pageNo = 1; pageNo <= pdf.numPages; pageNo++) {
+      const page = await pdf.getPage(pageNo);
+      const viewport = page.getViewport({scale: 2});
+      const canvas = document.createElement('canvas');
+      canvas.width = viewport.width; canvas.height = viewport.height;
+      await page.render({canvasContext: canvas.getContext('2d'), viewport}).promise;
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+      pdfImgPages.push({name: `page-${String(pageNo).padStart(3,'0')}.png`, blob});
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(blob);
+      img.className = 'w-full rounded-xl border border-gray-200';
+      const wrap = document.createElement('div');
+      wrap.className = 'space-y-2';
+      const btn = document.createElement('button');
+      btn.className = 'w-full md:w-auto bg-indigo-600 text-white px-5 py-3 rounded-xl';
+      btn.textContent = `${tt('downloadBtn')} ${pageNo}`;
+      btn.onclick = () => downloadBlob(blob, `page-${pageNo}.png`);
+      wrap.append(img, btn); out.appendChild(wrap);
+    }
+    document.getElementById('pdf-img-download').classList.remove('hidden');
+    showToast(tt('pdfRendered'));
+  }
+  async function pdfImgDownloadZip() {
+    const zip = new JSZip();
+    pdfImgPages.forEach(p => zip.file(p.name, p.blob));
+    downloadBlob(await zip.generateAsync({type:'blob'}), 'pdf-pages.zip');
+  }
+
+  function convertSetMode() { showGuide('convert-guide'); }
+  const trad = '體臺萬與專業叢東絲丟兩嚴喪個豐臨為麗舉麼義烏樂喬習鄉書買亂爭於虧雲亞產畝親褻億僅從侖倉儀們價眾優會傘偉傳傷倫偽佇佔餘佛來侶俠侶係俁倖倉個們倫偉側偵偽傑傖傘備傢傭債傾僂僅僉僑僕僞僥僨價儀儂億儈儉償優儲兇兌兒黨內兩冊寫軍農馮沖決況凍淨淒準涼減湊凜幾鳳憑凱擊鑿劃劉則剛創刪別剎劑剮劍劇勁動務勛勝勞勢勻匯區協卻廠廳歷厲壓厭厙廁釐參雙發變敘疊葉號嘆後嚇呂嗎噸聽啟吳吶員唄唚問啞啟嘔員唄唚問啞啟嘔嘩唸唸喚喪喬單喲嗆嗇嗎嗚嗩嗶嘆嘍嘗嘔嘜嘩嘮嘯嘰嘵嘸噁噓噸嚀嚇嚐嚕嚙嚥嚦嚨嚮嚳嚴囑囉囌囂園圓圖團聖場壞塊堅壇壩塢墳墜墮墳墾墻壓壘壙壞壟壠壢壩壯聲殼壺壼處備複夠頭夾奪奮奧婦媽嫵妝姍薑姦娛婁婦婭媧媼媽嫗嬋嬌嬈嬋嬰嬸孫學孿寶實寧審寫寬寵寶將專尋對導壽將爾塵嘗堯尷屆屍層屜屬岡峴島峽崍崗崢崙崗嶄嶇嶗嶠嶠嶧嶺嶼巋巒巔幣帥師帳帶幀幫幬幹並幾庫廂廄廁廂廈廚廄廝廟廠廡廢廣廩廬廳彈強彆彈彌彎彙彥後徑從徠復徵德徹恆恥悅悵悶惡惱惲愛愜愨愴愷愾慄態慍慘慚慟慣慪慫慮慳慶憂憊憐憑憒憚憤憫憮憲憶懇應懌懍懟懣懨懲懶懷懸懺懼懾戀戇戔戧戲戧戰戩戶扎撲扦執擴掃揚擾撫拋摶摳掄搶護報擔擬攏揀擁攔擰撥擇掛摯攣摻撻撈撐撓撥撫撲撳撻撾撿擁擄擇擊擋擔據擠擬擯擰擱擲擴擷擺擻擼擾攆攏攔攖攙攜攝攢敵斂數齋斕鬥斬斷無舊時曠曆曇曉曄暈暉暫曖術機殺雜權條來楊杴極構樅樞棗櫪梘棟欄樹棲樣欒槳樁樂樅樓標樞樞樑樸樹樺橈橋機橢橫檁檉檔檜槳檢櫻欄權欏欒欖欞歡歐歟歲歷歸歿殘殞殤殨殫殮殯殲殼毀毆氈氌氣氫氬氳匯漢湯洶溝沒灃漚瀝淪滄滬濘淚澩瀧瀘濼瀉潑澤涇潔灑洩濁濃潯濤澇渦塗渙減湊湞測渾湣湧湯灣濕潰濺漵滾滯灄滿漁漚滬滯滲滷灘滾滿漬漲滎滬滅滌滎滾滯漚漢漣漬漸漿潁潑潔潛潤潯潰潷潿澀澆澇澗澠澤澦澩澮澱濁濃濤濫濬濰濱濺濾瀅瀆瀉瀋瀏瀕瀘瀝瀟瀠瀦瀧瀨瀰瀲灃灄灑灘灣灤灧災為烏烴無煉熾爍爐爛爭爺爾牆牘犧狀獷猶狽猙獰獨狹獅獎獄獵獫獻獼玀現琺琿瑋璉瑣瑤瑩璽瓊瓏甕產畝畢畫異當疇療癘瘧瘍瘓瘞瘡瘋瘧瘺瘻療癆癇癉癢癤癥癧癩癬癭癮癰癱癲發皚皰皺盞鹽監蓋盜盤眥眾睏矚矯礬礦碼磚硨硯確礙磧磣禮禰禱禿稈種積稱穢穠穩窩窪窮竄竅竇竊競筆筍築篩箏節範築篤籃籌簽簡簣簫簷籟籠籢籤籩籪籬糴糶糾紀紂約紅紆紇紈紉紋納紐紓純紕紗紙級紛紜紡紮細紱紹紺紲紳組絆紿絀終絃經絎絏結絕絛絞絡絢給絨絰統絲絳絹綁綃綆綈綌綏綐經綜綠綢綣綫綬維綱網綳綴綵綸綺綻綽綾綿緄緇緊緋緒緘緙線緝緞締緡緣緦編緩緬緯緱緲練緶緹緻縈縉縊縋縐縑縝縞縣縧縫縭縮縱縲縳縴縵縶縷縹總績繃繅繆繈繒織繕繚繞繡繢繩繪繫繭繮繰繳繹繼繽繾纈纊續纍纏纓纖纜缽罈罌罰罵罷羅羆羈羋羥義習翹聖聞聯聰聲聳職聶聾聽肅脅脈脛脫脹腎腫腳腸膚膠膩膽膾膿臉臍臏臘臚臟臠臨舉艱艦艙艫藝節芻苧莊莖莢薦薘莧華萇萊萬萵葉葒著葷蒔蒞蒼蓀蓋蓮蓯蓴蔔蔞蔣蔥蔦蕁蕆蕎蕒蕓蕕蕘蕢蕩蕪蕭薈薊薌薔薘薟薦薩薩薺藍藎藝藥藪蘄蘆蘇蘊蘋蘚蘞蘢蘭蘺蘿虜虛號虧蟲虯蛺蟯蠱蠶蠻衆衊術衛衝袞裊裡補裝裊製複褲褳褸襇襖襝襠襤襪襯襲見規覓視覘覽覺覬覲覷觀觴觸觶訁訂訃計訊訌討訓訕訖託記訛訝訟訣訥訪設許訴訶診詆詎詐詒詔評詛詞詠詡詢詣試詩詫詬詭詮詰話該詳詵詼誄誅誆誇誌認誑誒誕誘誚語誠誡誣誤誥誦誨說誰課誹誼調諂諄談諉請諍諏諑諒論諗諛諜諞諡諢諤諦諧諫諭諮諱諳諶諷諸諺諼諾謀謁謂謄謅謊謎謐謔謖謗謙謚講謝謠謡謨謫謬謭謳謹謾譁證譎譏譖識譙譚譜譫譯議譴護譸譽讀變讎讒讓讕讖讜讞豈豎豐豬貓貝貞負財貢貧貨販貪貫責貯貰貴貶買貸費貼貽貿賀賁賂賃賄資賈賊賑賒賓賕賙賚賜賞賠賡賢賣賤賦質賬賭賴賺賽贄贅贈贊贍贏贓贖贗贛趕趙趨趲跡踐踴蹌蹕蹟蹣蹤蹺躂躉躊躋躍躑躒躓躕躚躥車軋軌軍軒軔軛軟軫軲軸軹軺軻軼軾較輅輇載輊輒輔輕輛輜輝輞輟輥輦輩輪輯輳輸轀轄轅轆轉轍轎轔轟轡轢轤辦辭辮辯農逕這連週進遊運過達違遙遜遞遠適遲遷選遺遼邁還邇邊邏鬱郟郵鄆鄉鄒鄴鄰鄲鄶鄺酈釀釁釃釅釋裡鑑鑾鑿鈀鈁鈃鈄鈈鈉鈞鈍鈐鈔鈕鈞鈣鈧鈮鈰鈳鈴鈷鈸鈹鈺鈽鈾鈿鉀鐵鉑鈴鉛鉚鉞鉦鉬鉭鉸鉺鉿銀銃銅銘銖銑銓銚銛銜銠銣銥銦銨銩銪銫鎧鋁鋃鋅鋇鋌鋏銳鋒鋝鋟鋣鋤鋥鋦鋨鋩鋪鋮鋯鋰鋱鋶鋸鋼錄錐錒錠錶錕錘錙錚錛錢錦錨錫錮錯録錳錶鍀鍁鍃鍆鍇鍈鍋鍍鍔鍘鍚鍛鍠鍤鍥鍬鍰鍵鍶鍺鍼鎂鎄鎇鎊鎔鎖鎗鎘鎚鎛鎝鎡鎢鎣鎦鎧鎩鎪鎬鎮鎰鎳鎵鎸鎿鏃鏈鏌鏍鏑鏗鏘鏜鏝鏞鏟鏡鏢鏤鏨鏰鏵鏷鏹鏽鐃鐐鐓鐔鐘鐙鐠鐨鐫鐮鐯鐲鐳鐵鐶鐸鐺鑄鑊鑌鑒鑔鑕鑞鑠鑣鑥鑲鑰鑷鑹鑼鑽鑾鑿長門閂閃閆閉問闖閏閑間閔閘閡閣閥閨閩閫閬閭閱閶閹閻閼閽閾閿闃闆闈闊闋闌闍闐闒闓闔闕闞闡闢闤阜隊陽陰陣階際陸隴陳陘陝隕險隨隱隸雋雖雙雛雜雞離難雲電霧霽靂靄靈靚靜靦韃韁韃韋韌韓韜韞韻頁頂頃項順須頊頌頎預頑頒頓頗領頜頡頤頦頭頰頲頷頸頻顆題額顎顓顏願顙顛類顢顧顫顬顯顰顱顳顴風颭颮颯颶颼飀飄飆飛饑飯飲飴飼飽飾餃餄餅餉養餌餎餏餑餒餓餘餜餛餞餡館餱餳餵餶餷餺餼餾餿饃饅饈饉饋饌饑饒饗饜饞饢馬馭馮馱馴馳驅馹駁驢駑駒駔駕駘駙駛駝駟駡駢駭駰駱騁驗騂駸駿騏騎騍騖騙騫騭騮騰驁驂驃驄驅驊驌驍驏驕驗驚驛驟驢驥驤魚魷魯魴鮁鮃鮋鮍鮑鮒鮐鮚鮜鮞鮟鮠鮡鮢鰱鱸鮦鮪鮫鮮鯁鯀鯇鯉鯊鯒鯖鯕鯗鯛鯡鯢鯤鯧鯨鯪鯫鯰鯴鯷鯽鰂鰈鰉鰍鰏鰐鰒鰓鰜鰟鰠鰣鰥鰨鰩鰭鰱鰲鰳鰴鰷鰹鰺鰻鰾鱂鱅鱈鱉鱒鱔鱖鱗鱘鱝鱟鱠鱣鱤鱧鱨鱭鱷鱸鱺鳥鳧鳩鳳鳴鳶鴆鴇鴉鴒鴕鴛鴝鴞鴟鴣鴦鴨鴯鴰鴻鴿鵂鵃鵐鵑鵒鵓鵜鵝鵠鵡鵪鵬鵮鵯鷄鶇鶉鶊鶓鶖鶘鶚鶡鶥鶩鶯鶴鶻鶿鷀鷁鷂鷃鷄鷓鷖鷗鷙鷚鷥鷦鷯鷲鷸鷹鷺鸌鸕鸚鸛鹵鹹鹺鹼鹽麗麥麩黃黌點黨黲黴黷黽黿鼉鼴齊齋齎齏齒齔齕齗齙齜齟齡齠齦齧齪齬齲齶齷龍龐龔龕龜';
+  const simp = '体台万与专业丛东丝丢两严丧个丰临为丽举么义乌乐乔习乡书买乱争于亏云亚产亩亲亵亿仅从仑仓仪们价众优会伞伟传伤伦伪伫占余佛来侣侠侣系俣幸仓个们伦伟侧侦伪杰伧伞备家佣债倾偻仅佥侨仆伪侥偾价仪侬亿侩俭偿优储凶兑儿党内两册写军农冯冲决况冻净凄准凉减凑凛几凤凭凯击凿划刘则刚创删别刹剂剐剑剧劲动务勋胜劳势匀汇区协却厂厅历厉压厌厍厕厘参双发变叙叠叶号叹后吓吕吗吨听启吴呐员呗吣问哑启呕员呗吣问哑启呕哗念念唤丧乔单哟呛啬吗呜唢哔叹喽尝呕唛哗唠啸叽哓呒恶嘘吨咛吓尝噜啮咽呖咙向学严嘱啰苏嚣园圆图团圣场坏块坚坛坝坞坟坠堕坟垦墙压垒圹坏垄垅坜坝壮声壳壶壸处备复够头夹夺奋奥妇妈妩妆姗姜奸娱娄妇娅娲媪妈妪婵娇娆婵婴婶孙学孪宝实宁审写宽宠宝将专寻对导寿将尔尘尝尧尴届尸层屉属冈岘岛峡崃岗峥仑岗崭岖崂峤峤峄岭屿岿峦巅币帅师帐带帧帮帱干并几库厢厩厕厢厦厨厩厮庙厂庑废广廪庐厅弹强别弹弥弯汇彦后径从徕复征德彻恒耻悦怅闷恶恼恽爱惬悫怆恺忾栗态愠惨惭恸惯怄怂虑悭庆忧惫怜凭愦惮愤悯怃宪忆恳应怿懔怼懑恹惩懒怀悬忏惧慑恋戆戋戗戏戗战戬户扎扑扦执扩扫扬扰抚抛抟抠抡抢护报担拟拢拣拥拦拧拨择挂挚挛掺挞捞撑挠拨抚扑揿挞挝捡拥掳择击挡担据挤拟摈拧搁掷扩撷摆擞撸扰撵拢拦撄搀携摄攒敌敛数斋斓斗斩断无旧时旷历昙晓晔晕晖暂暧术机杀杂权条来杨锨极构枞枢枣枥枧栋栏树栖样栾桨桩乐枞楼标枢枢梁朴树桦桡桥机椭横檩柽档桧桨检樱栏权椤栾榄棂欢欧欤岁历归殁残殒殇殨殚殓殡歼壳毁殴毡氇气氢氩氲汇汉汤汹沟没沣沤沥沦沧沪泞泪泶泷泸泺泻泼泽泾洁洒泄浊浓浔涛涝涡涂涣减凑浈测浑湣涌汤湾湿溃溅溆滚滞滠满渔沤沪滞渗卤滩滚满渍涨荥沪灭涤荥滚滞沤汉涟渍渐浆颍泼洁潜润浔溃滗涠涩浇涝涧渑泽滪泶浍淀浊浓涛滥浚潍滨溅滤滢渎泻沈浏濒泸沥潇潆潴泷濑弥潋沣滠洒滩湾滦滟灾为乌烃无炼炽烁炉烂争爷尔墙牍牺状犷犹狈狰狞独狭狮奖狱猎猃献猕猡现珐珲玮琏琐瑶莹玺琼珑瓮产亩毕画异当畴疗疠疟疡痪瘗疮疯疟瘘瘘疗痨痫瘅痒疖症疬癞癣瘿瘾痈瘫癫发皑疱皱盏盐监盖盗盘眦众困瞩矫矾矿码砖砗砚确碍碛碜礼祢祷秃秆种积称秽秾稳窝洼穷窜窍窦窃竞笔笋筑筛筝节范筑笃篮筹签简篑箫檐籁笼奁签笾簖篱籴粜纠纪纣约红纡纥纨纫纹纳纽纾纯纰纱纸级纷纭纺扎细绂绍绀绁绅组绊绐绌终弦经绗绁结绝绦绞络绚给绒绖统丝绛绢绑绡绠绨绤绥绐经综绿绸绻线绶维纲网绷缀彩纶绮绽绰绫绵绲缁紧绯绪缄缂线缉缎缔缗缘缌编缓缅纬缑缈练缏缇致萦缙缢缒绉缣缜缟县绦缝缡缩纵缧缳纤缦絷缕缥总绩绷缫缪襁缯织缮缭绕绣缋绳绘系茧缰缲缴绎继缤缱缬纩续累缠缨纤缆钵坛罂罚骂罢罗罴羁芈羟义习翘圣闻联聪声耸职聂聋听肃胁脉胫脱胀肾肿脚肠肤胶腻胆脍脓脸脐膑腊胪脏脔临举艰舰舱舻艺节刍苎庄茎荚荐荙苋华苌莱万莴叶荭着荤莳莅苍荪盖莲苁莼卜蒌蒋葱茑荨蒇荞荬芸莸荛蒉荡芜萧荟蓟芗蔷荙莶荐萨萨荠蓝荩艺药薮蕲芦苏蕴苹藓蔹茏兰蓠萝虏虚号亏虫虬蛱蛲蛊蚕蛮众蔑术卫冲衮袅里补装袅制复裤裢褛裥袄裣裆褴袜衬袭见规觅视觇览觉觊觐觑观觞触觯讠订讣计讯讧讨训讪讫托记讹讶讼诀讷访设许诉诃诊诋讵诈诒诏评诅词咏诩询诣试诗诧诟诡诠诘话该详诜诙诔诛诓夸志认诳诶诞诱诮语诚诫诬误诰诵诲说谁课诽谊调谄谆谈诿请诤诹诼谅论谂谀谍谝谥诨谔谛谐谏谕谘讳谙谌讽诸谚谖诺谋谒谓誊诌谎谜谧谑谡谤谦谥讲谢谣谣谟谪谬谫讴谨谩哗证谲讥谮识谯谭谱谵译议谴护诪誉读变雠谗让谰谶谠谳岂竖丰猪猫贝贞负财贡贫货贩贪贯责贮贳贵贬买贷费贴贻贸贺贲赂赁贿资贾贼赈赊宾赇赒赉赐赏赔赓贤卖贱赋质账赌赖赚赛贽赘赠赞赡赢赃赎赝赣赶赵趋趱迹践踊跄跸迹蹒踪跷跶趸踌跻跃踯跞踬蹰跹蹿车轧轨军轩轫轭软轸轱轴轵轺轲轶轼较辂辁载轾辄辅轻辆辎辉辋辍辊辇辈轮辑辏输辒辖辕辘转辙轿辚轰辔轹轳办辞辫辩农迳这连周进游运过达违遥逊递远适迟迁选遗辽迈还迩边逻郁郏邮郓乡邹邺邻郸郐邝郦酿衅酾酽释里鉴銮凿钯钫钘钭钚钠钧钝钤钞钮钧钙钪铌铈钶铃钴钹铍钰钸铀钿钾铁铂铃铅铆钺钲钼钽铰铒铪银铳铜铭铢铣铨铫铦衔铑铷铱铟铵铥铕铯铠铝锒锌钡铤铗锐锋锊锓铘锄锃锔锇铓铺铖锆锂铽锍锯钢录锥锕锭表锟锤锱铮锛钱锦锚锡锢错录锰表锝锨锪钔锴锳锅镀锷铡钖锻锽锸锲锹锾键锶锗针镁锿镅镑镕锁枪镉锤镈镝镃钨蓥镏铠铩锼镐镇镒镍镓携镢镞链镆镙镝铿锵镗镘镛铲镜镖镂錾镚铧镤镪锈铙镣镦镡钟镫镨镄镌镰䦅镯镭铁镮铎铛铸镬镔鉴镲锧镴铄镳镥镶钥镊镩锣钻銮凿长门闩闪闫闭问闯闰闲间闵闸阂阁阀闺闽阃阆闾阅阊阉阎阏阍阈阌阒板闱阔阕阑阇阗闼闿阖阙阚阐辟阛阜队阳阴阵阶际陆陇陈陉陕陨险随隐隶隽虽双雏杂鸡离难云电雾霁雳霭灵靓静腼鞑缰鞑韦韧韩韬韫韵页顶顷项顺须顼颂颀预顽颁顿颇领颌颉颐颏头颊颋颔颈频颗题额颚颛颜愿颡颠类颟顾颤颥显颦颅颞颧风飐飑飒飓飕飗飘飙飞饥饭饮饴饲饱饰饺饸饼饷养饵饹饻饽馁饿余馃馄饯馅馆糇饧喂馉馇馎饩馏馊馍馒馐馑馈馔饥饶飨餍馋馕马驭冯驮驯驰驱驲驳驴驽驹驵驾骀驸驶驼驷骂骈骇骃骆骋验骍骎骏骐骑骒骛骗骞骘骝腾骜骖骠骢驱骅骕骁骣骄验惊驿骤驴骥骧鱼鱿鲁鲂鲅鲆鲉鲏鲍鲋鲐鲒鲘鲕鮟鲔鲡鲢鲈鲖鲔鲛鲜鲠鲧鲩鲤鲨鲬鲭鲯鲞鲷鲱鲵鲲鲳鲸鲮鲰鲶鲺鳀鲫鲗鲽鳇鳅鲾鳄鳆鳃鳒鳑鳋鲥鳏鳎鳐鳍鲢鳌鳓鳘鲦鲣鲹鳗鳔鳉鳙鳕鳖鳟鳝鳜鳞鲟鲼鲎鲙鳣鳤鳢鲿鲚鳄鲈鲡鸟凫鸠凤鸣鸢鸩鸨鸦鸰鸵鸳鸲鸮鸱鸪鸯鸭鸸鸹鸿鸽鸺鸼鹀鹃鹆鹁鹈鹅鹄鹉鹌鹏鹐鹎鸡鸫鹑鹒鹋鹙鹕鹗鹖鹛鹜莺鹤鹘鹚鹚鹢鹞鷃鸡鹧鹥鸥鸷鹨鸶鹪鹩鹫鹬鹰鹭鹱鸬鹦鹳卤咸鹾碱盐丽麦麸黄黉点党黪霉黩黾鼋鼍鼹齐斋赍齑齿龀龁龂龅龇龃龄龆龈啮龊龉龋腭龌龙庞龚龛龟';
+  const t2sMap = Object.fromEntries([...trad].map((ch, i) => [ch, simp[i] || ch]));
+  const s2tMap = Object.fromEntries([...simp].map((ch, i) => [ch, trad[i] || ch]));
+  function convertRun(type) {
+    const map = type === 't2s' ? t2sMap : s2tMap;
+    document.getElementById('convert-output').value = [...document.getElementById('convert-input').value].map(ch => map[ch] || ch).join('');
+  }
+
+  function addCopyRow(container, text) {
+    const row = document.createElement('div');
+    row.className = 'flex flex-col md:flex-row md:items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl p-3';
+    const code = document.createElement('code');
+    code.className = 'flex-1 text-sm break-all';
+    code.textContent = text;
+    const btn = document.createElement('button');
+    btn.className = 'w-full md:w-auto bg-indigo-600 text-white px-4 py-3 rounded-xl text-sm';
+    btn.textContent = tt('copyBtn');
+    btn.onclick = () => copyRaw(text);
+    row.append(code, btn);
+    container.appendChild(row);
+  }
+  function copyText(id) { copyRaw(document.getElementById(id).value || document.getElementById(id).textContent); }
+  function copyRaw(text) {
+    navigator.clipboard?.writeText(text).then(() => showToast(tt('copied'))).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); showToast(tt('copied'));
+    });
+  }
+  function setupFileDrop(zoneId, inputId, handler) {
+    const zone = document.getElementById(zoneId);
+    const input = document.getElementById(inputId);
+    input.onchange = e => handler(Array.from(e.target.files || []));
+    zone.ondragover = e => { e.preventDefault(); zone.classList.add('dragover'); };
+    zone.ondragleave = () => zone.classList.remove('dragover');
+    zone.ondrop = e => { e.preventDefault(); zone.classList.remove('dragover'); handler(Array.from(e.dataTransfer.files || [])); };
+  }
+  function escapeHTML(text) {
+    return String(text).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   }
 
   // ========== UTILS ==========
