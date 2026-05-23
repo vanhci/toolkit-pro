@@ -34,6 +34,7 @@
   <!-- Favicon (simple emoji) -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
 
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5878538349612439" crossorigin="anonymous"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -84,7 +85,15 @@
 <body class="bg-gray-50 min-h-screen">
 
   <!-- TOP AD SLOT -->
-  <div id="top-ad" class="ad-slot mx-4 mt-4 rounded-xl">📢 广告位 — 728×90 Leaderboard</div>
+  <div id="top-ad" class="mx-4 mt-4 rounded-xl overflow-hidden">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-5878538349612439"
+         data-ad-slot="XXXXXXXXXX"
+         data-ad-format="horizontal"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
 
   <!-- HEADER -->
   <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
@@ -520,7 +529,15 @@
   </div>
 
   <!-- BOTTOM AD SLOT -->
-  <div id="bottom-ad" class="ad-slot mx-4 mt-6 mb-4 rounded-xl">📢 广告位 — 728×90 Leaderboard</div>
+  <div id="bottom-ad" class="mx-4 mt-6 mb-4 rounded-xl overflow-hidden">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-5878538349612439"
+         data-ad-slot="XXXXXXXXXX"
+         data-ad-format="horizontal"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
 
   <footer class="text-center text-xs text-gray-400 pb-8">
     <p id="footer-copy">ToolKit Pro · 免费在线工具箱 · © 2026</p>
@@ -1145,6 +1162,13 @@
   }
 
   // ========== AD REMOVAL ==========
+  function removeAds() {
+    document.querySelectorAll('#top-ad, #bottom-ad').forEach(el => {
+      el.innerHTML = '';
+      el.remove();
+    });
+  }
+
   document.getElementById('removeAdBtn').addEventListener('click', () => {
     if (adRemoved) { showToast(t('unlocked')); return; }
     document.getElementById('paywall-modal').classList.remove('hidden');
@@ -1261,7 +1285,7 @@
         adRemoved = true;
         localStorage.setItem('toolkit_unlocked', 'true');
         document.getElementById('removeAdBtn')?.remove();
-        document.querySelectorAll('.ad-slot').forEach(el => el.remove());
+        removeAds();
         document.getElementById('lic-step-key').classList.add('hidden');
         document.getElementById('lic-success').classList.remove('hidden');
       } else {
@@ -2350,7 +2374,10 @@
 
   // Init (order matters: adRemoved must be set before checkDailyLimit)
   const savedUnlock = localStorage.getItem('toolkit_unlocked');
-  if (savedUnlock === 'true') adRemoved = true;
+  if (savedUnlock === 'true') {
+    adRemoved = true;
+    removeAds();
+  }
   excelSetupDropzone();
   checkDailyLimit();
   </script>
