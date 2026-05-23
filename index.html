@@ -109,20 +109,11 @@
   <nav class="bg-white border-b border-gray-200">
     <div class="max-w-6xl mx-auto px-4">
       <div class="flex flex-nowrap gap-1 overflow-x-auto py-2" id="toolTabs">
-        <button class="tab-btn whitespace-nowrap min-w-fit tab-active px-4 py-2 rounded-lg text-sm font-medium transition" data-tool="excel">📊 Excel处理</button>
-        <button class="tab-btn whitespace-nowrap min-w-fit px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="image">🖼️ 图片处理</button>
-        <button class="tab-btn whitespace-nowrap min-w-fit px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="rename">📂 文件处理</button>
-        <button class="tab-btn whitespace-nowrap min-w-fit px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="password">🔑 密码</button>
-        <button class="tab-btn whitespace-nowrap min-w-fit px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="json">📋 JSON</button>
-        <button class="tab-btn whitespace-nowrap min-w-fit px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="base64-img">🎨 Base64</button>
-        <button class="tab-btn whitespace-nowrap min-w-fit px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="markdown">📝 Markdown</button>
-        <button class="tab-btn whitespace-nowrap min-w-fit px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="color">🔄 颜色</button>
-        <button class="tab-btn whitespace-nowrap min-w-fit px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="wordcount">📊 字数</button>
-        <button class="tab-btn whitespace-nowrap min-w-fit px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="uuid">🔒 UUID</button>
-        <button class="tab-btn whitespace-nowrap min-w-fit px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="qrcode">📦 二维码</button>
-        <button class="tab-btn whitespace-nowrap min-w-fit px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="ip">🌐 IP</button>
-        <button class="tab-btn whitespace-nowrap min-w-fit px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="pdf-img">📁 PDF</button>
-        <button class="tab-btn whitespace-nowrap min-w-fit px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="convert">🔤 繁简</button>
+        <button class="tab-btn whitespace-nowrap min-w-fit tab-active px-4 py-2 rounded-lg text-sm font-medium transition" data-tool="excel">📊 Excel</button>
+        <button class="tab-btn whitespace-nowrap min-w-fit px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="image">🖼️ 图片</button>
+        <button class="tab-btn whitespace-nowrap min-w-fit px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="file">📂 文件</button>
+        <button class="tab-btn whitespace-nowrap min-w-fit px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="dev">🛠️ 开发</button>
+        <button class="tab-btn whitespace-nowrap min-w-fit px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" data-tool="utility">🔧 实用</button>
       </div>
     </div>
   </nav>
@@ -132,33 +123,33 @@
 
     <!-- TOOL: EXCEL -->
     <section id="tool-excel" class="tool-content">
-      <div class="grid md:grid-cols-3 gap-2 md:gap-4 mb-4 md:mb-6">
-        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="excelSetMode('merge')">
+      <div id="excel-cards" class="grid grid-cols-2 gap-3 mb-4">
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showExcelTool('merge')">
           <div class="text-2xl mb-2">🔀</div>
           <h3 class="font-semibold text-gray-900">合并表格</h3>
           <p class="text-xs text-gray-500 mt-1">将多个 Excel/CSV 合并为一个</p>
         </div>
-        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="excelSetMode('split')">
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showExcelTool('split')">
           <div class="text-2xl mb-2">📂</div>
           <h3 class="font-semibold text-gray-900">拆分表格</h3>
           <p class="text-xs text-gray-500 mt-1">按列值拆成多个文件</p>
         </div>
-        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="excelSetMode('clean')">
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showExcelTool('clean')">
           <div class="text-2xl mb-2">🧹</div>
           <h3 class="font-semibold text-gray-900">清洗数据</h3>
           <p class="text-xs text-gray-500 mt-1">去空行、空格、重复项</p>
         </div>
-        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="excelSetMode('search')">
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showExcelTool('search')">
           <div class="text-2xl mb-2">🔍</div>
           <h3 class="font-semibold text-gray-900">搜索筛选</h3>
           <p class="text-xs text-gray-500 mt-1">按关键词过滤行</p>
         </div>
-        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="excelSetMode('compare')">
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showExcelTool('compare')">
           <div class="text-2xl mb-2">⚖️</div>
           <h3 class="font-semibold text-gray-900">对比差异</h3>
           <p class="text-xs text-gray-500 mt-1">找出两个表格的区别</p>
         </div>
-        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="excelSetMode('dedup')">
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showExcelTool('dedup')">
           <div class="text-2xl mb-2">🗂️</div>
           <h3 class="font-semibold text-gray-900">去重客户</h3>
           <p class="text-xs text-gray-500 mt-1">按姓名/手机号去重</p>
@@ -166,7 +157,8 @@
       </div>
 
       <!-- Excel 操作面板 -->
-      <div id="excel-panel" class="bg-white rounded-2xl border border-gray-100 p-6">
+      <div id="excel-panel" class="hidden bg-white rounded-2xl border border-gray-100 p-6">
+        <button onclick="hideExcelTool()" class="tool-back text-sm text-indigo-600 mb-3 hover:text-indigo-800">← 返回</button>
         <div id="excel-mode-title" class="font-bold text-gray-900 mb-4 text-lg">选择功能 ↑</div>
 
         <!-- 使用说明区域 -->
@@ -192,28 +184,31 @@
 
     <!-- TOOL: IMAGE -->
     <section id="tool-image" class="tool-content hidden">
-      <div class="grid md:grid-cols-2 gap-2 md:gap-4 mb-4 md:mb-6">
-        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="imageSetMode('resize')">
+      <div id="image-cards" class="grid grid-cols-2 gap-3 mb-4">
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showImageTool('resize')">
           <div class="text-2xl mb-2">📐</div>
           <h3 class="font-semibold text-gray-900">调整尺寸</h3>
           <p class="text-xs text-gray-500 mt-1">批量缩放图片到指定尺寸</p>
         </div>
-        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="imageSetMode('compress')">
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showImageTool('compress')">
           <div class="text-2xl mb-2">🗜️</div>
           <h3 class="font-semibold text-gray-900">压缩图片</h3>
           <p class="text-xs text-gray-500 mt-1">减小文件体积保持清晰度</p>
         </div>
-        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="imageSetMode('watermark')">
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showImageTool('watermark')">
           <div class="text-2xl mb-2">💧</div>
           <h3 class="font-semibold text-gray-900">添加水印</h3>
           <p class="text-xs text-gray-500 mt-1">文字或图片水印</p>
         </div>
-        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="imageSetMode('convert')">
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showImageTool('convert')">
           <div class="text-2xl mb-2">🔄</div>
           <h3 class="font-semibold text-gray-900">格式转换</h3>
           <p class="text-xs text-gray-500 mt-1">PNG/JPG/WebP 互转</p>
         </div>
       </div>
+
+      <div id="image-panel" class="hidden">
+      <button onclick="hideImageTool()" class="tool-back text-sm text-indigo-600 mb-3 hover:text-indigo-800">← 返回</button>
 
       <!-- Image 使用说明 -->
       <div id="image-guide" class="mb-4 md:mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden">
@@ -232,17 +227,21 @@
       <button id="image-run" class="hidden bg-indigo-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-indigo-700 transition" onclick="imageRun()">
         开始处理 →
       </button>
+      </div>
     </section>
 
     <!-- TOOL: FILE PROCESSING -->
-    <section id="tool-rename" class="tool-content hidden">
-      <div class="grid md:grid-cols-2 gap-2 md:gap-4 mb-4 md:mb-6">
-        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="renameSetMode('rename')">
+    <section id="tool-file" class="tool-content hidden">
+      <div id="file-cards" class="grid grid-cols-2 gap-3 mb-4">
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showFileTool('rename')">
           <div class="text-2xl mb-2">✏️</div>
           <h3 class="font-semibold text-gray-900">批量重命名</h3>
           <p class="text-xs text-gray-500 mt-1" id="rename-card-desc">按模板批量修改文件名</p>
         </div>
       </div>
+
+      <div id="file-rename" class="hidden">
+      <button onclick="hideFileTool()" class="tool-back text-sm text-indigo-600 mb-3 hover:text-indigo-800">← 返回</button>
 
       <!-- Rename 使用说明 -->
       <div id="rename-guide" class="mb-4 md:mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800">
@@ -296,10 +295,34 @@
           </button>
         </div>
       </div>
+      </div>
+    </section>
+
+    <!-- TOOL: DEV -->
+    <section id="tool-dev" class="tool-content hidden">
+      <div id="dev-cards" class="grid grid-cols-2 gap-3 mb-4">
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('json','dev', jsonSetMode)"><div class="text-2xl mb-2">📋</div><h3 class="font-semibold text-gray-900" data-i18n="jsonTitle">JSON 格式化</h3><p class="text-xs text-gray-500 mt-1" data-i18n="jsonDesc">json格式化在线、json美化</p></div>
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('base64-img','dev', base64ImgSetMode)"><div class="text-2xl mb-2">🎨</div><h3 class="font-semibold text-gray-900" data-i18n="base64Title">图片转 Base64</h3><p class="text-xs text-gray-500 mt-1" data-i18n="base64Desc">图片转base64、base64编码在线</p></div>
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('markdown','dev', markdownSetMode)"><div class="text-2xl mb-2">📝</div><h3 class="font-semibold text-gray-900" data-i18n="markdownTitle">Markdown 预览</h3><p class="text-xs text-gray-500 mt-1" data-i18n="markdownDesc">markdown在线编辑器、markdown预览</p></div>
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('color','dev', colorSetMode)"><div class="text-2xl mb-2">🔄</div><h3 class="font-semibold text-gray-900" data-i18n="colorTitle">颜色转换</h3><p class="text-xs text-gray-500 mt-1" data-i18n="colorDesc">rgb转hex、颜色转换器在线</p></div>
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('uuid','dev', uuidSetMode)"><div class="text-2xl mb-2">🔒</div><h3 class="font-semibold text-gray-900" data-i18n="uuidTitle">UUID 生成器</h3><p class="text-xs text-gray-500 mt-1" data-i18n="uuidDesc">在线uuid生成器、uuid随机生成</p></div>
+      </div>
+    </section>
+
+    <!-- TOOL: UTILITY -->
+    <section id="tool-utility" class="tool-content hidden">
+      <div id="utility-cards" class="grid grid-cols-2 gap-3 mb-4">
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('password','utility', passwordSetMode)"><div class="text-2xl mb-2">🔑</div><h3 class="font-semibold text-gray-900" data-i18n="passwordTitle">密码生成器</h3><p class="text-xs text-gray-500 mt-1" data-i18n="passwordDesc">在线密码生成器、随机密码生成</p></div>
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('wordcount','utility', wordcountSetMode)"><div class="text-2xl mb-2">📊</div><h3 class="font-semibold text-gray-900" data-i18n="wordcountTitle">字数统计</h3><p class="text-xs text-gray-500 mt-1" data-i18n="wordcountDesc">在线字数统计、字数计算器</p></div>
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('qrcode','utility', qrcodeSetMode)"><div class="text-2xl mb-2">📦</div><h3 class="font-semibold text-gray-900" data-i18n="qrcodeTitle">二维码生成</h3><p class="text-xs text-gray-500 mt-1" data-i18n="qrcodeDesc">二维码在线生成、生成二维码</p></div>
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('ip','utility', ipSetMode)"><div class="text-2xl mb-2">🌐</div><h3 class="font-semibold text-gray-900" data-i18n="ipTitle">IP 查询</h3><p class="text-xs text-gray-500 mt-1" data-i18n="ipDesc">查看我的ip、ip地址查询</p></div>
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('pdf-img','utility', pdfImgSetMode)"><div class="text-2xl mb-2">📁</div><h3 class="font-semibold text-gray-900" data-i18n="pdfImgTitle">PDF 转图片</h3><p class="text-xs text-gray-500 mt-1" data-i18n="pdfImgDesc">pdf转图片在线、pdf转png</p></div>
+        <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('convert','utility', convertSetMode)"><div class="text-2xl mb-2">🔤</div><h3 class="font-semibold text-gray-900" data-i18n="convertTitle">繁简转换</h3><p class="text-xs text-gray-500 mt-1" data-i18n="convertDesc">繁体转简体在线、简繁转换</p></div>
+      </div>
     </section>
 
     <!-- TOOL: PASSWORD -->
-    <section id="tool-password" class="tool-content hidden max-w-3xl mx-auto">
+    <section id="tool-password" class="tool-panel hidden max-w-3xl mx-auto">
       <div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-6">
         <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="passwordSetMode('random')"><div class="text-2xl mb-2">🔑</div><h3 class="font-semibold text-gray-900" data-i18n="passwordTitle">密码生成器</h3><p class="text-xs text-gray-500 mt-1" data-i18n="passwordDesc">在线密码生成器、随机密码生成</p></div>
       </div>
@@ -319,7 +342,7 @@
     </section>
 
     <!-- TOOL: JSON -->
-    <section id="tool-json" class="tool-content hidden max-w-3xl mx-auto">
+    <section id="tool-json" class="tool-panel hidden max-w-3xl mx-auto">
       <div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="jsonSetMode('format')"><div class="text-2xl mb-2">📋</div><h3 class="font-semibold text-gray-900" data-i18n="jsonTitle">JSON 格式化</h3><p class="text-xs text-gray-500 mt-1" data-i18n="jsonDesc">json格式化在线、json美化</p></div></div>
       <div id="json-guide" class="mb-4 md:mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="jsonGuide">粘贴 JSON 后可格式化、压缩或校验。</div>
       <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
@@ -330,7 +353,7 @@
     </section>
 
     <!-- TOOL: IMAGE TO BASE64 -->
-    <section id="tool-base64-img" class="tool-content hidden max-w-3xl mx-auto">
+    <section id="tool-base64-img" class="tool-panel hidden max-w-3xl mx-auto">
       <div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="base64ImgSetMode('encode')"><div class="text-2xl mb-2">🎨</div><h3 class="font-semibold text-gray-900" data-i18n="base64Title">图片转 Base64</h3><p class="text-xs text-gray-500 mt-1" data-i18n="base64Desc">图片转base64、base64编码在线</p></div></div>
       <div id="base64-img-guide" class="mb-4 md:mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="base64Guide">上传图片后输出 Data URI 或纯 Base64。</div>
       <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
@@ -343,56 +366,56 @@
     </section>
 
     <!-- TOOL: MARKDOWN -->
-    <section id="tool-markdown" class="tool-content hidden max-w-3xl mx-auto">
+    <section id="tool-markdown" class="tool-panel hidden max-w-3xl mx-auto">
       <div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="markdownSetMode('preview')"><div class="text-2xl mb-2">📝</div><h3 class="font-semibold text-gray-900" data-i18n="markdownTitle">Markdown 预览</h3><p class="text-xs text-gray-500 mt-1" data-i18n="markdownDesc">markdown在线编辑器、markdown预览</p></div></div>
       <div id="markdown-guide" class="mb-4 md:mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="markdownGuide">左侧输入 Markdown，右侧实时预览。</div>
       <div class="grid md:grid-cols-2 gap-4"><textarea id="markdown-input" rows="16" class="w-full border border-gray-200 rounded-xl text-sm p-3" oninput="markdownRender()"># ToolKit Pro&#10;&#10;- **实时预览**&#10;- `code`&#10;&#10;| A | B |&#10;|---|---|&#10;| 1 | 2 |</textarea><div id="markdown-output" class="markdown-preview bg-white rounded-2xl border border-gray-100 p-5 overflow-x-auto min-h-[280px]"></div></div>
     </section>
 
     <!-- TOOL: COLOR -->
-    <section id="tool-color" class="tool-content hidden max-w-3xl mx-auto">
+    <section id="tool-color" class="tool-panel hidden max-w-3xl mx-auto">
       <div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="colorSetMode('convert')"><div class="text-2xl mb-2">🔄</div><h3 class="font-semibold text-gray-900" data-i18n="colorTitle">颜色转换</h3><p class="text-xs text-gray-500 mt-1" data-i18n="colorDesc">rgb转hex、颜色转换器在线</p></div></div>
       <div id="color-guide" class="mb-4 md:mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="colorGuide">输入 HEX 或 RGB，自动转换为 HEX、RGB、HSL。</div>
       <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-4"><div class="flex flex-col md:flex-row gap-3"><input id="color-picker" type="color" value="#4f46e5" class="w-full md:w-20 h-12 border border-gray-200 rounded-xl" oninput="colorFromPicker()"><input id="color-input" value="#4f46e5" class="w-full border border-gray-200 rounded-xl text-sm px-3" oninput="colorConvert()"></div><div id="color-preview" class="h-24 rounded-xl border border-gray-200"></div><div id="color-output" class="space-y-2"></div></div>
     </section>
 
     <!-- TOOL: WORDCOUNT -->
-    <section id="tool-wordcount" class="tool-content hidden max-w-3xl mx-auto">
+    <section id="tool-wordcount" class="tool-panel hidden max-w-3xl mx-auto">
       <div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="wordcountSetMode('count')"><div class="text-2xl mb-2">📊</div><h3 class="font-semibold text-gray-900" data-i18n="wordcountTitle">字数统计</h3><p class="text-xs text-gray-500 mt-1" data-i18n="wordcountDesc">在线字数统计、字数计算器</p></div></div>
       <div id="wordcount-guide" class="mb-4 md:mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="wordcountGuide">输入文本后实时统计字符、单词、中文、段落和行数。</div>
       <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-4"><textarea id="wordcount-input" rows="10" class="w-full border border-gray-200 rounded-xl text-sm p-3" oninput="wordcountRun()"></textarea><div id="wordcount-output" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div></div>
     </section>
 
     <!-- TOOL: UUID -->
-    <section id="tool-uuid" class="tool-content hidden max-w-3xl mx-auto">
+    <section id="tool-uuid" class="tool-panel hidden max-w-3xl mx-auto">
       <div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="uuidSetMode('generate')"><div class="text-2xl mb-2">🔒</div><h3 class="font-semibold text-gray-900" data-i18n="uuidTitle">UUID 生成器</h3><p class="text-xs text-gray-500 mt-1" data-i18n="uuidDesc">在线uuid生成器、uuid随机生成</p></div></div>
       <div id="uuid-guide" class="mb-4 md:mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="uuidGuide">选择版本、数量和格式后批量生成 UUID。</div>
       <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-4"><div class="grid md:grid-cols-4 gap-3"><select id="uuid-version" class="w-full border border-gray-200 rounded-xl text-sm px-3 min-h-[44px]"><option value="v4">v4</option><option value="v5">v5</option></select><input id="uuid-count" type="number" min="1" max="100" value="5" class="w-full border border-gray-200 rounded-xl text-sm px-3 min-h-[44px]"><select id="uuid-hyphen" class="w-full border border-gray-200 rounded-xl text-sm px-3 min-h-[44px]"><option value="yes" data-i18n="withHyphen">有连字符</option><option value="no" data-i18n="withoutHyphen">无连字符</option></select><select id="uuid-case" class="w-full border border-gray-200 rounded-xl text-sm px-3 min-h-[44px]"><option value="lower" data-i18n="lowerCase">小写</option><option value="upper" data-i18n="upperCase">大写</option></select></div><div class="flex flex-col md:flex-row gap-2"><button class="w-full max-w-xs mx-auto md:w-auto md:max-w-none md:mx-0 bg-indigo-600 text-white px-5 py-3 rounded-xl" onclick="uuidRun()" data-i18n="generateBtn">生成</button><button class="w-full max-w-xs mx-auto md:w-auto md:max-w-none md:mx-0 bg-indigo-600 text-white px-5 py-3 rounded-xl" onclick="copyGeneratedUuids()" data-i18n="copyAllBtn">复制全部</button></div><div id="uuid-output" class="space-y-2"></div></div>
     </section>
 
     <!-- TOOL: QRCODE -->
-    <section id="tool-qrcode" class="tool-content hidden max-w-3xl mx-auto">
+    <section id="tool-qrcode" class="tool-panel hidden max-w-3xl mx-auto">
       <div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="qrcodeSetMode('make')"><div class="text-2xl mb-2">📦</div><h3 class="font-semibold text-gray-900" data-i18n="qrcodeTitle">二维码生成</h3><p class="text-xs text-gray-500 mt-1" data-i18n="qrcodeDesc">二维码在线生成、生成二维码</p></div></div>
       <div id="qrcode-guide" class="mb-4 md:mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="qrcodeGuide">输入文本或 URL，自定义尺寸和颜色后生成二维码。</div>
       <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-4"><textarea id="qrcode-text" rows="3" class="w-full border border-gray-200 rounded-xl text-sm p-3" placeholder="https://tools.vanhci.top"></textarea><div class="grid md:grid-cols-3 gap-3"><input id="qrcode-size" type="number" min="128" max="1024" value="256" class="w-full border border-gray-200 rounded-xl text-sm px-3 min-h-[44px]"><input id="qrcode-fg" type="color" value="#111827" class="w-full h-12 border border-gray-200 rounded-xl"><input id="qrcode-bg" type="color" value="#ffffff" class="w-full h-12 border border-gray-200 rounded-xl"></div><div class="flex flex-col md:flex-row gap-2"><button class="w-full max-w-xs mx-auto md:w-auto md:max-w-none md:mx-0 bg-indigo-600 text-white px-5 py-3 rounded-xl" onclick="qrcodeRun()" data-i18n="generateBtn">生成</button><button class="w-full max-w-xs mx-auto md:w-auto md:max-w-none md:mx-0 bg-indigo-600 text-white px-5 py-3 rounded-xl" onclick="qrcodeDownload()" data-i18n="downloadBtn">下载</button></div><canvas id="qrcode-canvas" class="border border-gray-200 rounded-xl max-w-full"></canvas></div>
     </section>
 
     <!-- TOOL: IP -->
-    <section id="tool-ip" class="tool-content hidden max-w-3xl mx-auto">
+    <section id="tool-ip" class="tool-panel hidden max-w-3xl mx-auto">
       <div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="ipSetMode('query')"><div class="text-2xl mb-2">🌐</div><h3 class="font-semibold text-gray-900" data-i18n="ipTitle">IP 查询</h3><p class="text-xs text-gray-500 mt-1" data-i18n="ipDesc">查看我的ip、ip地址查询</p></div></div>
       <div id="ip-guide" class="mb-4 md:mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="ipGuide">打开工具时自动查询公网 IP。</div>
       <div class="bg-white rounded-2xl border border-gray-100 p-6"><div class="text-sm text-gray-500" data-i18n="publicIp">公网 IP</div><div id="ip-address" class="text-3xl font-bold text-gray-900 mt-2 break-all">--</div><div id="ip-time" class="text-xs text-gray-400 mt-3">--</div><button class="mt-5 block w-full max-w-xs mx-auto md:w-auto md:max-w-none md:mx-0 bg-indigo-600 text-white px-5 py-3 rounded-xl" onclick="ipRun()" data-i18n="refreshBtn">刷新</button></div>
     </section>
 
     <!-- TOOL: PDF TO IMAGE -->
-    <section id="tool-pdf-img" class="tool-content hidden max-w-3xl mx-auto">
+    <section id="tool-pdf-img" class="tool-panel hidden max-w-3xl mx-auto">
       <div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="pdfImgSetMode('convert')"><div class="text-2xl mb-2">📁</div><h3 class="font-semibold text-gray-900" data-i18n="pdfImgTitle">PDF 转图片</h3><p class="text-xs text-gray-500 mt-1" data-i18n="pdfImgDesc">pdf转图片在线、pdf转png</p></div></div>
       <div id="pdf-img-guide" class="mb-4 md:mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="pdfImgGuide">上传 PDF 后逐页渲染为 PNG，可打包下载 ZIP。</div>
       <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-4"><div id="pdf-img-dropzone" class="drop-zone rounded-xl p-10 text-center cursor-pointer" onclick="document.getElementById('pdf-img-input').click()"><div class="text-4xl mb-3">📄</div><p class="text-gray-700 font-medium" data-i18n="uploadPdf">点击上传或拖拽 PDF</p><input id="pdf-img-input" type="file" accept="application/pdf" class="hidden"></div><button class="w-full max-w-xs mx-auto md:w-auto md:max-w-none md:mx-0 bg-indigo-600 text-white px-5 py-3 rounded-xl hidden" id="pdf-img-run" onclick="pdfImgRun()" data-i18n="convertBtn">转换</button><button class="w-full max-w-xs mx-auto md:w-auto md:max-w-none md:mx-0 bg-indigo-600 text-white px-5 py-3 rounded-xl hidden" id="pdf-img-download" onclick="pdfImgDownloadZip()" data-i18n="downloadZipBtn">全部下载 ZIP</button><div id="pdf-img-output" class="space-y-4"></div></div>
     </section>
 
     <!-- TOOL: CONVERT -->
-    <section id="tool-convert" class="tool-content hidden max-w-3xl mx-auto">
+    <section id="tool-convert" class="tool-panel hidden max-w-3xl mx-auto">
       <div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="convertSetMode('text')"><div class="text-2xl mb-2">🔤</div><h3 class="font-semibold text-gray-900" data-i18n="convertTitle">繁简转换</h3><p class="text-xs text-gray-500 mt-1" data-i18n="convertDesc">繁体转简体在线、简繁转换</p></div></div>
       <div id="convert-guide" class="mb-4 md:mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="convertGuide">使用内置常用字典进行繁简文本转换。</div>
       <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-4"><textarea id="convert-input" rows="7" class="w-full border border-gray-200 rounded-xl text-sm p-3"></textarea><div class="flex flex-col md:flex-row gap-2"><button class="w-full max-w-xs mx-auto md:w-auto md:max-w-none md:mx-0 bg-indigo-600 text-white px-5 py-3 rounded-xl" onclick="convertRun('t2s')" data-i18n="t2sBtn">繁→简</button><button class="w-full max-w-xs mx-auto md:w-auto md:max-w-none md:mx-0 bg-indigo-600 text-white px-5 py-3 rounded-xl" onclick="convertRun('s2t')" data-i18n="s2tBtn">简→繁</button></div><textarea id="convert-output" rows="7" class="w-full border border-gray-200 rounded-xl text-sm p-3" readonly></textarea></div>
@@ -869,32 +892,31 @@
     // Update tabs
     const excelBtn = document.querySelector('[data-tool="excel"]');
     const imageBtn = document.querySelector('[data-tool="image"]');
-    const renameBtn = document.querySelector('[data-tool="rename"]');
-    if (excelBtn) excelBtn.textContent = lang.excelTab;
-    if (imageBtn) imageBtn.textContent = lang.imageTab;
-    if (renameBtn) renameBtn.textContent = lang.fileTab;
-    const toolTabKeys = {password:'passwordTab', json:'jsonTab', 'base64-img':'base64ImgTab', markdown:'markdownTab', color:'colorTab', wordcount:'wordcountTab', uuid:'uuidTab', qrcode:'qrcodeTab', ip:'ipTab', 'pdf-img':'pdfImgTab', convert:'convertTab'};
-    Object.entries(toolTabKeys).forEach(([tool, key]) => {
-      const btn = document.querySelector(`[data-tool="${tool}"]`);
-      if (btn) btn.textContent = tt(key);
-    });
+    const fileBtn = document.querySelector('[data-tool="file"]');
+    const devBtn = document.querySelector('[data-tool="dev"]');
+    const utilityBtn = document.querySelector('[data-tool="utility"]');
+    if (excelBtn) excelBtn.textContent = currentLang === 'en' ? '📊 Excel' : '📊 Excel';
+    if (imageBtn) imageBtn.textContent = currentLang === 'en' ? '🖼️ Image' : '🖼️ 图片';
+    if (fileBtn) fileBtn.textContent = currentLang === 'en' ? '📂 File' : '📂 文件';
+    if (devBtn) devBtn.textContent = currentLang === 'en' ? '🛠️ Dev' : '🛠️ 开发';
+    if (utilityBtn) utilityBtn.textContent = currentLang === 'en' ? '🔧 Utility' : '🔧 实用';
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const value = tt(el.dataset.i18n);
       if (el.tagName === 'OPTION') el.textContent = value;
       else el.textContent = value;
     });
     // Update tool cards (title + description)
-    applyCardText('merge', lang.tabs.merge, lang.tabsDesc.merge);
-    applyCardText('split', lang.tabs.split, lang.tabsDesc.split);
-    applyCardText('clean', lang.tabs.clean, lang.tabsDesc.clean);
-    applyCardText('search', lang.tabs.search, lang.tabsDesc.search);
-    applyCardText('compare', lang.tabs.compare, lang.tabsDesc.compare);
-    applyCardText('dedup', lang.tabs.dedup, lang.tabsDesc.dedup);
-    applyCardText('resize', lang.imageTabs.resize, lang.imageTabsDesc.resize);
-    applyCardText('compress', lang.imageTabs.compress, lang.imageTabsDesc.compress);
-    applyCardText('watermark', lang.imageTabs.watermark, lang.imageTabsDesc.watermark);
-    applyCardText('convert', lang.imageTabs.convert, lang.imageTabsDesc.convert);
-    applyCardText('rename', lang.renameTab, lang.tabsDesc.rename);
+    applyCardText('merge', lang.tabs.merge, lang.tabsDesc.merge, ['showExcelTool', 'excelSetMode']);
+    applyCardText('split', lang.tabs.split, lang.tabsDesc.split, ['showExcelTool', 'excelSetMode']);
+    applyCardText('clean', lang.tabs.clean, lang.tabsDesc.clean, ['showExcelTool', 'excelSetMode']);
+    applyCardText('search', lang.tabs.search, lang.tabsDesc.search, ['showExcelTool', 'excelSetMode']);
+    applyCardText('compare', lang.tabs.compare, lang.tabsDesc.compare, ['showExcelTool', 'excelSetMode']);
+    applyCardText('dedup', lang.tabs.dedup, lang.tabsDesc.dedup, ['showExcelTool', 'excelSetMode']);
+    applyCardText('resize', lang.imageTabs.resize, lang.imageTabsDesc.resize, ['showImageTool', 'imageSetMode']);
+    applyCardText('compress', lang.imageTabs.compress, lang.imageTabsDesc.compress, ['showImageTool', 'imageSetMode']);
+    applyCardText('watermark', lang.imageTabs.watermark, lang.imageTabsDesc.watermark, ['showImageTool', 'imageSetMode']);
+    applyCardText('convert', lang.imageTabs.convert, lang.imageTabsDesc.convert, ['showImageTool', 'imageSetMode']);
+    applyCardText('rename', lang.renameTab, lang.tabsDesc.rename, ['showFileTool', 'renameSetMode']);
     // Update dropzones
     const excelDropzone = document.querySelector('#excel-dropzone p:nth-child(2)');
     if (excelDropzone) excelDropzone.textContent = lang.dropHint;
@@ -985,13 +1007,18 @@
     if (paypalNote) paypalNote.textContent = lang.paypalScan || '汇率约 ¥22，以 PayPal 显示为准（$2.99 USD）';
     const pwContact = document.getElementById('pw-contact');
     if (pwContact) pwContact.textContent = lang.contact;
+    document.querySelectorAll('.tool-back').forEach(btn => {
+      btn.textContent = currentLang === 'en' ? '← Back' : '← 返回';
+    });
   }
 
-  function applyCardText(mode, title, desc) {
+  function applyCardText(mode, title, desc, handlers = []) {
     const cards = document.querySelectorAll('.tool-card');
     cards.forEach(card => {
       const onclick = card.getAttribute('onclick') || '';
-      if (onclick.includes(`'${mode}'`) || onclick.includes(`"${mode}"`)) {
+      const hasMode = onclick.includes(`'${mode}'`) || onclick.includes(`"${mode}"`);
+      const hasHandler = !handlers.length || handlers.some(handler => onclick.includes(handler));
+      if (hasMode && hasHandler) {
         const h3 = card.querySelector('h3');
         const p = card.querySelector('p.text-xs');
         if (h3) h3.textContent = title;
@@ -1045,10 +1072,77 @@
       document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('tab-active','bg-indigo-600','text-white'); b.classList.add('bg-gray-100','text-gray-700'); });
       btn.classList.add('tab-active','bg-indigo-600','text-white'); btn.classList.remove('bg-gray-100','text-gray-700');
       document.querySelectorAll('.tool-content').forEach(c => c.classList.add('hidden'));
+      document.querySelectorAll('.tool-panel').forEach(panel => panel.classList.add('hidden'));
+      resetToolViews(btn.dataset.tool);
       document.getElementById('tool-' + btn.dataset.tool).classList.remove('hidden');
       window.scrollTo({top:0, behavior:'smooth'});
     });
   });
+
+  function resetToolViews(category) {
+    if (category === 'excel') hideExcelTool();
+    if (category === 'image') hideImageTool();
+    if (category === 'file') hideFileTool();
+    if (category === 'dev') hideStandaloneTool('dev');
+    if (category === 'utility') hideStandaloneTool('utility');
+  }
+
+  function showExcelTool(tool) {
+    document.getElementById('excel-cards')?.classList.add('hidden');
+    document.getElementById('excel-panel')?.classList.remove('hidden');
+    excelSetMode(tool);
+  }
+
+  function hideExcelTool() {
+    document.getElementById('excel-panel')?.classList.add('hidden');
+    document.getElementById('excel-cards')?.classList.remove('hidden');
+  }
+
+  function showImageTool(tool) {
+    document.getElementById('image-cards')?.classList.add('hidden');
+    document.getElementById('image-panel')?.classList.remove('hidden');
+    imageSetMode(tool);
+  }
+
+  function hideImageTool() {
+    document.getElementById('image-panel')?.classList.add('hidden');
+    document.getElementById('image-cards')?.classList.remove('hidden');
+  }
+
+  function showFileTool(tool) {
+    document.getElementById('file-cards')?.classList.add('hidden');
+    document.getElementById('file-' + tool)?.classList.remove('hidden');
+    if (tool === 'rename') renameSetMode('rename');
+  }
+
+  function hideFileTool() {
+    document.querySelectorAll('#tool-file > div[id^="file-"]').forEach(d => d.classList.add('hidden'));
+    document.getElementById('file-cards')?.classList.remove('hidden');
+  }
+
+  function showStandaloneTool(tool, category, setup) {
+    hideStandaloneTool(category);
+    document.getElementById(category + '-cards')?.classList.add('hidden');
+    const panel = document.getElementById('tool-' + tool);
+    if (!panel) return;
+    panel.classList.remove('hidden');
+    const innerCards = panel.querySelector(':scope > .grid');
+    if (innerCards) innerCards.classList.add('hidden');
+    if (!panel.querySelector(':scope > .tool-back')) {
+      const back = document.createElement('button');
+      back.type = 'button';
+      back.className = 'tool-back text-sm text-indigo-600 mb-3 hover:text-indigo-800';
+      back.textContent = currentLang === 'en' ? '← Back' : '← 返回';
+      back.onclick = () => hideStandaloneTool(category);
+      panel.prepend(back);
+    }
+    if (typeof setup === 'function') setup();
+  }
+
+  function hideStandaloneTool(category) {
+    document.querySelectorAll('.tool-panel').forEach(panel => panel.classList.add('hidden'));
+    document.getElementById(category + '-cards')?.classList.remove('hidden');
+  }
 
   // ========== AD REMOVAL ==========
   document.getElementById('removeAdBtn').addEventListener('click', () => {
