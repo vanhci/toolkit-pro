@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>如何免费合并多个Excel表格？3种方法教你一键搞定 — ToolKit Pro</title>
+  <meta name="description" content="免费在线Excel合并工具，支持多个xlsx/csv文件一键合并。无需安装软件，无需注册，完全免费。3种方法对比，总有一种适合你。">
+  <meta name="keywords" content="excel合并表格免费,多个excel合并成一个,excel表格合并工具在线,excel合并csv,批量合并excel">
+  <link rel="canonical" href="https://tools.vanhci.top/blog/excel-merge-free">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', -apple-system, sans-serif; }
+    .prose h2 { font-size: 1.25rem; font-weight: 700; margin-top: 2rem; margin-bottom: 0.75rem; color: #1f2937; }
+    .prose h3 { font-size: 1.1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #374151; }
+    .prose p { margin-bottom: 0.75rem; line-height: 1.75; color: #4b5563; }
+    .prose ul, .prose ol { margin-bottom: 0.75rem; padding-left: 1.5rem; }
+    .prose li { margin-bottom: 0.25rem; line-height: 1.75; color: #4b5563; }
+    .prose code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 0.875rem; }
+    .prose pre { background: #1f2937; color: #e5e7eb; padding: 1rem; border-radius: 8px; overflow-x: auto; margin-bottom: 1rem; }
+    .prose pre code { background: transparent; color: inherit; padding: 0; }
+    .prose blockquote { border-left: 4px solid #6366f1; padding-left: 1rem; margin-bottom: 1rem; color: #6b7280; font-style: italic; }
+    .prose strong { color: #1f2937; }
+    .prose a { color: #4f46e5; text-decoration: underline; }
+    .prose hr { border: none; border-top: 1px solid #e5e7eb; margin: 2rem 0; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <header class="bg-white border-b border-gray-100">
+    <div class="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="/" class="text-lg font-bold text-gray-900">🛠️ ToolKit Pro</a>
+      <a href="/" class="text-sm text-indigo-600 hover:text-indigo-700">← 返回工具箱</a>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 py-8">
+    <article class="prose">
+      <h1 class="text-2xl font-bold text-gray-900 mb-2">如何免费合并多个Excel表格？3种方法教你一键搞定</h1>
+      <p class="text-sm text-gray-500 mb-6">最后更新：2026年5月 · 阅读时间：3分钟</p>
+
+      <blockquote>搜索关键词：excel合并表格免费、多个excel合并成一个、excel表格合并工具在线</blockquote>
+
+      <h2>为什么需要合并Excel表格？</h2>
+      <p>工作中经常遇到这样的场景：每个月收到各部门发来的Excel报表，格式一样但分散在不同文件里，需要汇总成一张总表。手动复制粘贴不仅慢，还容易出错。</p>
+
+      <h2>方法一：使用在线工具（推荐）</h2>
+      <p>最简单的方式是使用免费在线Excel合并工具：</p>
+      <ol>
+        <li><strong>打开工具</strong> → 选择「Excel处理」→「合并表格」</li>
+        <li><strong>上传文件</strong> → 支持同时上传多个 .xlsx / .xls / .csv 文件</li>
+        <li><strong>点击开始处理</strong> → 自动识别表头，合并所有数据</li>
+        <li><strong>下载结果</strong> → 一键导出合并后的Excel文件</li>
+      </ol>
+      <p><strong>优点：</strong></p>
+      <ul>
+        <li>无需安装任何软件</li>
+        <li>支持 .xlsx、.xls、.csv 三种格式</li>
+        <li>自动识别表头，不会重复合并标题行</li>
+        <li>完全免费，无需注册</li>
+      </ul>
+      <p>👉 <a href="/?tool=excel">立即免费合并Excel表格</a></p>
+
+      <h2>方法二：Excel自带的VBA宏</h2>
+      <p>如果你熟悉Excel，可以用VBA宏来合并。按 <code>Alt+F11</code> 打开VBA编辑器，插入模块，粘贴以下代码：</p>
+      <pre><code>Sub MergeFiles()
+    Dim folder As String, file As String
+    Dim lastRow As Long, i As Integer
+    folder = "C:\你的文件夹路径\"
+    file = Dir(folder & "*.xlsx")
+    i = 0
+    Do While file &lt;&gt; ""
+        If file &lt;&gt; ThisWorkbook.Name Then
+            Workbooks.Open folder &amp; file
+            Sheets(1).UsedRange.Copy
+            ThisWorkbook.Sheets(1).Cells(Rows.Count, 1).End(xlUp).Offset(1, 0).PasteSpecial xlPasteValues
+            Workbooks(file).Close False
+            i = i + 1
+        End If
+        file = Dir
+    Loop
+    MsgBox "已合并 " &amp; i &amp; " 个文件"
+End Sub</code></pre>
+      <p><strong>缺点：</strong> 需要开启宏，部分公司禁止使用VBA。</p>
+
+      <h2>方法三：Power Query（Excel 2016+）</h2>
+      <ol>
+        <li>打开Excel → 数据 → 获取数据 → 从文件 → 从文件夹</li>
+        <li>选择包含所有Excel文件的文件夹</li>
+        <li>点击「合并和转换数据」</li>
+        <li>选择要合并的工作表</li>
+        <li>点击「关闭并上载」</li>
+      </ol>
+      <p><strong>优点：</strong> Office原生功能，无需额外工具<br>
+      <strong>缺点：</strong> 仅支持Excel 2016及以上版本</p>
+
+      <hr>
+
+      <h2>常见问题</h2>
+
+      <h3>Q: 合并后数据错位怎么办？</h3>
+      <p>确保所有文件的表头（第一行）格式一致。在线工具会自动识别表头，只合并数据行。</p>
+
+      <h3>Q: 文件太大合并失败？</h3>
+      <p>在线工具有文件大小限制。超大文件建议用Power Query或VBA方法。</p>
+
+      <h3>Q: CSV文件能合并吗？</h3>
+      <p>可以，支持 .xlsx、.xls、.csv 三种格式混合合并。</p>
+
+      <hr>
+
+      <p><strong>立即试试：</strong> <a href="/?tool=excel">免费在线Excel合并工具</a> — 无需注册，即开即用。</p>
+    </article>
+  </main>
+
+  <footer class="border-t border-gray-100 mt-12">
+    <div class="max-w-3xl mx-auto px-4 py-6 text-center text-xs text-gray-400">
+      © 2026 ToolKit Pro · <a href="/" class="hover:text-gray-600">工具箱</a> · <a href="/blog/excel-merge-free" class="hover:text-gray-600">Excel合并教程</a>
+    </div>
+  </footer>
+</body>
+</html>
