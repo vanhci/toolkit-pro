@@ -1113,14 +1113,19 @@
     }
     const fl = document.getElementById('excel-files');
     renderFileList(fl, excelFiles);
+    if (excelMode) document.getElementById('excel-run').classList.remove('hidden');
     excelData = [];
-    const XLSX = await ensureXLSX();
-    for (const f of excelFiles) {
-      const buf = await f.arrayBuffer();
-      const wb = XLSX.read(buf, {type:'array'});
-      excelData.push({name: f.name, wb});
+    try {
+      const XLSX = await ensureXLSX();
+      for (const f of excelFiles) {
+        const buf = await f.arrayBuffer();
+        const wb = XLSX.read(buf, {type:'array'});
+        excelData.push({name: f.name, wb});
+      }
+      showExcelOptions();
+    } catch (e) {
+      showToast(t('toastFail') + (e && e.message ? e.message : e));
     }
-    showExcelOptions();
   }
 
   function showExcelOptions() {
