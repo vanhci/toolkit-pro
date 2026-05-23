@@ -553,6 +553,7 @@
   // ========== STATE ==========
   let excelMode = null, excelFiles = [], excelData = [];
   let imageMode = null, imageFiles = [];
+  let excelProcessing = false, imageProcessing = false, pdfImgProcessing = false;
   let coverPreset = '考研', coverColor = '#4f46e5';
   let renameFiles = [];
   let adRemoved = false;
@@ -864,6 +865,73 @@
 
   function isOversizeFile(file) {
     return file.size > MAX_FILE_SIZE;
+  }
+
+  function isSupportedImageFile(file) {
+    return file && /^image\//.test(file.type);
+  }
+
+  function isSupportedPdfFile(file) {
+    return file && (file.type === 'application/pdf' || /\.pdf$/i.test(file.name));
+  }
+
+  function resolveColumnIndex(headers, input) {
+    const raw = String(input ?? '').trim();
+    if (!raw) return -1;
+    const exact = headers.findIndex(h => String(h ?? '').trim().toLowerCase() === raw.toLowerCase());
+    if (exact >= 0) return exact;
+    if (/^[a-z]+$/i.test(raw)) {
+      const idx = raw.toUpperCase().split('').reduce((sum, ch) => sum * 26 + ch.charCodeAt(0) - 64, 0) - 1;
+      if (idx >= 0 && idx < headers.length) return idx;
+    }
+    if (/^\d+$/.test(raw)) {
+      const n = Number(raw);
+      if (n >= 0 && n < headers.length) return n;
+      if (n >= 1 && n <= headers.length) return n - 1;
+    }
+    return -1;
+  }
+
+  function safeSheetName(name) {
+    const cleaned = String(name || 'Sheet').replace(/[\\/?*[\]:]/g, '_').trim() || 'Sheet';
+    return cleaned.substring(0, 31);
+  }
+
+  function canvasToBlob(canvas, type = 'image/png', quality) {
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas export failed')), type, quality);
+    });
+  }
+
+  function replaceExtension(name, ext) {
+    const safeExt = ext.startsWith('.') ? ext : `.${ext}`;
+    return /\.[^.]+$/.test(name) ? name.replace(/\.[^.]+$/, safeExt) : name + safeExt;
+  }
+
+  function getRandomBytes(length) {
+    const cryptoObj = window.crypto || window.msCrypto;
+    if (!cryptoObj || typeof cryptoObj.getRandomValues !== 'function') throw new Error('Secure random is unavailable');
+    return cryptoObj.getRandomValues(new Uint8Array(length));
+  }
+
+  function secureRandomInt(max) {
+    if (!Number.isFinite(max) || max <= 0) throw new Error('Invalid random range');
+    const limit = 256 - (256 % max);
+    let value;
+    do {
+      value = getRandomBytes(1)[0];
+    } while (value >= limit);
+    return value % max;
+  }
+
+  function uuidV4Compat() {
+    const cryptoObj = window.crypto || window.msCrypto;
+    if (cryptoObj && typeof cryptoObj.randomUUID === 'function') return cryptoObj.randomUUID();
+    const bytes = getRandomBytes(16);
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    const hex = [...bytes].map(b => b.toString(16).padStart(2, '0')).join('');
+    return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
   }
 
   function renderFileList(container, files) {
@@ -1461,9 +1529,13 @@
   }
 
   async function excelRun() {
+    if (excelProcessing) return;
     if (!adRemoved && dailyUses >= FREE_DAILY_LIMIT) {
       document.getElementById('paywall-modal').classList.remove('hidden'); return;
     }
+    const runBtn = document.getElementById('excel-run');
+    excelProcessing = true;
+    if (runBtn) runBtn.disabled = true;
     if (!excelData.length) {
       // 文件已选但解析可能失败（移动端CDN加载慢），尝试重新解析
       if (excelFiles.length && excelMode) {
@@ -1477,16 +1549,27 @@
             excelData.push({name: f.name, wb});
           }
         } catch (e) {
-          showToast(t('toastFail') + (e.message || e)); return;
+          showToast(t('toastFail') + (e.message || e));
+          excelProcessing = false;
+          if (runBtn) runBtn.disabled = false;
+          return;
         }
-        if (!excelData.length) { showToast(t('toastUpload')); return; }
+        if (!excelData.length) {
+          showToast(t('toastUpload'));
+          excelProcessing = false;
+          if (runBtn) runBtn.disabled = false;
+          return;
+        }
       } else {
-        showToast(t('toastUpload')); return;
+        showToast(t('toastUpload'));
+        excelProcessing = false;
+        if (runBtn) runBtn.disabled = false;
+        return;
       }
     }
-    const XLSX = await ensureXLSX();
-    showToast(t('toastProcess'));
     try {
+      const XLSX = await ensureXLSX();
+      showToast(t('toastProcess'));
       let result, outputName;
 
       if (excelMode === 'merge') {
@@ -1509,7 +1592,7 @@
         // 每行都填充到与表头等长，不足的补空，多余的截断
         for (const sh of allSheets) {
           for (let i = 1; i < sh.aoa.length; i++) {
-            const row = sh.aoa[i];
+            const row = sh.aoa[i] || [];
             const padded = [];
             for (let c = 0; c < headerLen; c++) {
               padded.push(row[c] != null ? row[c] : '');
@@ -1542,10 +1625,10 @@
 
         for (const sh of allSheets) {
           for (let i = 1; i < sh.aoa.length; i++) {
-            const row = sh.aoa[i];
+            const row = sh.aoa[i] || [];
             // 如果整行所有单元格都为空（或只有空白），跳过
             const isEmptyRow = row.every(cell => cell == null || EMPTY_RE.test(String(cell)));
-            if (!isEmptyRow) cleanAOA.push(row);
+            if (!isEmptyRow) cleanAOA.push(row.map(cell => typeof cell === 'string' ? cell.trim() : cell));
           }
         }
 
@@ -1574,7 +1657,7 @@
 
         for (const sh of allSheets) {
           for (let i = 1; i < sh.aoa.length; i++) {
-            const row = sh.aoa[i];
+            const row = sh.aoa[i] || [];
             const rowStr = row.map(c => String(c ?? '')).join('\t');
             if (rowStr.toLowerCase().includes(kw)) {
               filteredAOA.push(row);
@@ -1606,21 +1689,12 @@
         const dataRows = [];
         for (const sh of allSheets) {
           for (let i = 1; i < sh.aoa.length; i++) {
-            dataRows.push(sh.aoa[i]);
+            dataRows.push(sh.aoa[i] || []);
           }
         }
 
-        let colIndex = -1;
-        if (dedupCol !== '') {
-          // 优先按列名匹配
-          const colLower = dedupCol.toLowerCase();
-          colIndex = headers.findIndex(h => String(h ?? '').toLowerCase() === colLower);
-          // 其次按数字列索引
-          if (colIndex === -1) {
-            const num = parseInt(dedupCol, 10);
-            if (!isNaN(num) && num >= 0 && num < headers.length) colIndex = num;
-          }
-        }
+        const colIndex = dedupCol !== '' ? resolveColumnIndex(headers, dedupCol) : -1;
+        if (dedupCol !== '' && colIndex === -1) { showToast(t('toastSplitColNotFound')); return; }
 
         const seenKeys = new Set();
         const dedupAOA = [headers];
@@ -1633,7 +1707,10 @@
           } else {
             key = row.map(c => String(c ?? '').toLowerCase().trim()).join('|');
           }
-          if (!key || key === '') continue; // 跳过空键
+          if (!key || key === '') {
+            dedupAOA.push(row);
+            continue;
+          }
           if (seenKeys.has(key)) { dupCount++; continue; }
           seenKeys.add(key);
           dedupAOA.push(row);
@@ -1659,13 +1736,7 @@
         const dataRows = aoa.slice(1);
 
         // 找拆分列
-        let colIndex = -1;
-        const colLower = splitCol.toLowerCase();
-        colIndex = headers.findIndex(h => String(h ?? '').toLowerCase() === colLower);
-        if (colIndex === -1) {
-          const num = parseInt(splitCol, 10);
-          if (!isNaN(num) && num >= 0 && num < headers.length) colIndex = num;
-        }
+        const colIndex = resolveColumnIndex(headers, splitCol);
         if (colIndex === -1) { showToast(t('toastSplitColNotFound')); return; }
 
         // 按值分组
@@ -1682,7 +1753,7 @@
           const wb2 = XLSX.utils.book_new();
           const ws = XLSX.utils.aoa_to_sheet(rows);
           ws['!cols'] = headers.map(() => ({ wch: 15 }));
-          XLSX.utils.book_append_sheet(wb2, ws, key.substring(0, 31));
+          XLSX.utils.book_append_sheet(wb2, ws, safeSheetName(key));
           const buf = XLSX.write(wb2, {bookType:'xlsx',type:'array'});
           const safeName = key.replace(/[\\/:*?"<>|]/g, '_').substring(0, 50);
           zip.file(`${safeName}.xlsx`, buf);
@@ -1734,7 +1805,13 @@
       const buf = XLSX.write(result, {bookType:'xlsx',type:'array'});
       recordUse();
       downloadFile(buf, outputName);
-    } catch(e) { showToast(t('toastFail') + e.message); console.error(e); }
+    } catch(e) {
+      showToast(t('toastFail') + (e && e.message ? e.message : e));
+      console.error(e);
+    } finally {
+      excelProcessing = false;
+      if (runBtn) runBtn.disabled = false;
+    }
   }
 
   // ========== IMAGE ==========
@@ -1767,7 +1844,11 @@
     dz.ondragover = e => { e.preventDefault(); dz.classList.add('dragover'); };
     dz.ondragleave = () => dz.classList.remove('dragover');
     const handleImages = files => {
-      imageFiles = Array.from(files);
+      imageFiles = Array.from(files).filter(isSupportedImageFile);
+      if (!imageFiles.length) {
+        showToast(t('toastUploadImages'));
+        return;
+      }
       const oversized = imageFiles.find(isOversizeFile);
       if (oversized) {
         imageFiles = [];
@@ -1793,53 +1874,73 @@
   }
 
   async function imageRun() {
+    if (imageProcessing) return;
     if (!adRemoved && dailyUses >= FREE_DAILY_LIMIT) {
       document.getElementById('paywall-modal').classList.remove('hidden'); return;
     }
     if (!imageFiles.length) { showToast(t('toastUploadImages')); return; }
-    recordUse();
+    const runBtn = document.getElementById('image-run');
+    imageProcessing = true;
+    if (runBtn) runBtn.disabled = true;
     showToast(t('toastStartProcess'));
-    for (const f of imageFiles) {
-      const img = await loadImage(f);
-      let canvas = document.createElement('canvas');
-      let ctx = canvas.getContext('2d');
-      if (imageMode === 'resize') {
-        canvas.width = parseInt(document.getElementById('img-w').value) || 800;
-        canvas.height = parseInt(document.getElementById('img-h').value) || 600;
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      } else if (imageMode === 'compress') {
-        canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
-        ctx.drawImage(img, 0, 0);
-        canvas.toBlob(blob => {
-          downloadBlob(blob, f.name.replace(/\.[^.]+$/, '_压缩.jpg'));
-        }, 'image/jpeg', (parseInt(document.getElementById('img-quality')?.value) || 80) / 100);
-        continue;
-      } else if (imageMode === 'watermark') {
-        canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
-        ctx.drawImage(img, 0, 0);
-        ctx.font = `${Math.max(20, img.naturalWidth/15)}px sans-serif`;
-        ctx.fillStyle = 'rgba(255,255,255,0.5)';
-        ctx.fillText(document.getElementById('wm-text')?.value || '©', 20, img.naturalHeight - 20);
-      } else if (imageMode === 'convert') {
-        canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
-        ctx.drawImage(img, 0, 0);
-        const fmt = document.getElementById('img-format')?.value || 'image/png';
-        canvas.toBlob(blob => {
-          const ext = fmt.split('/')[1];
-          downloadBlob(blob, f.name.replace(/\.[^.]+$/, '.' + (ext==='jpeg'?'jpg':ext)));
-        }, fmt, 0.92);
-        continue;
+    try {
+      let processed = 0;
+      for (const f of imageFiles) {
+        const img = await loadImage(f);
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('Canvas is unavailable');
+        if (imageMode === 'resize') {
+          const width = Math.max(1, Math.min(12000, parseInt(document.getElementById('img-w').value, 10) || 800));
+          const height = Math.max(1, Math.min(12000, parseInt(document.getElementById('img-h').value, 10) || 600));
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          downloadBlob(await canvasToBlob(canvas, 'image/png'), replaceExtension(f.name, '.png'));
+        } else if (imageMode === 'compress') {
+          canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+          ctx.drawImage(img, 0, 0);
+          const quality = (parseInt(document.getElementById('img-quality')?.value, 10) || 80) / 100;
+          downloadBlob(await canvasToBlob(canvas, 'image/jpeg', quality), replaceExtension(f.name.replace(/\.[^.]+$/, '_compressed'), '.jpg'));
+        } else if (imageMode === 'watermark') {
+          canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+          ctx.drawImage(img, 0, 0);
+          ctx.font = `${Math.max(20, Math.round(img.naturalWidth / 15))}px sans-serif`;
+          ctx.fillStyle = 'rgba(255,255,255,0.5)';
+          ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+          ctx.lineWidth = Math.max(2, Math.round(img.naturalWidth / 400));
+          const text = document.getElementById('wm-text')?.value || '©';
+          ctx.strokeText(text, 20, img.naturalHeight - 20);
+          ctx.fillText(text, 20, img.naturalHeight - 20);
+          downloadBlob(await canvasToBlob(canvas, 'image/png'), replaceExtension(f.name.replace(/\.[^.]+$/, '_watermark'), '.png'));
+        } else if (imageMode === 'convert') {
+          canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+          ctx.drawImage(img, 0, 0);
+          const fmt = document.getElementById('img-format')?.value || 'image/png';
+          const ext = fmt === 'image/jpeg' ? 'jpg' : fmt.split('/')[1];
+          downloadBlob(await canvasToBlob(canvas, fmt, 0.92), replaceExtension(f.name, `.${ext}`));
+        }
+        URL.revokeObjectURL(img.src);
+        processed++;
       }
-      canvas.toBlob(blob => downloadBlob(blob, f.name), 'image/png');
+      if (processed) recordUse();
+      showToast(t('toastDone'));
+    } catch (e) {
+      showToast(t('toastFail') + (e && e.message ? e.message : e));
+    } finally {
+      imageProcessing = false;
+      if (runBtn) runBtn.disabled = false;
     }
-    showToast(t('toastDone'));
   }
 
   function loadImage(file) {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = () => resolve(img);
-      img.onerror = reject;
+      img.onerror = () => {
+        URL.revokeObjectURL(img.src);
+        reject(new Error(currentLang === 'en' ? 'Image failed to load' : '图片加载失败'));
+      };
       img.src = URL.createObjectURL(file);
     });
   }
@@ -2014,8 +2115,8 @@
     document.getElementById('rename-dropzone').style.display = '';
   }
 
-  document.getElementById('rename-input').onchange = e => {
-    renameFiles = Array.from(e.target.files);
+  function handleRenameFiles(files) {
+    renameFiles = Array.from(files || []);
     const oversized = renameFiles.find(isOversizeFile);
     if (oversized) {
       renameFiles = [];
@@ -2027,7 +2128,9 @@
     const fl = document.getElementById('rename-files');
     renderFileList(fl, renameFiles);
     if (renameFiles.length) document.getElementById('rename-run').classList.remove('hidden');
-  };
+  }
+  document.getElementById('rename-input').onchange = e => handleRenameFiles(e.target.files);
+  setupFileDrop('rename-dropzone', 'rename-input', handleRenameFiles);
 
   function renameRun() {
     if (!adRemoved && dailyUses >= FREE_DAILY_LIMIT) {
@@ -2070,25 +2173,32 @@
   function showGuide(id) { document.getElementById(id)?.classList.remove('hidden'); }
   function passwordSetMode() { showGuide('password-guide'); document.getElementById('password-run').classList.remove('hidden'); }
   function passwordRun() {
-    const length = parseInt(document.getElementById('password-length').value, 10);
-    const sets = [
-      ['password-upper', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'],
-      ['password-lower', 'abcdefghijklmnopqrstuvwxyz'],
-      ['password-number', '0123456789'],
-      ['password-symbol', '!@#$%^&*()-_=+[]{};:,.?/']
-    ].filter(([id]) => document.getElementById(id).checked).map(([, chars]) => chars);
-    if (!sets.length) { showToast(tt('needInput')); return; }
-    const all = sets.join('');
-    const pick = chars => chars[crypto.getRandomValues(new Uint32Array(1))[0] % chars.length];
-    const output = document.getElementById('password-output');
-    output.textContent = '';
-    for (let i = 0; i < 5; i++) {
-      const chars = sets.map(pick);
-      while (chars.length < length) chars.push(pick(all));
-      chars.sort(() => crypto.getRandomValues(new Uint32Array(1))[0] - 2147483648);
-      addCopyRow(output, chars.join(''));
+    try {
+      const length = Math.max(8, Math.min(64, parseInt(document.getElementById('password-length').value, 10) || 16));
+      const sets = [
+        ['password-upper', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'],
+        ['password-lower', 'abcdefghijklmnopqrstuvwxyz'],
+        ['password-number', '0123456789'],
+        ['password-symbol', '!@#$%^&*()-_=+[]{};:,.?/']
+      ].filter(([id]) => document.getElementById(id).checked).map(([, chars]) => chars);
+      if (!sets.length) { showToast(tt('needInput')); return; }
+      const all = sets.join('');
+      const pick = chars => chars[secureRandomInt(chars.length)];
+      const output = document.getElementById('password-output');
+      output.textContent = '';
+      for (let i = 0; i < 5; i++) {
+        const chars = sets.map(pick);
+        while (chars.length < length) chars.push(pick(all));
+        for (let j = chars.length - 1; j > 0; j--) {
+          const k = secureRandomInt(j + 1);
+          [chars[j], chars[k]] = [chars[k], chars[j]];
+        }
+        addCopyRow(output, chars.join(''));
+      }
+      showToast(tt('generated'));
+    } catch (e) {
+      showToast(t('toastFail') + (e && e.message ? e.message : e));
     }
-    showToast(tt('generated'));
   }
 
   function jsonSetMode() { showGuide('json-guide'); }
@@ -2123,6 +2233,8 @@
   function handleBase64File(files) {
     base64File = files[0];
     if (!base64File) return;
+    if (!isSupportedImageFile(base64File)) { showToast(t('toastUploadImages')); return; }
+    if (isOversizeFile(base64File)) { showToast(formatMsg('toastFileTooLarge', {name: base64File.name})); return; }
     const reader = new FileReader();
     reader.onload = () => {
       const data = reader.result;
@@ -2131,6 +2243,7 @@
       document.getElementById('base64-output').value = document.getElementById('base64-datauri').checked ? data : String(data).split(',')[1];
       showToast(tt('uploadDone'));
     };
+    reader.onerror = () => showToast(t('toastFail') + (reader.error?.message || 'read failed'));
     reader.readAsDataURL(base64File);
   }
   document.getElementById('base64-datauri')?.addEventListener('change', () => { if (base64File) handleBase64File([base64File]); });
@@ -2158,10 +2271,25 @@
     return text.replace(/@@CODE(\d+)@@/g, (_, i) => blocks[i]);
   }
   function inlineMd(text) {
-    return text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="max-w-full rounded-xl">')
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a class="text-indigo-600 underline" href="$2" target="_blank" rel="noopener">$1</a>')
+    return text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, url) => {
+        const safeUrl = sanitizeMarkdownUrl(url, true);
+        return safeUrl ? `<img src="${safeUrl}" alt="${alt}" class="max-w-full rounded-xl">` : alt;
+      })
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) => {
+        const safeUrl = sanitizeMarkdownUrl(url, false);
+        return safeUrl ? `<a class="text-indigo-600 underline" href="${safeUrl}" target="_blank" rel="noopener noreferrer">${label}</a>` : label;
+      })
       .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
       .replace(/`([^`]+)`/g, '<code>$1</code>');
+  }
+
+  function sanitizeMarkdownUrl(url, allowImages) {
+    const trimmed = String(url || '').trim();
+    if (!trimmed) return '';
+    if (/^(https?:|mailto:)/i.test(trimmed)) return escapeHTML(trimmed);
+    if (allowImages && /^data:image\/(?:png|jpe?g|gif|webp);base64,/i.test(trimmed)) return escapeHTML(trimmed);
+    if (/^(\/|\.\/|\.\.\/|#)/.test(trimmed)) return escapeHTML(trimmed);
+    return '';
   }
 
   function colorSetMode() { showGuide('color-guide'); colorConvert(); }
@@ -2209,17 +2337,21 @@
   let generatedUuids = [];
   function uuidSetMode() { showGuide('uuid-guide'); }
   function uuidRun() {
-    const count = Math.max(1, Math.min(100, parseInt(document.getElementById('uuid-count').value, 10) || 1));
-    const version = document.getElementById('uuid-version').value;
-    const hyphen = document.getElementById('uuid-hyphen').value === 'yes';
-    const upper = document.getElementById('uuid-case').value === 'upper';
-    generatedUuids = Array.from({length: count}, () => formatUuid(version === 'v5' ? uuidV5Like() : crypto.randomUUID(), hyphen, upper));
-    const out = document.getElementById('uuid-output');
-    out.textContent = '';
-    generatedUuids.forEach(id => addCopyRow(out, id));
+    try {
+      const count = Math.max(1, Math.min(100, parseInt(document.getElementById('uuid-count').value, 10) || 1));
+      const version = document.getElementById('uuid-version').value;
+      const hyphen = document.getElementById('uuid-hyphen').value === 'yes';
+      const upper = document.getElementById('uuid-case').value === 'upper';
+      generatedUuids = Array.from({length: count}, () => formatUuid(version === 'v5' ? uuidV5Like() : uuidV4Compat(), hyphen, upper));
+      const out = document.getElementById('uuid-output');
+      out.textContent = '';
+      generatedUuids.forEach(id => addCopyRow(out, id));
+    } catch (e) {
+      showToast(t('toastFail') + (e && e.message ? e.message : e));
+    }
   }
   function uuidV5Like() {
-    const bytes = crypto.getRandomValues(new Uint8Array(16));
+    const bytes = getRandomBytes(16);
     bytes[6] = (bytes[6] & 0x0f) | 0x50;
     bytes[8] = (bytes[8] & 0x3f) | 0x80;
     const hex = [...bytes].map(b => b.toString(16).padStart(2,'0')).join('');
@@ -2231,6 +2363,7 @@
   function qrcodeSetMode() { showGuide('qrcode-guide'); }
   function qrcodeRun() {
     try {
+      if (typeof qrcode !== 'function') { showToast(tt('qrFail')); return; }
       const text = document.getElementById('qrcode-text').value.trim();
       if (!text) { showToast(tt('needInput')); return; }
       const qr = qrcode(0, 'M');
@@ -2249,7 +2382,15 @@
       showToast(tt('generated'));
     } catch (e) { showToast(tt('qrFail')); }
   }
-  function qrcodeDownload() { document.getElementById('qrcode-canvas').toBlob(blob => downloadBlob(blob, 'qrcode.png'), 'image/png'); }
+  async function qrcodeDownload() {
+    const canvas = document.getElementById('qrcode-canvas');
+    if (!canvas.width || !canvas.height) { showToast(tt('needInput')); return; }
+    try {
+      downloadBlob(await canvasToBlob(canvas, 'image/png'), 'qrcode.png');
+    } catch (e) {
+      showToast(t('toastFail') + (e && e.message ? e.message : e));
+    }
+  }
 
   let ipLoaded = false;
   function ipSetMode() { showGuide('ip-guide'); if (!ipLoaded) ipRun(); }
@@ -2280,38 +2421,71 @@
   }
 
   let pdfImgFile = null, pdfImgPages = [];
-  function pdfImgSetMode() { showGuide('pdf-img-guide'); setupFileDrop('pdf-img-dropzone', 'pdf-img-input', files => { pdfImgFile = files[0]; document.getElementById('pdf-img-run').classList.toggle('hidden', !pdfImgFile); showToast(tt('uploadDone')); }); }
+  function pdfImgSetMode() {
+    showGuide('pdf-img-guide');
+    setupFileDrop('pdf-img-dropzone', 'pdf-img-input', files => {
+      pdfImgFile = files[0] || null;
+      pdfImgPages = [];
+      document.getElementById('pdf-img-output').textContent = '';
+      document.getElementById('pdf-img-download').classList.add('hidden');
+      if (pdfImgFile && !isSupportedPdfFile(pdfImgFile)) {
+        showToast(currentLang === 'en' ? 'Please upload a PDF file' : '请上传 PDF 文件');
+        pdfImgFile = null;
+      }
+      if (pdfImgFile && isOversizeFile(pdfImgFile)) {
+        showToast(formatMsg('toastFileTooLarge', {name: pdfImgFile.name}));
+        pdfImgFile = null;
+      }
+      document.getElementById('pdf-img-run').classList.toggle('hidden', !pdfImgFile);
+      if (pdfImgFile) showToast(tt('uploadDone'));
+    });
+  }
   async function pdfImgRun() {
     if (!pdfImgFile) return;
-    const pdfjsLib = window.pdfjsLib;
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    const bytes = await pdfImgFile.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({data: bytes}).promise;
-    const out = document.getElementById('pdf-img-output');
-    out.textContent = ''; pdfImgPages = [];
-    for (let pageNo = 1; pageNo <= pdf.numPages; pageNo++) {
-      const page = await pdf.getPage(pageNo);
-      const viewport = page.getViewport({scale: 2});
-      const canvas = document.createElement('canvas');
-      canvas.width = viewport.width; canvas.height = viewport.height;
-      await page.render({canvasContext: canvas.getContext('2d'), viewport}).promise;
-      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-      pdfImgPages.push({name: `page-${String(pageNo).padStart(3,'0')}.png`, blob});
-      const img = document.createElement('img');
-      img.src = URL.createObjectURL(blob);
-      img.className = 'w-full rounded-xl border border-gray-200';
-      const wrap = document.createElement('div');
-      wrap.className = 'space-y-2';
-      const btn = document.createElement('button');
-      btn.className = 'w-full max-w-xs mx-auto md:w-auto md:max-w-none md:mx-0 bg-indigo-600 text-white px-5 py-3 rounded-xl';
-      btn.textContent = `${tt('downloadBtn')} ${pageNo}`;
-      btn.onclick = () => downloadBlob(blob, `page-${pageNo}.png`);
-      wrap.append(img, btn); out.appendChild(wrap);
+    if (pdfImgProcessing) return;
+    const runBtn = document.getElementById('pdf-img-run');
+    pdfImgProcessing = true;
+    if (runBtn) runBtn.disabled = true;
+    try {
+      const pdfjsLib = window.pdfjsLib;
+      if (!pdfjsLib) throw new Error('PDF.js not loaded');
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      const bytes = await pdfImgFile.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({data: bytes}).promise;
+      const out = document.getElementById('pdf-img-output');
+      out.textContent = ''; pdfImgPages = [];
+      for (let pageNo = 1; pageNo <= pdf.numPages; pageNo++) {
+        const page = await pdf.getPage(pageNo);
+        const viewport = page.getViewport({scale: 2});
+        const canvas = document.createElement('canvas');
+        canvas.width = viewport.width; canvas.height = viewport.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('Canvas is unavailable');
+        await page.render({canvasContext: ctx, viewport}).promise;
+        const blob = await canvasToBlob(canvas, 'image/png');
+        pdfImgPages.push({name: `page-${String(pageNo).padStart(3,'0')}.png`, blob});
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(blob);
+        img.className = 'w-full rounded-xl border border-gray-200';
+        const wrap = document.createElement('div');
+        wrap.className = 'space-y-2';
+        const btn = document.createElement('button');
+        btn.className = 'w-full max-w-xs mx-auto md:w-auto md:max-w-none md:mx-0 bg-indigo-600 text-white px-5 py-3 rounded-xl';
+        btn.textContent = `${tt('downloadBtn')} ${pageNo}`;
+        btn.onclick = () => downloadBlob(blob, `page-${pageNo}.png`);
+        wrap.append(img, btn); out.appendChild(wrap);
+      }
+      document.getElementById('pdf-img-download').classList.toggle('hidden', !pdfImgPages.length);
+      showToast(tt('pdfRendered'));
+    } catch (e) {
+      showToast(t('toastFail') + (e && e.message ? e.message : e));
+    } finally {
+      pdfImgProcessing = false;
+      if (runBtn) runBtn.disabled = false;
     }
-    document.getElementById('pdf-img-download').classList.remove('hidden');
-    showToast(tt('pdfRendered'));
   }
   async function pdfImgDownloadZip() {
+    if (!pdfImgPages.length) { showToast(tt('needInput')); return; }
     const zip = new JSZip();
     pdfImgPages.forEach(p => zip.file(p.name, p.blob));
     downloadBlob(await zip.generateAsync({type:'blob'}), 'pdf-pages.zip');
@@ -2350,6 +2524,7 @@
   function setupFileDrop(zoneId, inputId, handler) {
     const zone = document.getElementById(zoneId);
     const input = document.getElementById(inputId);
+    if (!zone || !input) return;
     input.onchange = e => handler(Array.from(e.target.files || []));
     zone.ondragover = e => { e.preventDefault(); zone.classList.add('dragover'); };
     zone.ondragleave = () => zone.classList.remove('dragover');
