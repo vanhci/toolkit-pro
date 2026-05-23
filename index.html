@@ -1156,7 +1156,26 @@
     if (!adRemoved && dailyUses >= FREE_DAILY_LIMIT) {
       document.getElementById('paywall-modal').classList.remove('hidden'); return;
     }
-    if (!excelData.length) { showToast(t('toastUpload')); return; }
+    if (!excelData.length) {
+      // 文件已选但解析可能失败（移动端CDN加载慢），尝试重新解析
+      if (excelFiles.length && excelMode) {
+        showToast(currentLang === 'en' ? 'Re-parsing files...' : '正在重新解析文件...');
+        try {
+          const XLSX = await ensureXLSX();
+          excelData = [];
+          for (const f of excelFiles) {
+            const buf = await f.arrayBuffer();
+            const wb = XLSX.read(buf, {type:'array'});
+            excelData.push({name: f.name, wb});
+          }
+        } catch (e) {
+          showToast(t('toastFail') + (e.message || e)); return;
+        }
+        if (!excelData.length) { showToast(t('toastUpload')); return; }
+      } else {
+        showToast(t('toastUpload')); return;
+      }
+    }
     const XLSX = await ensureXLSX();
     showToast(t('toastProcess'));
     try {
