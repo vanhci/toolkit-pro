@@ -387,7 +387,7 @@
   const STORAGE_KEY = 'toolkit_daily_uses';
   const DATE_KEY = 'toolkit_date';
   const MAX_FILE_SIZE = 5 * 1024 * 1024;
-  const XLSX_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.mjs';
+  const XLSX_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
   let xlsxLoadPromise = null;
 
   // ========== LANGUAGE ==========
@@ -674,9 +674,15 @@
     if (window.XLSX) return window.XLSX;
     if (!xlsxLoadPromise) {
       showToast(t('toastXlsxLoading'));
-      xlsxLoadPromise = import(XLSX_CDN).then(module => {
-        window.XLSX = module;
-        return module;
+      xlsxLoadPromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = XLSX_CDN;
+        script.onload = () => {
+          if (window.XLSX) resolve(window.XLSX);
+          else reject(new Error('XLSX loaded but not available'));
+        };
+        script.onerror = () => reject(new Error('Failed to load XLSX library'));
+        document.head.appendChild(script);
       });
     }
     return xlsxLoadPromise;
