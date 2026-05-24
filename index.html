@@ -315,23 +315,29 @@
       box-shadow: 0 24px 70px rgba(15, 23, 42, .24);
     }
     .recent-tools {
-      margin-top: .25rem;
-      margin-bottom: 1rem;
-      padding-top: .75rem;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 40;
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+      padding: .75rem 1rem 1rem;
+      box-shadow: 0 -4px 20px rgba(15, 23, 42, .08);
     }
     .recent-tools h2 {
-      font-size: .9rem;
+      font-size: .8rem;
       font-weight: 800;
       color: #334155;
-      margin-bottom: .75rem;
+      margin-bottom: .5rem;
     }
     .recent-empty {
       border: 1px dashed rgba(148, 163, 184, .55);
-      border-radius: 1rem;
+      border-radius: .75rem;
       color: #94a3b8;
       background: rgba(255,255,255,.58);
-      padding: .9rem 1rem;
-      font-size: .85rem;
+      padding: .6rem .75rem;
+      font-size: .8rem;
     }
     @media (min-width: 768px) {
       .tool-grid,
@@ -445,7 +451,7 @@
   </nav>
 
   <!-- MAIN CONTENT -->
-  <main class="max-w-6xl mx-auto px-4 py-6">
+  <main class="max-w-6xl mx-auto px-4 py-6 pb-24">
     <div id="recent-tools" class="recent-tools"></div>
 
     <!-- TOOL: EXCEL -->
