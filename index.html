@@ -349,6 +349,15 @@
       font-size: .9rem;
       flex-shrink: 0;
     }
+    .recent-strip-label-text {
+      flex-shrink: 0;
+      font-size: .78rem;
+      font-weight: 700;
+      color: #94a3b8;
+      white-space: nowrap;
+      padding-right: .2rem;
+      letter-spacing: .02em;
+    }
     .recent-strip-label {
       max-width: 100px;
       overflow: hidden;
@@ -468,7 +477,7 @@
   <!-- MAIN CONTENT -->
   <main class="max-w-6xl mx-auto px-4 py-6">
     <!-- 最近使用 — 顶部紧凑横条，跟随内容滚动 -->
-    <div id="recent-tools" class="recent-strip flex gap-2 overflow-x-auto pb-1 mb-5" style="scrollbar-width:none;-ms-overflow-style:none;"></div>
+    <div id="recent-tools" class="recent-strip flex gap-2 overflow-x-auto pb-1 mb-4 items-center" style="scrollbar-width:none;-ms-overflow-style:none;"></div>
 
     <!-- TOOL: EXCEL -->
     <section id="tool-excel" class="tool-content">
@@ -1331,6 +1340,10 @@
       .slice(0, 5);
     container.textContent = '';
     if (!recent.length) return;
+    const label = document.createElement('span');
+    label.className = 'recent-strip-label-text';
+    label.textContent = currentLang === 'en' ? 'Recent' : '最近';
+    container.appendChild(label);
     recent.forEach(item => {
       const tool = getToolMeta(item.tool, item.group);
       if (!tool) return;
