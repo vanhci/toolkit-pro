@@ -299,8 +299,24 @@
       color: white !important;
       transform: translateY(-1px);
     }
+    .footer-action {
+      color: rgba(255,255,255,.78);
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.08);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, .16);
+    }
+    .footer-action:hover {
+      color: white;
+      background: rgba(255,255,255,.14);
+      transform: translateY(-1px);
+    }
+    .feedback-modal-card {
+      width: min(100%, 28rem);
+      box-shadow: 0 24px 70px rgba(15, 23, 42, .24);
+    }
     .recent-tools {
       margin-top: .25rem;
+      margin-bottom: 1rem;
       padding-top: .75rem;
     }
     .recent-tools h2 {
@@ -359,6 +375,13 @@
         width: 52px;
         height: 52px;
         font-size: 42px !important;
+      }
+      .feedback-actions {
+        flex-direction: column;
+      }
+      .feedback-actions a,
+      .feedback-actions button {
+        width: 100%;
       }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -423,6 +446,7 @@
 
   <!-- MAIN CONTENT -->
   <main class="max-w-6xl mx-auto px-4 py-6">
+    <div id="recent-tools" class="recent-tools"></div>
 
     <!-- TOOL: EXCEL -->
     <section id="tool-excel" class="tool-content">
@@ -458,7 +482,6 @@
           <p class="text-xs text-gray-500 mt-1">按姓名/手机号去重</p>
         </div>
       </div>
-      <div class="recent-tools" data-recent-for="excel"></div>
 
       <!-- Excel 操作面板 -->
       <div id="excel-panel" class="hidden bg-white rounded-2xl border border-gray-100 p-6">
@@ -510,7 +533,6 @@
           <p class="text-xs text-gray-500 mt-1">PNG/JPG/WebP 互转</p>
         </div>
       </div>
-      <div class="recent-tools" data-recent-for="image"></div>
 
       <div id="image-panel" class="hidden">
       <button onclick="hideImageTool()" class="tool-back text-sm text-indigo-600 mb-3 hover:text-indigo-800">← 返回分类</button>
@@ -544,7 +566,6 @@
           <p class="text-xs text-gray-500 mt-1" id="rename-card-desc">按模板批量修改文件名</p>
         </div>
       </div>
-      <div class="recent-tools" data-recent-for="file"></div>
 
       <div id="file-rename" class="hidden">
       <button onclick="hideFileTool()" class="tool-back text-sm text-indigo-600 mb-3 hover:text-indigo-800">← 返回分类</button>
@@ -613,7 +634,6 @@
         <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('color','dev', colorSetMode)"><div class="text-2xl mb-2">🔄</div><h3 class="font-semibold text-gray-900" data-i18n="colorTitle">颜色转换</h3><p class="text-xs text-gray-500 mt-1" data-i18n="colorDesc">rgb转hex、颜色转换器在线</p></div>
         <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('uuid','dev', uuidSetMode)"><div class="text-2xl mb-2">🔒</div><h3 class="font-semibold text-gray-900" data-i18n="uuidTitle">UUID 生成器</h3><p class="text-xs text-gray-500 mt-1" data-i18n="uuidDesc">在线uuid生成器、uuid随机生成</p></div>
       </div>
-      <div class="recent-tools" data-recent-for="dev"></div>
     </section>
 
     <!-- TOOL: UTILITY -->
@@ -626,7 +646,6 @@
         <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('pdf-img','utility', pdfImgSetMode)"><div class="text-2xl mb-2">📁</div><h3 class="font-semibold text-gray-900" data-i18n="pdfImgTitle">PDF 转图片</h3><p class="text-xs text-gray-500 mt-1" data-i18n="pdfImgDesc">pdf转图片在线、pdf转png</p></div>
         <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('convert','utility', convertSetMode)"><div class="text-2xl mb-2">🔤</div><h3 class="font-semibold text-gray-900" data-i18n="convertTitle">繁简转换</h3><p class="text-xs text-gray-500 mt-1" data-i18n="convertDesc">繁体转简体在线、简繁转换</p></div>
       </div>
-      <div class="recent-tools" data-recent-for="utility"></div>
     </section>
 
     <!-- TOOL: PASSWORD -->
@@ -839,14 +858,43 @@
   </div>
 
   <footer class="text-center text-xs text-gray-400 pb-8">
-    <p id="footer-copy">ToolKit Pro · 免费在线工具箱 · © 2026</p>
-    <div class="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-      <span>📚 教程</span>
-      <a href="/blog/excel-merge-free.html" class="hover:text-gray-600">Excel合并教程</a>
-      <a href="/blog/image-compress-free.html" class="hover:text-gray-600">图片压缩教程</a>
-      <a href="/blog/excel-clean-data.html" class="hover:text-gray-600">数据清洗教程</a>
+    <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div class="md:text-left">
+        <p id="footer-copy">ToolKit Pro · 免费在线工具箱 · © 2026</p>
+        <div class="mt-3 flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-2">
+          <span>📚 教程</span>
+          <a href="/blog/excel-merge-free.html" class="hover:text-gray-600">Excel合并教程</a>
+          <a href="/blog/image-compress-free.html" class="hover:text-gray-600">图片压缩教程</a>
+          <a href="/blog/excel-clean-data.html" class="hover:text-gray-600">数据清洗教程</a>
+        </div>
+      </div>
+      <button id="feedback-open" type="button" class="footer-action px-4 py-2 rounded-full text-xs font-semibold transition">
+        反馈意见
+      </button>
     </div>
   </footer>
+
+  <div id="feedback-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+    <div class="modal-content feedback-modal-card bg-white rounded-2xl p-6">
+      <div class="flex items-start justify-between gap-4 mb-3">
+        <h2 id="feedback-title" class="text-lg font-bold text-gray-900">反馈意见</h2>
+        <button id="feedback-close-icon" type="button" class="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="关闭">×</button>
+      </div>
+      <p id="feedback-desc" class="text-sm text-gray-600 leading-6">可提交问题、建议、改进点</p>
+      <div class="mt-4 rounded-xl bg-indigo-50 border border-indigo-100 px-4 py-3">
+        <p id="feedback-email-label" class="text-xs font-semibold text-indigo-700 mb-1">反馈邮箱</p>
+        <a id="feedback-email" href="mailto:hcw43446@gmail.com" class="text-sm font-semibold text-indigo-700 break-all">hcw43446@gmail.com</a>
+      </div>
+      <div class="feedback-actions mt-5 flex gap-3 justify-end">
+        <a id="feedback-mailto" href="mailto:hcw43446@gmail.com?subject=ToolKit%20Pro%20%E5%8F%8D%E9%A6%88" class="inline-flex items-center justify-center bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition">
+          发送邮件
+        </a>
+        <button id="feedback-close" type="button" class="inline-flex items-center justify-center bg-gray-100 text-gray-700 px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-200 transition">
+          关闭
+        </button>
+      </div>
+    </div>
+  </div>
 
   <script>
   // ========== STATE ==========
@@ -1202,7 +1250,7 @@
     return tool.descKey ? tt(tool.descKey) : tool.desc[currentLang];
   }
 
-  function createToolCard(tool, groupId) {
+  function createToolCard(tool, groupId, options = {}) {
     const card = document.createElement('button');
     card.type = 'button';
     card.className = 'tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer text-left';
@@ -1213,12 +1261,23 @@
     card.querySelector('h3').textContent = toolTitle(tool);
     card.querySelector('p').textContent = toolDesc(tool);
     card.addEventListener('click', () => {
-      const activeGroup = document.querySelector('.tool-content:not(.hidden)')?.id.replace('tool-', '');
-      if (activeGroup !== groupId) activateToolGroup(groupId, false);
-      rememberRecentTool(groupId, tool.id);
-      tool.action();
+      if (typeof options.onClick === 'function') {
+        options.onClick();
+        return;
+      }
+      openTool(groupId, tool.id);
     });
     return card;
+  }
+
+  function openTool(groupId, toolId, options = {}) {
+    const tool = getToolMeta(toolId, groupId);
+    if (!tool) return;
+    const activeGroup = document.querySelector('.tool-content:not(.hidden)')?.id.replace('tool-', '');
+    if (activeGroup !== groupId) activateToolGroup(groupId, false);
+    if (options.remember !== false) rememberRecentTool(groupId, toolId, {render: !options.fromRecent});
+    tool.action();
+    if (options.fromRecent) syncRecentToolsOrder();
   }
 
   function renderToolGroups() {
@@ -1231,36 +1290,58 @@
     renderRecentTools();
   }
 
-  function rememberRecentTool(groupId, toolId) {
-    const next = [{group: groupId, tool: toolId}, ...safeReadJSON(RECENT_TOOLS_KEY, [])]
+  function rememberRecentTool(groupId, toolId, options = {}) {
+    const now = Date.now();
+    const next = [{group: groupId, tool: toolId, updatedAt: now}, ...safeReadJSON(RECENT_TOOLS_KEY, [])]
       .filter((item, index, arr) => arr.findIndex(v => v.group === item.group && v.tool === item.tool) === index)
-      .slice(0, 12);
+      .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))
+      .slice(0, 3);
     localStorage.setItem(RECENT_TOOLS_KEY, JSON.stringify(next));
-    renderRecentTools();
+    if (options.render !== false) renderRecentTools();
+    return next;
   }
 
   function renderRecentTools() {
-    const recent = safeReadJSON(RECENT_TOOLS_KEY, []).slice(0, 3);
-    document.querySelectorAll('[data-recent-for]').forEach(container => {
-      container.textContent = '';
-      const title = document.createElement('h2');
-      title.textContent = currentLang === 'en' ? 'Recently Used' : '最近使用';
-      container.appendChild(title);
-      if (!recent.length) {
-        const empty = document.createElement('div');
-        empty.className = 'recent-empty';
-        empty.textContent = currentLang === 'en' ? 'Recently opened tools will appear here.' : '最近打开的工具会显示在这里。';
-        container.appendChild(empty);
-        return;
-      }
-      const grid = document.createElement('div');
-      grid.className = 'tool-grid grid gap-3';
-      recent.forEach(item => {
-        const tool = getToolMeta(item.tool, item.group);
-        if (tool) grid.appendChild(createToolCard(tool, item.group));
+    const container = document.getElementById('recent-tools');
+    if (!container) return;
+    const recent = safeReadJSON(RECENT_TOOLS_KEY, [])
+      .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))
+      .slice(0, 3);
+    container.textContent = '';
+    const title = document.createElement('h2');
+    title.textContent = currentLang === 'en' ? 'Recently Used' : '最近使用';
+    container.appendChild(title);
+    if (!recent.length) {
+      const empty = document.createElement('div');
+      empty.className = 'recent-empty';
+      empty.textContent = currentLang === 'en' ? 'Recently opened tools will appear here.' : '最近打开的工具会显示在这里。';
+      container.appendChild(empty);
+      return;
+    }
+    const grid = document.createElement('div');
+    grid.className = 'tool-grid grid gap-3';
+    recent.forEach(item => {
+      const tool = getToolMeta(item.tool, item.group);
+      if (!tool) return;
+      const card = createToolCard(tool, item.group, {
+        onClick: () => openTool(item.group, item.tool, {fromRecent: true})
       });
-      container.appendChild(grid);
+      grid.appendChild(card);
     });
+    container.appendChild(grid);
+  }
+
+  function syncRecentToolsOrder() {
+    const grid = document.querySelector('#recent-tools .tool-grid');
+    if (!grid) return;
+    const cards = Array.from(grid.children);
+    safeReadJSON(RECENT_TOOLS_KEY, [])
+      .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))
+      .slice(0, 3)
+      .forEach(item => {
+        const card = cards.find(el => el.dataset.groupId === item.group && el.dataset.toolId === item.tool);
+        if (card) grid.appendChild(card);
+      });
   }
 
   let currentLang = localStorage.getItem('toolkit_lang') || 'zh';
@@ -1293,6 +1374,37 @@
     } catch (e) {
       localStorage.removeItem(key);
       return fallback;
+    }
+  }
+
+  function getSavedLicenseEmail() {
+    return (localStorage.getItem('toolkit_license_email') || '').trim();
+  }
+
+  function saveLicenseEmail(email) {
+    const normalized = String(email || '').trim();
+    if (normalized) {
+      localStorage.setItem('toolkit_license_email', normalized);
+    }
+  }
+
+  async function syncLicenseStatus() {
+    const email = getSavedLicenseEmail();
+    if (!email || !email.includes('@')) {
+      return false;
+    }
+
+    try {
+      const resp = await fetch('/api/license/status?email=' + encodeURIComponent(email));
+      const data = await resp.json();
+      adRemoved = Boolean(data && data.success && data.unlocked);
+      if (adRemoved) {
+        document.getElementById('removeAdBtn')?.remove();
+        removeAds();
+      }
+      return adRemoved;
+    } catch (e) {
+      return false;
     }
   }
 
@@ -1507,6 +1619,7 @@
     // Update footer
     const footer = document.getElementById('footer-copy');
     if (footer) footer.textContent = lang.footer;
+    applyFeedbackLang();
     // Update rename pattern tip
     const renameTip = document.getElementById('rename-pattern');
     if (renameTip) renameTip.placeholder = lang.renamePatternTip;
@@ -1570,9 +1683,51 @@
   // Apply language on load
   document.addEventListener('DOMContentLoaded', () => {
     renderToolGroups();
+    setupFeedbackModal();
     setTimeout(applyLang, 50);
     ipRun();
   });
+
+  function applyFeedbackLang() {
+    const isEn = currentLang === 'en';
+    const text = {
+      open: isEn ? 'Feedback' : '反馈意见',
+      title: isEn ? 'Feedback' : '反馈意见',
+      desc: isEn ? 'Submit issues, suggestions, or improvement ideas.' : '可提交问题、建议、改进点',
+      emailLabel: isEn ? 'Feedback email' : '反馈邮箱',
+      send: isEn ? 'Send email' : '发送邮件',
+      close: isEn ? 'Close' : '关闭',
+    };
+    const map = {
+      'feedback-open': text.open,
+      'feedback-title': text.title,
+      'feedback-desc': text.desc,
+      'feedback-email-label': text.emailLabel,
+      'feedback-mailto': text.send,
+      'feedback-close': text.close,
+    };
+    Object.entries(map).forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    });
+    const icon = document.getElementById('feedback-close-icon');
+    if (icon) icon.setAttribute('aria-label', text.close);
+  }
+
+  function setupFeedbackModal() {
+    const modal = document.getElementById('feedback-modal');
+    const openBtn = document.getElementById('feedback-open');
+    const closeModal = () => modal?.classList.add('hidden');
+    openBtn?.addEventListener('click', () => modal?.classList.remove('hidden'));
+    document.getElementById('feedback-close')?.addEventListener('click', closeModal);
+    document.getElementById('feedback-close-icon')?.addEventListener('click', closeModal);
+    modal?.addEventListener('click', e => {
+      if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+  }
 
   function checkDailyLimit() {
     const today = getUTCDateKey();
@@ -1627,7 +1782,6 @@
 
   function showExcelTool(tool) {
     document.getElementById('excel-cards')?.classList.add('hidden');
-    document.querySelector('[data-recent-for="excel"]')?.classList.add('hidden');
     document.getElementById('excel-panel')?.classList.remove('hidden');
     excelSetMode(tool);
   }
@@ -1635,12 +1789,10 @@
   function hideExcelTool() {
     document.getElementById('excel-panel')?.classList.add('hidden');
     document.getElementById('excel-cards')?.classList.remove('hidden');
-    document.querySelector('[data-recent-for="excel"]')?.classList.remove('hidden');
   }
 
   function showImageTool(tool) {
     document.getElementById('image-cards')?.classList.add('hidden');
-    document.querySelector('[data-recent-for="image"]')?.classList.add('hidden');
     document.getElementById('image-panel')?.classList.remove('hidden');
     imageSetMode(tool);
   }
@@ -1648,12 +1800,10 @@
   function hideImageTool() {
     document.getElementById('image-panel')?.classList.add('hidden');
     document.getElementById('image-cards')?.classList.remove('hidden');
-    document.querySelector('[data-recent-for="image"]')?.classList.remove('hidden');
   }
 
   function showFileTool(tool) {
     document.getElementById('file-cards')?.classList.add('hidden');
-    document.querySelector('[data-recent-for="file"]')?.classList.add('hidden');
     document.getElementById('file-' + tool)?.classList.remove('hidden');
     if (tool === 'rename') renameSetMode('rename');
   }
@@ -1661,13 +1811,11 @@
   function hideFileTool() {
     document.querySelectorAll('#tool-file > div[id^="file-"]').forEach(d => d.classList.add('hidden'));
     document.getElementById('file-cards')?.classList.remove('hidden');
-    document.querySelector('[data-recent-for="file"]')?.classList.remove('hidden');
   }
 
   function showStandaloneTool(tool, category, setup) {
     hideStandaloneTool(category);
     document.getElementById(category + '-cards')?.classList.add('hidden');
-    document.querySelector(`[data-recent-for="${category}"]`)?.classList.add('hidden');
     const panel = document.getElementById('tool-' + tool);
     if (!panel) return;
     panel.classList.remove('hidden');
@@ -1687,7 +1835,6 @@
   function hideStandaloneTool(category) {
     document.querySelectorAll('.tool-panel').forEach(panel => panel.classList.add('hidden'));
     document.getElementById(category + '-cards')?.classList.remove('hidden');
-    document.querySelector(`[data-recent-for="${category}"]`)?.classList.remove('hidden');
   }
 
   // ========== AD REMOVAL ==========
@@ -1768,6 +1915,7 @@
   document.getElementById('lic-send-btn')?.addEventListener('click', async () => {
     const email = document.getElementById('lic-email').value.trim();
     if (!email || !email.includes('@')) { showToast('请输入有效邮箱'); return; }
+    saveLicenseEmail(email);
     const btn = document.getElementById('lic-send-btn');
     btn.textContent = '提交中...'; btn.disabled = true;
     try {
@@ -1789,6 +1937,7 @@
   // 已有激活码时，允许用户手动输入并激活。
   document.getElementById('lic-show-key-btn')?.addEventListener('click', () => {
     const email = document.getElementById('lic-email').value.trim();
+    saveLicenseEmail(email);
     const stepKey = document.getElementById('lic-step-key');
     stepKey.classList.remove('hidden');
     stepKey.dataset.email = email;
@@ -1815,6 +1964,7 @@
     const email = stepKey.dataset.email || document.getElementById('lic-email').value.trim();
     const key = document.getElementById('lic-key').value.trim().toUpperCase();
     if (!email || !key) { showToast('请填写邮箱和激活码'); return; }
+    saveLicenseEmail(email);
     const btn = document.getElementById('lic-activate-btn');
     btn.textContent = '激活中...'; btn.disabled = true;
     try {
@@ -1825,10 +1975,7 @@
       });
       const data = await resp.json();
       if (data.success) {
-        adRemoved = true;
-        localStorage.setItem('toolkit_unlocked', 'true');
-        document.getElementById('removeAdBtn')?.remove();
-        removeAds();
+        await syncLicenseStatus();
         document.getElementById('lic-step-key').classList.add('hidden');
         document.getElementById('lic-success').classList.remove('hidden');
       } else {
@@ -3023,15 +3170,12 @@
   }
 
   // Init (order matters: adRemoved must be set before checkDailyLimit)
-  const savedUnlock = localStorage.getItem('toolkit_unlocked');
-  if (savedUnlock === 'true') {
-    adRemoved = true;
-    removeAds();
-  } else {
-    window.setTimeout(hideUnfilledAds, 3000);
-  }
+  const licenseStatusPromise = syncLicenseStatus();
+  licenseStatusPromise.then(unlocked => {
+    if (!unlocked) window.setTimeout(hideUnfilledAds, 3000);
+  });
   excelSetupDropzone();
-  checkDailyLimit();
+  licenseStatusPromise.finally(checkDailyLimit);
   </script>
 </body>
 </html>
