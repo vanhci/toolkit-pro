@@ -1237,6 +1237,20 @@
     });
   }
 
+  function hideUnfilledAds() {
+    if (adRemoved) return;
+    document.querySelectorAll('#top-ad, #bottom-ad').forEach(container => {
+      const ad = container.querySelector('ins.adsbygoogle');
+      if (!ad) return;
+      const hasRenderedAd = !!ad.querySelector('iframe') || ad.dataset.adStatus === 'filled';
+      const isUnfilled = ad.dataset.adStatus === 'unfilled';
+      const isEmpty = !ad.textContent.trim() && ad.children.length === 0;
+      if (!hasRenderedAd && (isUnfilled || isEmpty)) {
+        container.style.display = 'none';
+      }
+    });
+  }
+
   document.getElementById('removeAdBtn').addEventListener('click', () => {
     if (adRemoved) { showToast(t('unlocked')); return; }
     document.getElementById('paywall-modal').classList.remove('hidden');
@@ -2552,6 +2566,8 @@
   if (savedUnlock === 'true') {
     adRemoved = true;
     removeAds();
+  } else {
+    window.setTimeout(hideUnfilledAds, 3000);
   }
   excelSetupDropzone();
   checkDailyLimit();
