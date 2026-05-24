@@ -108,6 +108,7 @@
       border-color: transparent;
       box-shadow: 0 14px 32px rgba(99, 102, 241, 0.32);
     }
+    .tool-grid,
     .tool-content > div[id$="-cards"],
     .tool-panel > .grid:first-child {
       gap: 1rem !important;
@@ -129,6 +130,24 @@
       transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease, background .24s ease;
       animation: cardFadeIn .48s ease both;
     }
+    .tool-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .tool-card h3,
+    .tool-card p {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .tool-card h3 {
+      min-height: 1.5rem;
+      line-height: 1.5;
+      -webkit-line-clamp: 1;
+    }
+    .tool-card p {
+      min-height: 2.5rem;
+      -webkit-line-clamp: 2;
+    }
     .tool-card::before {
       content: "";
       position: absolute;
@@ -141,7 +160,7 @@
       transition: opacity .24s ease, transform .24s ease;
     }
     .tool-card::after {
-      content: "使用 →";
+      content: attr(data-action-label);
       display: inline-flex;
       align-items: center;
       margin-top: .9rem;
@@ -280,12 +299,49 @@
       color: white !important;
       transform: translateY(-1px);
     }
+    .recent-tools {
+      margin-top: .25rem;
+      padding-top: .75rem;
+    }
+    .recent-tools h2 {
+      font-size: .9rem;
+      font-weight: 800;
+      color: #334155;
+      margin-bottom: .75rem;
+    }
+    .recent-empty {
+      border: 1px dashed rgba(148, 163, 184, .55);
+      border-radius: 1rem;
+      color: #94a3b8;
+      background: rgba(255,255,255,.58);
+      padding: .9rem 1rem;
+      font-size: .85rem;
+    }
     @media (min-width: 768px) {
+      .tool-grid,
       .tool-content > div[id$="-cards"] {
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
     }
+    @media (min-width: 1180px) {
+      .tool-grid,
+      .tool-content > div[id$="-cards"] {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
     @media (max-width: 640px) {
+      main {
+        padding-top: 1rem !important;
+        padding-bottom: 1.25rem !important;
+      }
+      #toolTabs {
+        padding-top: .6rem !important;
+        padding-bottom: .6rem !important;
+      }
+      .tool-content > div[id$="-cards"],
+      .tool-grid {
+        gap: .65rem !important;
+      }
       header .max-w-6xl {
         align-items: flex-start;
         gap: .75rem;
@@ -296,7 +352,7 @@
         gap: .5rem;
       }
       .tool-card {
-        min-height: 156px;
+        min-height: 142px;
         padding: 1rem !important;
       }
       .tool-card > div:first-child {
@@ -370,7 +426,7 @@
 
     <!-- TOOL: EXCEL -->
     <section id="tool-excel" class="tool-content">
-      <div id="excel-cards" class="grid grid-cols-2 gap-3 mb-4">
+      <div id="excel-cards" class="tool-grid grid gap-3 mb-4">
         <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showExcelTool('merge')">
           <div class="text-2xl mb-2">🔀</div>
           <h3 class="font-semibold text-gray-900">合并表格</h3>
@@ -402,10 +458,11 @@
           <p class="text-xs text-gray-500 mt-1">按姓名/手机号去重</p>
         </div>
       </div>
+      <div class="recent-tools" data-recent-for="excel"></div>
 
       <!-- Excel 操作面板 -->
       <div id="excel-panel" class="hidden bg-white rounded-2xl border border-gray-100 p-6">
-        <button onclick="hideExcelTool()" class="tool-back text-sm text-indigo-600 mb-3 hover:text-indigo-800">← 返回</button>
+        <button onclick="hideExcelTool()" class="tool-back text-sm text-indigo-600 mb-3 hover:text-indigo-800">← 返回分类</button>
         <div id="excel-mode-title" class="font-bold text-gray-900 mb-4 text-lg">选择功能 ↑</div>
 
         <!-- 使用说明区域 -->
@@ -431,7 +488,7 @@
 
     <!-- TOOL: IMAGE -->
     <section id="tool-image" class="tool-content hidden">
-      <div id="image-cards" class="grid grid-cols-2 gap-3 mb-4">
+      <div id="image-cards" class="tool-grid grid gap-3 mb-4">
         <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showImageTool('resize')">
           <div class="text-2xl mb-2">📐</div>
           <h3 class="font-semibold text-gray-900">调整尺寸</h3>
@@ -453,9 +510,10 @@
           <p class="text-xs text-gray-500 mt-1">PNG/JPG/WebP 互转</p>
         </div>
       </div>
+      <div class="recent-tools" data-recent-for="image"></div>
 
       <div id="image-panel" class="hidden">
-      <button onclick="hideImageTool()" class="tool-back text-sm text-indigo-600 mb-3 hover:text-indigo-800">← 返回</button>
+      <button onclick="hideImageTool()" class="tool-back text-sm text-indigo-600 mb-3 hover:text-indigo-800">← 返回分类</button>
 
       <!-- Image 使用说明 -->
       <div id="image-guide" class="mb-4 md:mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden">
@@ -479,16 +537,17 @@
 
     <!-- TOOL: FILE PROCESSING -->
     <section id="tool-file" class="tool-content hidden">
-      <div id="file-cards" class="grid grid-cols-2 gap-3 mb-4">
+      <div id="file-cards" class="tool-grid grid gap-3 mb-4">
         <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showFileTool('rename')">
           <div class="text-2xl mb-2">✏️</div>
           <h3 class="font-semibold text-gray-900">批量重命名</h3>
           <p class="text-xs text-gray-500 mt-1" id="rename-card-desc">按模板批量修改文件名</p>
         </div>
       </div>
+      <div class="recent-tools" data-recent-for="file"></div>
 
       <div id="file-rename" class="hidden">
-      <button onclick="hideFileTool()" class="tool-back text-sm text-indigo-600 mb-3 hover:text-indigo-800">← 返回</button>
+      <button onclick="hideFileTool()" class="tool-back text-sm text-indigo-600 mb-3 hover:text-indigo-800">← 返回分类</button>
 
       <!-- Rename 使用说明 -->
       <div id="rename-guide" class="mb-4 md:mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800">
@@ -547,18 +606,19 @@
 
     <!-- TOOL: DEV -->
     <section id="tool-dev" class="tool-content hidden">
-      <div id="dev-cards" class="grid grid-cols-2 gap-3 mb-4">
+      <div id="dev-cards" class="tool-grid grid gap-3 mb-4">
         <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('json','dev', jsonSetMode)"><div class="text-2xl mb-2">📋</div><h3 class="font-semibold text-gray-900" data-i18n="jsonTitle">JSON 格式化</h3><p class="text-xs text-gray-500 mt-1" data-i18n="jsonDesc">json格式化在线、json美化</p></div>
         <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('base64-img','dev', base64ImgSetMode)"><div class="text-2xl mb-2">🎨</div><h3 class="font-semibold text-gray-900" data-i18n="base64Title">图片转 Base64</h3><p class="text-xs text-gray-500 mt-1" data-i18n="base64Desc">图片转base64、base64编码在线</p></div>
         <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('markdown','dev', markdownSetMode)"><div class="text-2xl mb-2">📝</div><h3 class="font-semibold text-gray-900" data-i18n="markdownTitle">Markdown 预览</h3><p class="text-xs text-gray-500 mt-1" data-i18n="markdownDesc">markdown在线编辑器、markdown预览</p></div>
         <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('color','dev', colorSetMode)"><div class="text-2xl mb-2">🔄</div><h3 class="font-semibold text-gray-900" data-i18n="colorTitle">颜色转换</h3><p class="text-xs text-gray-500 mt-1" data-i18n="colorDesc">rgb转hex、颜色转换器在线</p></div>
         <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('uuid','dev', uuidSetMode)"><div class="text-2xl mb-2">🔒</div><h3 class="font-semibold text-gray-900" data-i18n="uuidTitle">UUID 生成器</h3><p class="text-xs text-gray-500 mt-1" data-i18n="uuidDesc">在线uuid生成器、uuid随机生成</p></div>
       </div>
+      <div class="recent-tools" data-recent-for="dev"></div>
     </section>
 
     <!-- TOOL: UTILITY -->
     <section id="tool-utility" class="tool-content hidden">
-      <div id="utility-cards" class="grid grid-cols-2 gap-3 mb-4">
+      <div id="utility-cards" class="tool-grid grid gap-3 mb-4">
         <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('password','utility', passwordSetMode)"><div class="text-2xl mb-2">🔑</div><h3 class="font-semibold text-gray-900" data-i18n="passwordTitle">密码生成器</h3><p class="text-xs text-gray-500 mt-1" data-i18n="passwordDesc">在线密码生成器、随机密码生成</p></div>
         <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('wordcount','utility', wordcountSetMode)"><div class="text-2xl mb-2">📊</div><h3 class="font-semibold text-gray-900" data-i18n="wordcountTitle">字数统计</h3><p class="text-xs text-gray-500 mt-1" data-i18n="wordcountDesc">在线字数统计、字数计算器</p></div>
         <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('qrcode','utility', qrcodeSetMode)"><div class="text-2xl mb-2">📦</div><h3 class="font-semibold text-gray-900" data-i18n="qrcodeTitle">二维码生成</h3><p class="text-xs text-gray-500 mt-1" data-i18n="qrcodeDesc">二维码在线生成、生成二维码</p></div>
@@ -566,6 +626,7 @@
         <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('pdf-img','utility', pdfImgSetMode)"><div class="text-2xl mb-2">📁</div><h3 class="font-semibold text-gray-900" data-i18n="pdfImgTitle">PDF 转图片</h3><p class="text-xs text-gray-500 mt-1" data-i18n="pdfImgDesc">pdf转图片在线、pdf转png</p></div>
         <div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="showStandaloneTool('convert','utility', convertSetMode)"><div class="text-2xl mb-2">🔤</div><h3 class="font-semibold text-gray-900" data-i18n="convertTitle">繁简转换</h3><p class="text-xs text-gray-500 mt-1" data-i18n="convertDesc">繁体转简体在线、简繁转换</p></div>
       </div>
+      <div class="recent-tools" data-recent-for="utility"></div>
     </section>
 
     <!-- TOOL: PASSWORD -->
@@ -799,6 +860,7 @@
   const FREE_DAILY_LIMIT = 3;
   const STORAGE_KEY = 'toolkit_daily_uses';
   const DATE_KEY = 'toolkit_date';
+  const RECENT_TOOLS_KEY = 'toolkit_recent_tools';
   const MAX_FILE_SIZE = 5 * 1024 * 1024;
   const XLSX_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
   let xlsxLoadPromise = null;
@@ -1064,6 +1126,143 @@
     }
   };
 
+  const toolGroups = [
+    {
+      id: 'excel',
+      label: {zh: '📊 Excel', en: '📊 Excel'},
+      tools: [
+        {id: 'merge', icon: '🔀', title: {zh: '合并表格', en: 'Merge'}, desc: {zh: '将多个 Excel/CSV 合并为一个', en: 'Merge multiple Excel/CSV files'}, action: () => showExcelTool('merge')},
+        {id: 'search', icon: '🔍', title: {zh: '搜索筛选', en: 'Search'}, desc: {zh: '按关键词过滤行', en: 'Filter rows by keyword'}, action: () => showExcelTool('search')},
+        {id: 'split', icon: '📂', title: {zh: '拆分文件', en: 'Split Files'}, desc: {zh: '按列值拆成多个文件', en: 'Split into multiple files by column'}, action: () => showExcelTool('split')},
+        {id: 'clean', icon: '🧹', title: {zh: '清洗数据', en: 'Clean Data'}, desc: {zh: '去空行、空格、重复项', en: 'Remove empty rows, spaces, duplicates'}, action: () => showExcelTool('clean')},
+        {id: 'dedup', icon: '🗂️', title: {zh: '去重', en: 'Dedupe'}, desc: {zh: '按姓名/手机号去重', en: 'Deduplicate by name/phone'}, action: () => showExcelTool('dedup')},
+        {id: 'compare', icon: '⚖️', title: {zh: '对比', en: 'Compare'}, desc: {zh: '找出两个表格的区别', en: 'Find differences between two tables'}, action: () => showExcelTool('compare')}
+      ]
+    },
+    {
+      id: 'image',
+      label: {zh: '🖼️ 图片', en: '🖼️ Image'},
+      tools: [
+        {id: 'resize', icon: '📐', title: {zh: '调整尺寸', en: 'Resize'}, desc: {zh: '批量缩放图片到指定尺寸', en: 'Batch resize images to target dimensions'}, action: () => showImageTool('resize')},
+        {id: 'compress', icon: '🗜️', title: {zh: '压缩图片', en: 'Compress'}, desc: {zh: '减小文件体积保持清晰度', en: 'Reduce file size, keep quality'}, action: () => showImageTool('compress')},
+        {id: 'watermark', icon: '💧', title: {zh: '添加水印', en: 'Watermark'}, desc: {zh: '文字或图片水印', en: 'Add text or image watermark'}, action: () => showImageTool('watermark')},
+        {id: 'convert', icon: '🔄', title: {zh: '格式转换', en: 'Convert'}, desc: {zh: 'PNG/JPG/WebP 互转', en: 'PNG/JPG/WebP convert'}, action: () => showImageTool('convert')}
+      ]
+    },
+    {
+      id: 'file',
+      label: {zh: '📂 文件', en: '📂 File'},
+      tools: [
+        {id: 'rename', icon: '✏️', title: {zh: '批量重命名', en: 'Batch Rename'}, desc: {zh: '按模板批量修改文件名', en: 'Batch rename files by template'}, action: () => showFileTool('rename')}
+      ]
+    },
+    {
+      id: 'dev',
+      label: {zh: '🛠️ 开发', en: '🛠️ Dev'},
+      tools: [
+        {id: 'json', icon: '📋', titleKey: 'jsonTitle', descKey: 'jsonDesc', action: () => showStandaloneTool('json', 'dev', jsonSetMode)},
+        {id: 'base64-img', icon: '🎨', titleKey: 'base64Title', descKey: 'base64Desc', action: () => showStandaloneTool('base64-img', 'dev', base64ImgSetMode)},
+        {id: 'markdown', icon: '📝', titleKey: 'markdownTitle', descKey: 'markdownDesc', action: () => showStandaloneTool('markdown', 'dev', markdownSetMode)},
+        {id: 'color', icon: '🔄', titleKey: 'colorTitle', descKey: 'colorDesc', action: () => showStandaloneTool('color', 'dev', colorSetMode)},
+        {id: 'uuid', icon: '🔒', titleKey: 'uuidTitle', descKey: 'uuidDesc', action: () => showStandaloneTool('uuid', 'dev', uuidSetMode)}
+      ]
+    },
+    {
+      id: 'utility',
+      label: {zh: '🔧 实用', en: '🔧 Utility'},
+      tools: [
+        {id: 'password', icon: '🔑', titleKey: 'passwordTitle', descKey: 'passwordDesc', action: () => showStandaloneTool('password', 'utility', passwordSetMode)},
+        {id: 'wordcount', icon: '📊', titleKey: 'wordcountTitle', descKey: 'wordcountDesc', action: () => showStandaloneTool('wordcount', 'utility', wordcountSetMode)},
+        {id: 'qrcode', icon: '📦', titleKey: 'qrcodeTitle', descKey: 'qrcodeDesc', action: () => showStandaloneTool('qrcode', 'utility', qrcodeSetMode)},
+        {id: 'ip', icon: '🌐', titleKey: 'ipTitle', descKey: 'ipDesc', action: () => showStandaloneTool('ip', 'utility', ipSetMode)},
+        {id: 'pdf-img', icon: '📁', titleKey: 'pdfImgTitle', descKey: 'pdfImgDesc', action: () => showStandaloneTool('pdf-img', 'utility', pdfImgSetMode)},
+        {id: 'convert', icon: '🔤', titleKey: 'convertTitle', descKey: 'convertDesc', action: () => showStandaloneTool('convert', 'utility', convertSetMode)}
+      ]
+    }
+  ];
+
+  function getToolGroup(groupId) {
+    return toolGroups.find(group => group.id === groupId);
+  }
+
+  function getToolMeta(toolId, groupId) {
+    const groups = groupId ? [getToolGroup(groupId)].filter(Boolean) : toolGroups;
+    for (const group of groups) {
+      const tool = group.tools.find(item => item.id === toolId);
+      if (tool) return {...tool, group: group.id};
+    }
+    return null;
+  }
+
+  function toolTitle(tool) {
+    return tool.titleKey ? tt(tool.titleKey) : tool.title[currentLang];
+  }
+
+  function toolDesc(tool) {
+    return tool.descKey ? tt(tool.descKey) : tool.desc[currentLang];
+  }
+
+  function createToolCard(tool, groupId) {
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer text-left';
+    card.dataset.toolId = tool.id;
+    card.dataset.groupId = groupId;
+    card.dataset.actionLabel = currentLang === 'en' ? 'Use →' : '使用 →';
+    card.innerHTML = `<div class="text-2xl mb-2">${tool.icon}</div><h3 class="font-semibold text-gray-900"></h3><p class="text-xs text-gray-500 mt-1"></p>`;
+    card.querySelector('h3').textContent = toolTitle(tool);
+    card.querySelector('p').textContent = toolDesc(tool);
+    card.addEventListener('click', () => {
+      const activeGroup = document.querySelector('.tool-content:not(.hidden)')?.id.replace('tool-', '');
+      if (activeGroup !== groupId) activateToolGroup(groupId, false);
+      rememberRecentTool(groupId, tool.id);
+      tool.action();
+    });
+    return card;
+  }
+
+  function renderToolGroups() {
+    toolGroups.forEach(group => {
+      const grid = document.getElementById(group.id + '-cards');
+      if (!grid) return;
+      grid.textContent = '';
+      group.tools.forEach(tool => grid.appendChild(createToolCard(tool, group.id)));
+    });
+    renderRecentTools();
+  }
+
+  function rememberRecentTool(groupId, toolId) {
+    const next = [{group: groupId, tool: toolId}, ...safeReadJSON(RECENT_TOOLS_KEY, [])]
+      .filter((item, index, arr) => arr.findIndex(v => v.group === item.group && v.tool === item.tool) === index)
+      .slice(0, 12);
+    localStorage.setItem(RECENT_TOOLS_KEY, JSON.stringify(next));
+    renderRecentTools();
+  }
+
+  function renderRecentTools() {
+    const recent = safeReadJSON(RECENT_TOOLS_KEY, []).slice(0, 3);
+    document.querySelectorAll('[data-recent-for]').forEach(container => {
+      container.textContent = '';
+      const title = document.createElement('h2');
+      title.textContent = currentLang === 'en' ? 'Recently Used' : '最近使用';
+      container.appendChild(title);
+      if (!recent.length) {
+        const empty = document.createElement('div');
+        empty.className = 'recent-empty';
+        empty.textContent = currentLang === 'en' ? 'Recently opened tools will appear here.' : '最近打开的工具会显示在这里。';
+        container.appendChild(empty);
+        return;
+      }
+      const grid = document.createElement('div');
+      grid.className = 'tool-grid grid gap-3';
+      recent.forEach(item => {
+        const tool = getToolMeta(item.tool, item.group);
+        if (tool) grid.appendChild(createToolCard(tool, item.group));
+      });
+      container.appendChild(grid);
+    });
+  }
+
   let currentLang = localStorage.getItem('toolkit_lang') || 'zh';
 
   function toggleLang() {
@@ -1218,15 +1417,19 @@
     const fileBtn = document.querySelector('[data-tool="file"]');
     const devBtn = document.querySelector('[data-tool="dev"]');
     const utilityBtn = document.querySelector('[data-tool="utility"]');
-    if (excelBtn) excelBtn.textContent = currentLang === 'en' ? '📊 Excel' : '📊 Excel';
-    if (imageBtn) imageBtn.textContent = currentLang === 'en' ? '🖼️ Image' : '🖼️ 图片';
-    if (fileBtn) fileBtn.textContent = currentLang === 'en' ? '📂 File' : '📂 文件';
-    if (devBtn) devBtn.textContent = currentLang === 'en' ? '🛠️ Dev' : '🛠️ 开发';
-    if (utilityBtn) utilityBtn.textContent = currentLang === 'en' ? '🔧 Utility' : '🔧 实用';
+    if (excelBtn) excelBtn.textContent = getToolGroup('excel')?.label[currentLang] || '📊 Excel';
+    if (imageBtn) imageBtn.textContent = getToolGroup('image')?.label[currentLang] || '🖼️ 图片';
+    if (fileBtn) fileBtn.textContent = getToolGroup('file')?.label[currentLang] || '📂 文件';
+    if (devBtn) devBtn.textContent = getToolGroup('dev')?.label[currentLang] || '🛠️ 开发';
+    if (utilityBtn) utilityBtn.textContent = getToolGroup('utility')?.label[currentLang] || '🔧 实用';
+    renderToolGroups();
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const value = tt(el.dataset.i18n);
       if (el.tagName === 'OPTION') el.textContent = value;
       else el.textContent = value;
+    });
+    document.querySelectorAll('.tool-card').forEach(card => {
+      card.dataset.actionLabel = currentLang === 'en' ? 'Use →' : '使用 →';
     });
     // Update tool cards (title + description)
     applyCardText('merge', lang.tabs.merge, lang.tabsDesc.merge, ['showExcelTool', 'excelSetMode']);
@@ -1331,7 +1534,7 @@
     const pwContact = document.getElementById('pw-contact');
     if (pwContact) pwContact.textContent = lang.contact;
     document.querySelectorAll('.tool-back').forEach(btn => {
-      btn.textContent = currentLang === 'en' ? '← Back' : '← 返回';
+      btn.textContent = currentLang === 'en' ? '← Back to Category' : '← 返回分类';
     });
   }
 
@@ -1366,6 +1569,7 @@
 
   // Apply language on load
   document.addEventListener('DOMContentLoaded', () => {
+    renderToolGroups();
     setTimeout(applyLang, 50);
     ipRun();
   });
@@ -1392,15 +1596,26 @@
   // ========== TAB SWITCHING ==========
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('tab-active','bg-indigo-600','text-white'); b.classList.add('bg-gray-100','text-gray-700'); });
-      btn.classList.add('tab-active','bg-indigo-600','text-white'); btn.classList.remove('bg-gray-100','text-gray-700');
-      document.querySelectorAll('.tool-content').forEach(c => c.classList.add('hidden'));
-      document.querySelectorAll('.tool-panel').forEach(panel => panel.classList.add('hidden'));
-      resetToolViews(btn.dataset.tool);
-      document.getElementById('tool-' + btn.dataset.tool).classList.remove('hidden');
+      activateToolGroup(btn.dataset.tool);
       window.scrollTo({top:0, behavior:'smooth'});
     });
   });
+
+  function activateToolGroup(groupId, reset = true) {
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.remove('tab-active','bg-indigo-600','text-white');
+      b.classList.add('bg-gray-100','text-gray-700');
+    });
+    const btn = document.querySelector(`.tab-btn[data-tool="${groupId}"]`);
+    if (btn) {
+      btn.classList.add('tab-active','bg-indigo-600','text-white');
+      btn.classList.remove('bg-gray-100','text-gray-700');
+    }
+    document.querySelectorAll('.tool-content').forEach(c => c.classList.add('hidden'));
+    document.querySelectorAll('.tool-panel').forEach(panel => panel.classList.add('hidden'));
+    if (reset) resetToolViews(groupId);
+    document.getElementById('tool-' + groupId)?.classList.remove('hidden');
+  }
 
   function resetToolViews(category) {
     if (category === 'excel') hideExcelTool();
@@ -1412,6 +1627,7 @@
 
   function showExcelTool(tool) {
     document.getElementById('excel-cards')?.classList.add('hidden');
+    document.querySelector('[data-recent-for="excel"]')?.classList.add('hidden');
     document.getElementById('excel-panel')?.classList.remove('hidden');
     excelSetMode(tool);
   }
@@ -1419,10 +1635,12 @@
   function hideExcelTool() {
     document.getElementById('excel-panel')?.classList.add('hidden');
     document.getElementById('excel-cards')?.classList.remove('hidden');
+    document.querySelector('[data-recent-for="excel"]')?.classList.remove('hidden');
   }
 
   function showImageTool(tool) {
     document.getElementById('image-cards')?.classList.add('hidden');
+    document.querySelector('[data-recent-for="image"]')?.classList.add('hidden');
     document.getElementById('image-panel')?.classList.remove('hidden');
     imageSetMode(tool);
   }
@@ -1430,10 +1648,12 @@
   function hideImageTool() {
     document.getElementById('image-panel')?.classList.add('hidden');
     document.getElementById('image-cards')?.classList.remove('hidden');
+    document.querySelector('[data-recent-for="image"]')?.classList.remove('hidden');
   }
 
   function showFileTool(tool) {
     document.getElementById('file-cards')?.classList.add('hidden');
+    document.querySelector('[data-recent-for="file"]')?.classList.add('hidden');
     document.getElementById('file-' + tool)?.classList.remove('hidden');
     if (tool === 'rename') renameSetMode('rename');
   }
@@ -1441,11 +1661,13 @@
   function hideFileTool() {
     document.querySelectorAll('#tool-file > div[id^="file-"]').forEach(d => d.classList.add('hidden'));
     document.getElementById('file-cards')?.classList.remove('hidden');
+    document.querySelector('[data-recent-for="file"]')?.classList.remove('hidden');
   }
 
   function showStandaloneTool(tool, category, setup) {
     hideStandaloneTool(category);
     document.getElementById(category + '-cards')?.classList.add('hidden');
+    document.querySelector(`[data-recent-for="${category}"]`)?.classList.add('hidden');
     const panel = document.getElementById('tool-' + tool);
     if (!panel) return;
     panel.classList.remove('hidden');
@@ -1455,7 +1677,7 @@
       const back = document.createElement('button');
       back.type = 'button';
       back.className = 'tool-back text-sm text-indigo-600 mb-3 hover:text-indigo-800';
-      back.textContent = currentLang === 'en' ? '← Back' : '← 返回';
+      back.textContent = currentLang === 'en' ? '← Back to Category' : '← 返回分类';
       back.onclick = () => hideStandaloneTool(category);
       panel.prepend(back);
     }
@@ -1465,6 +1687,7 @@
   function hideStandaloneTool(category) {
     document.querySelectorAll('.tool-panel').forEach(panel => panel.classList.add('hidden'));
     document.getElementById(category + '-cards')?.classList.remove('hidden');
+    document.querySelector(`[data-recent-for="${category}"]`)?.classList.remove('hidden');
   }
 
   // ========== AD REMOVAL ==========
