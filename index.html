@@ -1693,8 +1693,8 @@
       el.textContent = lang.useWarn.replace('{n}', dailyUses);
       el.className = 'text-xs font-medium text-red-500';
     } else {
-      el.textContent = lang.useText.replace('{n}', dailyUses);
-      el.className = 'text-xs font-medium text-gray-400';
+      // 有剩余次数时隐藏计数器，达到上限才显示提示
+      el.textContent = '';
     }
   }
 
