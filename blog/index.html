@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>工具教程 & 使用指南 — ToolKit Pro</title>
+  <meta name="description" content="ToolKit Pro 工具教程与使用指南，涵盖Excel合并拆分、图片压缩、文件批量处理等在线工具的操作说明。">
+  <link rel="canonical" href="https://tools.vanhci.top/blog/">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', -apple-system, sans-serif; }
+    body {
+      background: radial-gradient(circle at 8% 8%, rgba(59,130,246,0.08), transparent 30rem),
+                  radial-gradient(circle at 92% 18%, rgba(139,92,246,0.08), transparent 28rem),
+                  linear-gradient(180deg, #F8FAFC 0%, #EFF6FF 58%, #F8FAFC 100%);
+      color: #0f172a;
+    }
+    .header-bar {
+      height: 4px;
+      background: linear-gradient(90deg, #3B82F6, #8B5CF6, #F59E0B);
+      box-shadow: 0 8px 28px rgba(99, 102, 241, 0.25);
+    }
+    .article-card {
+      background: rgba(255,255,255,0.9);
+      border: 1px solid rgba(226,232,240,0.9);
+      box-shadow: 0 8px 24px rgba(15,23,42,0.06);
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+    .article-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 40px rgba(15,23,42,0.12);
+    }
+    .tag {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-weight: 600;
+    }
+    .tag-excel { background: rgba(59,130,246,0.12); color: #2563eb; }
+    .tag-image { background: rgba(139,92,246,0.12); color: #7c3aed; }
+    .tag-file { background: rgba(245,158,11,0.12); color: #d97706; }
+    .tag-dev { background: rgba(16,185,129,0.12); color: #059669; }
+    .tag-utility { background: rgba(236,72,153,0.12); color: #db2777; }
+  </style>
+</head>
+<body class="min-h-screen">
+  <div class="header-bar"></div>
+  <header class="bg-white/90 border-b border-gray-200 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div>
+        <a href="/" class="text-xl font-bold text-gray-900 flex items-center gap-2">🛠️ ToolKit Pro</a>
+        <p class="text-xs text-gray-500 mt-0.5">免费在线工具箱 · 无需注册 · 永不过期</p>
+      </div>
+      <a href="/" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">← 返回工具箱</a>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-10">
+    <div class="text-center mb-10">
+      <h1 class="text-3xl font-extrabold text-gray-900 mb-3">📚 工具教程 & 使用指南</h1>
+      <p class="text-gray-500 text-lg">24 篇详细教程，覆盖所有工具的长尾使用场景</p>
+    </div>
+
+    <!-- Excel -->
+    <div class="mb-10">
+      <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">📊 Excel 工具教程</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a href="/blog/excel-merge-free.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">如何免费合并多个Excel表格？</h3>
+            <span class="tag tag-excel whitespace-nowrap ml-2">Excel</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">3种方法教你一键搞定合并，支持xlsx/csv格式，无需安装软件。</p>
+        </a>
+        <a href="/blog/excel-split-free.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">Excel拆分在线免费工具</h3>
+            <span class="tag tag-excel whitespace-nowrap ml-2">Excel</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">按列值将大Excel拆分成多个文件，省时省力，适合报表分发。</p>
+        </a>
+        <a href="/blog/excel-dedupe-free.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">Excel去重工具免费</h3>
+            <span class="tag tag-excel whitespace-nowrap ml-2">Excel</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">一键删除重复行，保留首条或末条，自定义去重列，完全免费。</p>
+        </a>
+        <a href="/blog/excel-clean-data.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">Excel数据清洗在线工具</h3>
+            <span class="tag tag-excel whitespace-nowrap ml-2">Excel</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">去空行、去空格、去重复项，数据清洗一站式搞定。</p>
+        </a>
+        <a href="/blog/excel-search-free.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">Excel查找替换在线工具</h3>
+            <span class="tag tag-excel whitespace-nowrap ml-2">Excel</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">批量替换内容，支持正则匹配，搜索结果高亮显示。</p>
+        </a>
+        <a href="/blog/excel-compare-free.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">Excel对比工具免费</h3>
+            <span class="tag tag-excel whitespace-nowrap ml-2">Excel</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">对比两个表格差异，高亮显示新增、修改、删除行，快速对账。</p>
+        </a>
+        <a href="/blog/excel-filter-free.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">Excel筛选工具免费</h3>
+            <span class="tag tag-excel whitespace-nowrap ml-2">Excel</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">多条件组合筛选，支持关键词过滤和数据排序，一键导出结果。</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- Image -->
+    <div class="mb-10">
+      <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">🖼️ 图片工具教程</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a href="/blog/image-compress-free.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">图片压缩在线免费工具</h3>
+            <span class="tag tag-image whitespace-nowrap ml-2">图片</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">在线压缩图片体积，支持批量处理，保持清晰度，浏览器直接用。</p>
+        </a>
+        <a href="/blog/image-watermark-free.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">图片添加水印在线免费</h3>
+            <span class="tag tag-image whitespace-nowrap ml-2">图片</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">添加文字或LOGO水印，支持批量处理，透明度和位置可调。</p>
+        </a>
+        <a href="/blog/image-resize-free.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">图片放大压缩在线工具</h3>
+            <span class="tag tag-image whitespace-nowrap ml-2">图片</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">在线调整尺寸，支持批量处理，保持宽高比，适用多平台。</p>
+        </a>
+        <a href="/blog/image-format-convert.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">图片格式转换在线免费</h3>
+            <span class="tag tag-image whitespace-nowrap ml-2">图片</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">PNG、JPG、WebP、GIF格式互转，批量处理，完全免费。</p>
+        </a>
+        <a href="/blog/image-crop-free.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">图片裁剪在线工具</h3>
+            <span class="tag tag-image whitespace-nowrap ml-2">图片</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">自由裁切图片区域，支持批量处理，常用比例预设一键套用。</p>
+        </a>
+        <a href="/blog/image-webp-convert.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">WebP转换工具免费在线</h3>
+            <span class="tag tag-image whitespace-nowrap ml-2">图片</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">将图片转为WebP格式，大幅压缩体积，提升网页加载速度。</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- File -->
+    <div class="mb-10">
+      <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">📂 文件工具教程</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a href="/blog/file-rename-batch.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">批量文件重命名工具</h3>
+            <span class="tag tag-file whitespace-nowrap ml-2">文件</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">序号、日期、替换、添加前后缀，一次处理上千个文件。</p>
+        </a>
+        <a href="/blog/file-zip-unzip.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">在线解压缩文件工具</h3>
+            <span class="tag tag-file whitespace-nowrap ml-2">文件</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">在线解压zip/rar/7z，支持压缩成zip格式，浏览器直接搞定。</p>
+        </a>
+        <a href="/blog/file-convert-format.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">文件格式转换在线工具</h3>
+            <span class="tag tag-file whitespace-nowrap ml-2">文件</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">文档格式互转，支持PDF、Word、图片，办公必备工具。</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- Dev -->
+    <div class="mb-10">
+      <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">🛠️ 开发工具教程</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a href="/blog/json-formatter-free.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">JSON格式化在线工具</h3>
+            <span class="tag tag-dev whitespace-nowrap ml-2">开发</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">一键美化、压缩、校验JSON，语法高亮，程序员效率工具。</p>
+        </a>
+        <a href="/blog/regex-tester-free.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">正则表达式测试工具免费</h3>
+            <span class="tag tag-dev whitespace-nowrap ml-2">开发</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">实时高亮匹配结果，常用模式预设，写正则不再靠猜。</p>
+        </a>
+        <a href="/blog/color-converter-free.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">颜色格式转换工具</h3>
+            <span class="tag tag-dev whitespace-nowrap ml-2">开发</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">HEX、RGB、RGBA、HSL、HSLA互转，一键复制代码，设计师必备。</p>
+        </a>
+        <a href="/blog/hash-generator-free.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">密码生成器在线工具</h3>
+            <span class="tag tag-dev whitespace-nowrap ml-2">开发</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">自定义长度和字符类型，一键生成高强度随机密码，保障安全。</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- Utility -->
+    <div class="mb-10">
+      <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">🔧 实用工具教程</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a href="/blog/qrcode-generator-free.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">二维码生成器在线免费</h3>
+            <span class="tag tag-utility whitespace-nowrap ml-2">实用</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">文字、网址、电话批量生成，自定义颜色尺寸，立即下载。</p>
+        </a>
+        <a href="/blog/wordcount-tool.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">在线字数统计工具</h3>
+            <span class="tag tag-utility whitespace-nowrap ml-2">实用</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">中英文混合统计、段落统计、关键词密度分析，写作者必备。</p>
+        </a>
+        <a href="/blog/base64-encode-decode.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">Base64编码解码在线</h3>
+            <span class="tag tag-utility whitespace-nowrap ml-2">实用</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">文本和文件Base64编码解码，界面简洁，开发必备工具。</p>
+        </a>
+        <a href="/blog/url-encode-decode.html" class="article-card rounded-2xl p-5 block">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900 text-sm">URL编码解码在线工具</h3>
+            <span class="tag tag-utility whitespace-nowrap ml-2">实用</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed">URL中特殊字符转义，解决GET参数传递乱码问题。</p>
+        </a>
+      </div>
+    </div>
+
+    <div class="text-center mt-8">
+      <a href="/" class="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-full font-semibold hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">
+        🚀 立即使用工具箱
+      </a>
+    </div>
+  </main>
+
+  <footer class="text-center text-xs text-gray-400 pb-8 mt-4">
+    © 2026 ToolKit Pro · <a href="/" class="hover:text-gray-600">免费在线工具箱</a>
+  </footer>
+</body>
+</html>
