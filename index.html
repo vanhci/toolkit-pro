@@ -1667,6 +1667,26 @@
     document.querySelectorAll('.tool-back').forEach(btn => {
       btn.textContent = currentLang === 'en' ? '← Back to Category' : '← 返回分类';
     });
+    // Re-apply excel guide if panel is open
+    if (excelMode) {
+      const excelGuide = excelGuides[excelMode];
+      const excelGuideEl = document.getElementById('excel-guide');
+      if (excelGuide && excelGuideEl) {
+        document.getElementById('excel-guide-title').innerHTML = excelGuide.title[currentLang] || excelGuide.title.zh;
+        document.getElementById('excel-guide-steps').innerHTML = (excelGuide.steps[currentLang] || excelGuide.steps.zh).map(s => `<p>${s}</p>`).join('');
+        document.getElementById('excel-guide-example').innerHTML = excelGuide.example[currentLang] || excelGuide.example.zh;
+      }
+    }
+    // Re-apply image guide if panel is open
+    if (imageMode) {
+      const imageGuide = imageGuides[imageMode];
+      const imageGuideEl = document.getElementById('image-guide');
+      if (imageGuide && imageGuideEl) {
+        document.getElementById('image-guide-title').innerHTML = imageGuide.title[currentLang] || imageGuide.title.zh;
+        document.getElementById('image-guide-steps').innerHTML = (imageGuide.steps[currentLang] || imageGuide.steps.zh).map(s => `<p>${s}</p>`).join('');
+        document.getElementById('image-guide-example').innerHTML = imageGuide.example[currentLang] || imageGuide.example.zh;
+      }
+    }
   }
 
   function applyCardText(mode, title, desc, handlers = []) {
@@ -1702,7 +1722,28 @@
   document.addEventListener('DOMContentLoaded', () => {
     renderToolGroups();
     setupFeedbackModal();
-    setTimeout(applyLang, 50);
+    // Auto-detect language by IP if user hasn't set a preference yet
+    if (!localStorage.getItem('toolkit_lang')) {
+      fetch('http://ip-api.com/json/')
+        .then(r => r.json())
+        .then(data => {
+          if (data.status === 'success' && data.country === 'China') {
+            currentLang = 'zh';
+          } else {
+            currentLang = 'en';
+          }
+          localStorage.setItem('toolkit_lang', currentLang);
+          setTimeout(applyLang, 50);
+        })
+        .catch(() => {
+          currentLang = 'en';
+          localStorage.setItem('toolkit_lang', currentLang);
+          setTimeout(applyLang, 50);
+        });
+    } else {
+      currentLang = localStorage.getItem('toolkit_lang');
+      setTimeout(applyLang, 50);
+    }
     ipRun();
   });
 
