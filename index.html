@@ -936,7 +936,7 @@
   let renameFiles = [];
   let adRemoved = false;
   let dailyUses = 0;
-  const FREE_DAILY_LIMIT = 3;
+  const FREE_DAILY_LIMIT = 99999;
   const STORAGE_KEY = 'toolkit_daily_uses';
   const DATE_KEY = 'toolkit_date';
   const RECENT_TOOLS_KEY = 'toolkit_recent_tools';
@@ -948,8 +948,8 @@
   const LANG = {
     zh: {
       headerSub: '免费在线工具箱 · 无需注册 · 永不过期',
-      useText: '今日已用 {n}/3 次',
-      useWarn: '⚠️ 今日已用 {n}/3 次',
+      useText: '今日已用 {n} 次',
+      useWarn: '今日已用 {n} 次',
       upgradeBtn: '升级解锁 ¥9.9',
       unlocked: '已解锁！',
       adRemoved: '广告位已隐藏',
@@ -972,7 +972,7 @@
       renameBtn: '开始重命名 →',
       selectFirst: '选择功能 ↑',
       paywallTitle: '升级解锁',
-      paywallDesc: '每日免费3次，升级后无限制使用所有工具<br>一次付费，永久解锁，无需订阅。',
+      paywallDesc: '每日无限次使用所有工具，无任何限制<br>一次付费，永久解锁，无需订阅。',
       paywallSubtitle: '终身解锁 · 永久使用 · 无订阅',
       paywallPrice: '¥9.99',
       paywallOriginal: '¥29',
@@ -1034,8 +1034,8 @@
     },
     en: {
       headerSub: 'Free Online Toolkit · No Registration · Forever Free',
-      useText: 'Used {n}/3 times today',
-      useWarn: '⚠️ Used {n}/3 times today',
+      useText: 'Used {n} times today',
+      useWarn: 'Used {n} times today',
       upgradeBtn: 'Upgrade ¥9.9',
       unlocked: 'Unlocked!',
       adRemoved: 'Ad removed',
@@ -1058,7 +1058,7 @@
       renameBtn: 'Start Rename →',
       selectFirst: 'Select a tool ↑',
       paywallTitle: 'Upgrade',
-      paywallDesc: '3 free uses daily, unlimited after upgrade<br>One-time payment, lifetime access, no subscription.',
+      paywallDesc: 'Unlimited uses daily, no restrictions<br>One-time payment, lifetime access, no subscription.',
       paywallSubtitle: 'Lifetime · Unlimited · No subscription',
       paywallPrice: '¥9.99',
       paywallOriginal: '¥29',
