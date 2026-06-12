@@ -34,7 +34,6 @@
   <!-- Favicon (simple emoji) -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
 
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5878538349612439" crossorigin="anonymous"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -432,7 +431,7 @@
 <body class="bg-gray-50 min-h-screen">
 
   <!-- TOP AD SLOT -->
-  <div id="top-ad" class="mx-4 mt-4 rounded-xl overflow-hidden">
+  <div id="top-ad" class="mx-4 mt-4 rounded-xl overflow-hidden hidden">
     <ins class="adsbygoogle"
          style="display:block"
          data-ad-client="ca-pub-5878538349612439"
@@ -454,7 +453,7 @@
       <div class="flex items-center gap-3">
         <button id="lang-toggle" onclick="toggleLang()" class="text-xs px-2 py-1 border border-gray-300 rounded-lg hover:bg-gray-100 transition">🌐 EN/中</button>
         <span id="use-indicator" class="text-xs font-medium text-gray-400"></span>
-        <button id="removeAdBtn" class="pro-badge text-white text-xs font-semibold px-3 py-1.5 rounded-full hover:opacity-90 transition">
+        <button id="removeAdBtn" class="pro-badge text-white text-xs font-semibold px-3 py-1.5 rounded-full hover:opacity-90 transition hidden">
           ⭐ <span id="upgrade-btn-text">升级解锁 ¥9.9</span>
         </button>
       </div>
@@ -878,7 +877,7 @@
   </div>
 
   <!-- BOTTOM AD SLOT -->
-  <div id="bottom-ad" class="mx-4 mt-6 mb-4 rounded-xl overflow-hidden">
+  <div id="bottom-ad" class="mx-4 mt-6 mb-4 rounded-xl overflow-hidden hidden">
     <ins class="adsbygoogle"
          style="display:block"
          data-ad-client="ca-pub-5878538349612439"
@@ -934,7 +933,7 @@
   let excelProcessing = false, imageProcessing = false, pdfImgProcessing = false;
   let coverPreset = '考研', coverColor = '#4f46e5';
   let renameFiles = [];
-  let adRemoved = false;
+  let adRemoved = true;
   let dailyUses = 0;
   const FREE_DAILY_LIMIT = 99999;
   const STORAGE_KEY = 'toolkit_daily_uses';
@@ -1407,6 +1406,7 @@
   }
 
   async function syncLicenseStatus() {
+    return true; // permanently unlocked
     const email = getSavedLicenseEmail();
     if (!email || !email.includes('@')) {
       return false;
