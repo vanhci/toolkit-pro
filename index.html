@@ -2931,8 +2931,11 @@
 
   function markdownSetMode() { showGuide('markdown-guide'); markdownRender(); }
   function markdownRender() {
-    const src = document.getElementById('markdown-input').value;
-    document.getElementById('markdown-output').innerHTML = markdownToHtml(src);
+    const input = document.getElementById('markdown-input');
+    const output = document.getElementById('markdown-output');
+    if (!input || !output) { console.error('markdown elements not found'); return; }
+    const src = input.value || '';
+    output.innerHTML = markdownToHtml(src);
   }
   function markdownToHtml(src) {
     const blocks = [];
@@ -3004,7 +3007,9 @@
 
   function wordcountSetMode() { showGuide('wordcount-guide'); wordcountRun(); }
   function wordcountRun() {
-    const text = document.getElementById('wordcount-input').value;
+    const input = document.getElementById('wordcount-input');
+    if (!input) { console.error('wordcount-input not found'); return; }
+    const text = input.value || '';
     const stats = [
       [tt('chars'), text.length],
       [tt('words'), (text.match(/[A-Za-z0-9]+(?:[-'][A-Za-z0-9]+)?/g) || []).length],
@@ -3012,7 +3017,12 @@
       [tt('paragraphs'), text.trim() ? text.trim().split(/\n\s*\n/).length : 0],
       [tt('lines'), text ? text.split(/\n/).length : 0]
     ];
-    document.getElementById('wordcount-output').innerHTML = stats.map(([label, val]) => `<div class="bg-gray-50 border border-gray-200 rounded-xl p-3"><div class="text-xs text-gray-500">${label}</div><div class="text-xl font-bold text-gray-900">${val}</div></div>`).join('');
+    const output = document.getElementById('wordcount-output');
+    if (output) {
+      output.innerHTML = stats.map(([label, val]) => 
+        `<div class="bg-gray-50 border border-gray-200 rounded-xl p-3"><div class="text-xs text-gray-500">${label}</div><div class="text-xl font-bold text-gray-900">${val}</div></div>`
+      ).join('');
+    }
   }
 
   let generatedUuids = [];
