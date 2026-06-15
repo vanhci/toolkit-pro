@@ -589,7 +589,7 @@
         <button id="lang-toggle" onclick="toggleLang()" class="text-xs px-2 py-1 border border-gray-300 rounded-lg hover:bg-gray-100 transition">🌐 EN/中</button>
         <span id="use-indicator" class="text-xs font-medium text-gray-400"></span>
         <button id="removeAdBtn" class="pro-badge text-white text-xs font-semibold px-3 py-1.5 rounded-full hover:opacity-90 transition hidden">
-          ⭐ <span id="upgrade-btn-text">升级解锁 ¥9.9</span>
+          ⭐ <span id="upgrade-btn-text">全部免费</span>
         </button>
       </div>
     </div>
@@ -937,43 +937,43 @@
     <div class="modal-content bg-white rounded-2xl p-6 max-w-sm w-full text-center">
       <button id="pw-close" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl">&times;</button>
       <div class="text-3xl mb-3">⭐</div>
-      <h2 class="text-xl font-bold text-gray-900 mb-1" id="pw-title">升级解锁</h2>
-      <p class="text-xs text-gray-400 mb-3" id="pw-subtitle">终身解锁 · 永久使用 · 无订阅</p>
+      <h2 class="text-xl font-bold text-gray-900 mb-1" id="pw-title">完全免费</h2>
+      <p class="text-xs text-gray-400 mb-3" id="pw-subtitle">所有工具完全免费 · 无需注册</p>
       <div class="bg-gray-50 rounded-xl p-3 mb-4">
-        <span class="font-bold text-2xl text-gray-900" id="pw-price">¥9.99</span>
+        <span class="font-bold text-2xl text-gray-900" id="pw-price">免费</span>
         <span class="text-xs text-gray-400 line-through ml-2" id="pw-original-price">¥29</span>
       </div>
 
       <!-- Tab buttons -->
       <div class="flex gap-1 mb-4 bg-gray-100 rounded-xl p-1">
-        <button class="pay-tab flex-1 py-2 rounded-lg text-sm font-medium transition" data-tab="wechat">微信</button>
-        <button class="pay-tab flex-1 py-2 rounded-lg text-sm font-medium transition" data-tab="alipay">支付宝</button>
-        <button class="pay-tab flex-1 py-2 rounded-lg text-sm font-medium transition" data-tab="paypal">PayPal</button>
+        <button class="pay-tab flex-1 py-2 rounded-lg text-sm font-medium transition" data-tab="wechat">免费</button>
+        <button class="pay-tab flex-1 py-2 rounded-lg text-sm font-medium transition" data-tab="alipay">免费</button>
+        <button class="pay-tab flex-1 py-2 rounded-lg text-sm font-medium transition" data-tab="paypal">免费</button>
       </div>
 
       <!-- WeChat QR -->
       <div id="qr-wechat" class="qr-panel">
-        <p class="text-xs text-gray-500 mb-3">截图二维码，用微信扫一扫支付</p>
-        <img src="assets/wechat-pay.jpg" alt="微信支付" class="mx-auto rounded-xl w-52">
+        <p class="text-xs text-gray-500 mb-3">所有工具完全免费使用</p>
+        <img src="assets/wechat-pay.jpg" alt="免费使用" class="mx-auto rounded-xl w-52">
         <p class="text-xs text-gray-400 mt-2">联系邮箱：hcw43446@gmail.com</p>
       </div>
 
       <!-- Alipay QR -->
       <div id="qr-alipay" class="qr-panel hidden">
-        <p class="text-xs text-gray-500 mb-3">截图二维码，用支付宝扫一扫支付</p>
-        <img src="assets/alipay-pay.jpg" alt="支付宝" class="mx-auto rounded-xl w-52">
-        <p class="text-xs text-gray-400 mt-2">支付宝昵称：VAN(**超)</p>
+        <p class="text-xs text-gray-500 mb-3">所有工具完全免费使用</p>
+        <img src="assets/alipay-pay.jpg" alt="免费使用" class="mx-auto rounded-xl w-52">
+        <p class="text-xs text-gray-400 mt-2">无需支付，无需注册</p>
       </div>
 
       <!-- PayPal -->
       <div id="qr-paypal" class="qr-panel hidden">
-        <p class="text-xs text-gray-500 mb-3">扫描二维码，用 PayPal 安全支付</p>
-        <img src="assets/paypal-pay.jpg" alt="PayPal" class="mx-auto rounded-xl w-52">
-        <p class="text-xs text-gray-400 mt-2">汇率约 ¥22，以 PayPal 显示为准（$2.99 USD）</p>
+        <p class="text-xs text-gray-500 mb-3">所有工具完全免费使用</p>
+        <img src="assets/paypal-pay.jpg" alt="免费使用" class="mx-auto rounded-xl w-52">
+        <p class="text-xs text-gray-400 mt-2">无需支付，无需注册</p>
       </div>
 
-      <p class="text-xs text-gray-400 mt-4" id="pw-contact">支付后点击"已付款，获取激活码"即可</p>
-      <button id="pw-activate-btn" class="mt-3 text-xs text-indigo-600 hover:text-indigo-800 underline">已付款，获取激活码 →</button>
+      <p class="text-xs text-gray-400 mt-4" id="pw-contact">所有工具完全免费使用，无需注册，无任何限制。</p>
+      <button id="pw-activate-btn" class="mt-3 text-xs text-indigo-600 hover:text-indigo-800 underline">免费使用</button>
     </div>
   </div>
 
@@ -1001,7 +1001,7 @@
           <button id="lic-copy-btn" class="bg-indigo-600 text-white px-4 py-3 rounded-xl font-medium hover:bg-indigo-700 transition text-sm">复制</button>
         </div>
         <button id="lic-activate-btn" class="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition">
-          激活解锁
+          开始使用
         </button>
         <p class="text-xs text-gray-400 mt-2">请使用提交审核时填写的邮箱激活</p>
       </div>
@@ -1009,7 +1009,7 @@
       <div id="lic-success" class="lic-step hidden">
         <div class="text-4xl mb-3">🎉</div>
         <p class="text-lg font-bold text-green-600">已激活！</p>
-        <p class="text-sm text-gray-500 mt-1">解锁成功，感谢购买</p>
+        <p class="text-sm text-gray-500 mt-1">欢迎使用</p>
         <button id="lic-done-btn" class="mt-4 bg-indigo-600 text-white px-6 py-2 rounded-xl font-medium hover:bg-indigo-700">开始使用 →</button>
       </div>
     </div>
@@ -1092,7 +1092,7 @@
       headerSub: '免费在线工具箱 · 无需注册 · 永不过期',
       useText: '今日已用 {n} 次',
       useWarn: '今日已用 {n} 次',
-      upgradeBtn: '升级解锁 ¥9.9',
+      upgradeBtn: '全部免费',
       unlocked: '已解锁！',
       adRemoved: '广告位已隐藏',
       excelTab: '📊 Excel处理',
@@ -1113,19 +1113,19 @@
       runBtn: '开始处理 →',
       renameBtn: '开始重命名 →',
       selectFirst: '选择功能 ↑',
-      paywallTitle: '升级解锁',
-      paywallDesc: '每日无限次使用所有工具，无任何限制<br>一次付费，永久解锁，无需订阅。',
-      paywallSubtitle: '终身解锁 · 永久使用 · 无订阅',
-      paywallPrice: '¥9.99',
+      paywallTitle: '完全免费',
+      paywallDesc: '所有工具完全免费使用，无需注册，无任何限制。',
+      paywallSubtitle: '所有工具完全免费 · 无需注册',
+      paywallPrice: '免费',
       paywallOriginal: '¥29',
       wechatScan: '截图二维码，用微信扫一扫支付',
       alipayScan: '截图二维码，用支付宝扫一扫支付',
       paypalScan: '汇率约 ¥22 via PayPal（$2.99 USD）',
-      lifetime: '终身解锁',
+      lifetime: '所有工具完全免费 · 无需注册',
       original: '原价 ¥29',
-      wechatPay: '微信支付 ¥9.9',
-      alipay: '支付宝支付 ¥9.9',
-      contact: '支付后点击"已付款，获取激活码"即可，无需额外联系',
+      wechatPay: '免费使用',
+      alipay: '免费使用',
+      contact: '所有工具完全免费使用，无需注册，无任何限制。',
       toastSelect: '请先选择功能',
       toastUpload: '请先上传文件',
       toastNoData: '没有数据',
@@ -1151,7 +1151,7 @@
       toastCompareDone: '对比完成：新增 {added} 行，删除 {removed} 行，相同 {same} 行',
       toastFileTooLarge: '文件超过 5MB：{name}',
       toastXlsxLoading: '正在加载 Excel 处理模块...',
-      toastPaymentPending: '支付功能开发中，支付后直接获取激活码',
+      toastPaymentPending: '免费使用',
       toastCoverDownloaded: '✅ 封面已下载！',
       toastPdfGenerating: '正在生成 PDF...',
       toastPdfDownloaded: '✅ PDF 已下载！',
@@ -1178,7 +1178,7 @@
       headerSub: 'Free Online Toolkit · No Registration · Forever Free',
       useText: 'Used {n} times today',
       useWarn: 'Used {n} times today',
-      upgradeBtn: 'Upgrade ¥9.9',
+      upgradeBtn: 'Free to Use',
       unlocked: 'Unlocked!',
       adRemoved: 'Ad removed',
       excelTab: '📊 Excel Tools',
@@ -1199,19 +1199,19 @@
       runBtn: 'Start →',
       renameBtn: 'Start Rename →',
       selectFirst: 'Select a tool ↑',
-      paywallTitle: 'Upgrade',
-      paywallDesc: 'Unlimited uses daily, no restrictions<br>One-time payment, lifetime access, no subscription.',
-      paywallSubtitle: 'Lifetime · Unlimited · No subscription',
-      paywallPrice: '¥9.99',
+      paywallTitle: 'Free to Use',
+      paywallDesc: 'All tools are completely free, with no registration and no limits.',
+      paywallSubtitle: 'All tools are free · No registration',
+      paywallPrice: 'Free',
       paywallOriginal: '¥29',
       wechatScan: 'Scan the QR code with WeChat',
       alipayScan: 'Scan the QR code with Alipay',
-      paypalScan: 'Rate ~¥22 via PayPal ($2.99 USD)',
-      lifetime: 'Lifetime',
+      paypalScan: 'No payment or registration required',
+      lifetime: 'All tools are free',
       original: 'Original ¥29',
-      wechatPay: 'WeChat Pay ¥9.9',
-      alipay: 'Alipay ¥9.9',
-      contact: 'Click "Paid, get activation code" after payment — no extra contact needed',
+      wechatPay: 'Free to Use',
+      alipay: 'Free to Use',
+      contact: 'All tools are completely free, with no registration and no limits.',
       toastSelect: 'Please select a function first',
       toastUpload: 'Please upload files first',
       toastNoData: 'No data',
@@ -1237,7 +1237,7 @@
       toastCompareDone: 'Compare complete: {added} added, {removed} removed, {same} unchanged',
       toastFileTooLarge: 'File exceeds 5MB: {name}',
       toastXlsxLoading: 'Loading Excel module...',
-      toastPaymentPending: 'Payment under development — get activation code directly after payment',
+      toastPaymentPending: 'Free to use',
       toastCoverDownloaded: '✅ Cover downloaded!',
       toastPdfGenerating: 'Generating PDF...',
       toastPdfDownloaded: '✅ PDF downloaded!',
@@ -2063,14 +2063,15 @@
 
   document.getElementById('removeAdBtn').addEventListener('click', () => {
     if (adRemoved) { showToast(t('unlocked')); return; }
-    document.getElementById('paywall-modal').classList.remove('hidden');
+    document.getElementById('paywall-modal').classList.add('hidden');
+    showToast('免费使用');
     // Switch to first tab
     document.querySelectorAll('.pay-tab').forEach((b, i) => b.classList.toggle('active', i === 0));
     document.querySelectorAll('.qr-panel').forEach((p, i) => p.classList.toggle('hidden', i !== 0));
   });
 
   // Paywall tab switching + dynamic price
-  const prices = { wechat: {price:'¥9.99', original:'¥29'}, alipay: {price:'¥9.99', original:'¥29'}, paypal: {price:'$2.99', original:'$8.99'} };
+  const prices = { wechat: {price:'免费', original:'¥29'}, alipay: {price:'免费', original:'¥29'}, paypal: {price:'免费', original:'$8.99'} };
   document.querySelectorAll('.pay-tab').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.pay-tab').forEach(b => b.classList.remove('active'));
@@ -2096,7 +2097,8 @@
   // Open license modal from "已付款，获取激活码" link
   document.getElementById('pw-activate-btn')?.addEventListener('click', () => {
     document.getElementById('paywall-modal').classList.add('hidden');
-    document.getElementById('license-modal').classList.remove('hidden');
+    document.getElementById('license-modal').classList.add('hidden');
+    showToast('免费使用');
     // Reset to step 1
     document.querySelectorAll('.lic-step').forEach(s => s.classList.add('hidden'));
     document.getElementById('lic-step-email').classList.remove('hidden');
@@ -2184,7 +2186,7 @@
         showToast(data.message || '激活失败');
       }
     } catch(e) { showToast('激活失败: ' + e.message); }
-    btn.textContent = '激活解锁'; btn.disabled = false;
+    btn.textContent = '开始使用'; btn.disabled = false;
   });
 
   // Done - close license modal
@@ -2355,7 +2357,7 @@
   async function excelRun() {
     if (excelProcessing) return;
     if (!adRemoved && dailyUses >= FREE_DAILY_LIMIT) {
-      document.getElementById('paywall-modal').classList.remove('hidden'); return;
+      document.getElementById('paywall-modal').classList.add('hidden'); showToast('免费使用'); return;
     }
     const runBtn = document.getElementById('excel-run');
     excelProcessing = true;
@@ -2700,7 +2702,7 @@
   async function imageRun() {
     if (imageProcessing) return;
     if (!adRemoved && dailyUses >= FREE_DAILY_LIMIT) {
-      document.getElementById('paywall-modal').classList.remove('hidden'); return;
+      document.getElementById('paywall-modal').classList.add('hidden'); showToast('免费使用'); return;
     }
     if (!imageFiles.length) { showToast(t('toastUploadImages')); return; }
     const runBtn = document.getElementById('image-run');
@@ -2958,7 +2960,7 @@
 
   function renameRun() {
     if (!adRemoved && dailyUses >= FREE_DAILY_LIMIT) {
-      document.getElementById('paywall-modal').classList.remove('hidden'); return;
+      document.getElementById('paywall-modal').classList.add('hidden'); showToast('免费使用'); return;
     }
     if (!renameFiles.length) return;
     recordUse();
