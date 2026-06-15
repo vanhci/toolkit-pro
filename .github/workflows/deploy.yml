@@ -20,15 +20,8 @@ jobs:
       - name: Install Wrangler
         run: npm install -g wrangler
 
-      - name: Build resume-optimizer
-        run: |
-          cd resume-optimizer
-          npm install
-          npm run build
-
       - name: Deploy to Cloudflare Pages
         run: |
-          cd resume-optimizer
-          wrangler pages deploy .next --project-name=toolkit-pro --commit-dirty=true --commit-message "deploy ${{ github.sha }}"
+          wrangler pages deploy . --project-name=toolkit-pro --commit-dirty=true --commit-message "deploy ${{ github.sha }}"
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
