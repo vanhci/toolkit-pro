@@ -676,7 +676,7 @@
         </div>
         <div id="excel-files" class="space-y-2 mb-4"></div>
         <div id="excel-options" class="hidden mb-4 p-4 bg-gray-50 rounded-xl"></div>
-        <button id="excel-run" class="hidden bg-indigo-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-indigo-700 transition disabled:opacity-50" onclick="excelRun()">
+        <button id="excel-run" class="hidden bg-indigo-600 text-white px-5 py-3 rounded-xl font-medium hover:bg-indigo-700 transition" onclick="excelRun()">
           开始处理 →
         </button>
       </div>
@@ -717,14 +717,14 @@
         <div id="image-guide-example" class="mt-3 p-3 bg-white rounded-lg border border-blue-100"></div>
       </div>
 
-      <div id="image-dropzone" class="drop-zone rounded-xl p-10 text-center cursor-pointer bg-white border border-gray-100 mb-4" onclick="document.getElementById('image-input').click()">
+      <div id="image-dropzone" class="drop-zone rounded-xl p-10 text-center cursor-pointer mb-4" onclick="document.getElementById('image-input').click()">
         <div class="text-4xl mb-3">🖼️</div>
         <p class="text-gray-700 font-medium">点击上传或拖拽图片</p>
         <p class="text-xs text-gray-400 mt-1">支持 PNG, JPG, WebP, GIF</p>
         <input type="file" id="image-input" class="hidden" multiple accept="image/*">
       </div>
       <div id="image-options" class="bg-white rounded-2xl border border-gray-100 p-6 mb-4"></div>
-      <button id="image-run" class="hidden bg-indigo-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-indigo-700 transition" onclick="imageRun()">
+      <button id="image-run" class="hidden bg-indigo-600 text-white px-5 py-3 rounded-xl font-medium hover:bg-indigo-700 transition" onclick="imageRun()">
         开始处理 →
       </button>
       </div>
@@ -790,7 +790,7 @@
               <input type="checkbox" id="rename-date" class="rounded"> <span id="rg-date-label">加日期</span>
             </label>
           </div>
-          <button id="rename-run" class="hidden w-full bg-indigo-600 text-white py-2.5 rounded-xl font-semibold hover:bg-indigo-700 transition" onclick="renameRun()">
+          <button id="rename-run" class="hidden w-full bg-indigo-600 text-white px-5 py-3 rounded-xl font-medium hover:bg-indigo-700 transition" onclick="renameRun()">
             开始重命名 →
           </button>
         </div>
@@ -836,7 +836,7 @@
           <label class="min-h-[44px] flex items-center gap-2"><input id="password-number" type="checkbox" checked> <span data-i18n="numberLabel">数字</span></label>
           <label class="min-h-[44px] flex items-center gap-2"><input id="password-symbol" type="checkbox" checked> <span data-i18n="symbolLabel">特殊字符</span></label>
         </div>
-        <button id="password-run" class="hidden block w-full max-w-xs mx-auto md:w-auto md:max-w-none md:mx-0 bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold" onclick="passwordRun()" data-i18n="generateBtn">生成</button>
+        <button id="password-run" class="hidden block w-full max-w-xs mx-auto md:w-auto md:max-w-none md:mx-0 bg-indigo-600 text-white px-5 py-3 rounded-xl font-medium" onclick="passwordRun()" data-i18n="generateBtn">生成</button>
         <div id="password-output" class="mt-5 space-y-2"></div>
       </div>
     </section>
@@ -857,7 +857,7 @@
       <div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="base64ImgSetMode('encode')"><div class="text-2xl mb-2">🎨</div><h3 class="font-semibold text-gray-900" data-i18n="base64Title">图片转 Base64</h3><p class="text-xs text-gray-500 mt-1" data-i18n="base64Desc">图片转base64、base64编码在线</p></div></div>
       <div id="base64-img-guide" class="mb-4 md:mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="base64Guide">上传图片后输出 Data URI 或纯 Base64。</div>
       <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
-        <div id="base64-dropzone" class="drop-zone rounded-xl p-10 text-center cursor-pointer" onclick="document.getElementById('base64-input').click()"><div class="text-4xl mb-3">🖼️</div><p class="text-gray-700 font-medium" data-i18n="uploadImage">点击上传或拖拽图片</p><input id="base64-input" type="file" accept="image/*" class="hidden"></div>
+        <div id="base64-dropzone" class="drop-zone rounded-xl p-10 text-center cursor-pointer mb-4" onclick="document.getElementById('base64-input').click()"><div class="text-4xl mb-3">🖼️</div><p class="text-gray-700 font-medium" data-i18n="uploadImage">点击上传或拖拽图片</p><input id="base64-input" type="file" accept="image/*" class="hidden"></div>
         <label class="min-h-[44px] flex items-center gap-2 text-sm"><input id="base64-datauri" type="checkbox" checked> <span data-i18n="dataUriLabel">输出为 data URI 格式</span></label>
         <img id="base64-preview" class="hidden max-h-40 rounded-xl border border-gray-200" alt="preview">
         <textarea id="base64-output" rows="8" class="w-full border border-gray-200 rounded-xl text-sm p-3 code-output" readonly></textarea>
@@ -911,7 +911,7 @@
     <section id="tool-pdf-img" class="tool-panel hidden">
       <div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-6"><div class="tool-card bg-white rounded-2xl p-5 border border-gray-100 cursor-pointer" onclick="pdfImgSetMode('convert')"><div class="text-2xl mb-2">📁</div><h3 class="font-semibold text-gray-900" data-i18n="pdfImgTitle">PDF 转图片</h3><p class="text-xs text-gray-500 mt-1" data-i18n="pdfImgDesc">pdf转图片在线、pdf转png</p></div></div>
       <div id="pdf-img-guide" class="mb-4 md:mb-5 p-4 bg-blue-50 rounded-xl text-sm text-blue-800 hidden" data-i18n="pdfImgGuide">上传 PDF 后逐页渲染为 PNG，可打包下载 ZIP。</div>
-      <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-4"><div id="pdf-img-dropzone" class="drop-zone rounded-xl p-10 text-center cursor-pointer" onclick="document.getElementById('pdf-img-input').click()"><div class="text-4xl mb-3">📄</div><p class="text-gray-700 font-medium" data-i18n="uploadPdf">点击上传或拖拽 PDF</p><input id="pdf-img-input" type="file" accept="application/pdf" class="hidden"></div><button class="w-full max-w-xs mx-auto md:w-auto md:max-w-none md:mx-0 bg-indigo-600 text-white px-5 py-3 rounded-xl hidden" id="pdf-img-run" onclick="pdfImgRun()" data-i18n="convertBtn">转换</button><button class="w-full max-w-xs mx-auto md:w-auto md:max-w-none md:mx-0 bg-indigo-600 text-white px-5 py-3 rounded-xl hidden" id="pdf-img-download" onclick="pdfImgDownloadZip()" data-i18n="downloadZipBtn">全部下载 ZIP</button><div id="pdf-img-output" class="space-y-4"></div></div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-4"><div id="pdf-img-dropzone" class="drop-zone rounded-xl p-10 text-center cursor-pointer mb-4" onclick="document.getElementById('pdf-img-input').click()"><div class="text-4xl mb-3">📄</div><p class="text-gray-700 font-medium" data-i18n="uploadPdf">点击上传或拖拽 PDF</p><input id="pdf-img-input" type="file" accept="application/pdf" class="hidden"></div><button class="w-full max-w-xs mx-auto md:w-auto md:max-w-none md:mx-0 bg-indigo-600 text-white px-5 py-3 rounded-xl hidden" id="pdf-img-run" onclick="pdfImgRun()" data-i18n="convertBtn">转换</button><button class="w-full max-w-xs mx-auto md:w-auto md:max-w-none md:mx-0 bg-indigo-600 text-white px-5 py-3 rounded-xl hidden" id="pdf-img-download" onclick="pdfImgDownloadZip()" data-i18n="downloadZipBtn">全部下载 ZIP</button><div id="pdf-img-output" class="space-y-4"></div></div>
     </section>
 
     <!-- TOOL: CONVERT -->
@@ -987,7 +987,7 @@
 
       <div id="lic-step-email" class="lic-step">
         <input type="email" id="lic-email" placeholder="your@email.com" class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm mb-3">
-        <button id="lic-send-btn" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition">
+        <button id="lic-send-btn" class="w-full bg-indigo-600 text-white px-5 py-3 rounded-xl font-medium hover:bg-indigo-700 transition">
           提交审核请求
         </button>
         <p class="text-xs text-gray-400 mt-2">请付款后将截图发送至 hcw43446@gmail.com</p>
@@ -998,7 +998,7 @@
         <p class="text-xs text-green-600 font-medium mb-2">请输入管理员发送给您的激活码：</p>
         <div class="flex gap-2 mb-3">
           <input type="text" id="lic-key" placeholder="TKP-XXXXXX-XXXXXX" class="flex-1 px-4 py-3 border border-gray-200 rounded-xl text-sm font-mono" style="letter-spacing:2px">
-          <button id="lic-copy-btn" class="bg-indigo-600 text-white px-4 py-3 rounded-xl font-medium hover:bg-indigo-700 transition text-sm">复制</button>
+          <button id="lic-copy-btn" class="bg-indigo-600 text-white px-5 py-3 rounded-xl font-medium hover:bg-indigo-700 transition">复制</button>
         </div>
         <button id="lic-activate-btn" class="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition">
           开始使用
@@ -1010,7 +1010,7 @@
         <div class="text-4xl mb-3">🎉</div>
         <p class="text-lg font-bold text-green-600">已激活！</p>
         <p class="text-sm text-gray-500 mt-1">欢迎使用</p>
-        <button id="lic-done-btn" class="mt-4 bg-indigo-600 text-white px-6 py-2 rounded-xl font-medium hover:bg-indigo-700">开始使用 →</button>
+        <button id="lic-done-btn" class="mt-4 bg-indigo-600 text-white px-5 py-3 rounded-xl font-medium hover:bg-indigo-700">开始使用 →</button>
       </div>
     </div>
   </div>
@@ -1059,7 +1059,7 @@
         <a id="feedback-email" href="mailto:hcw43446@gmail.com" class="text-sm font-semibold text-indigo-700 break-all">hcw43446@gmail.com</a>
       </div>
       <div class="feedback-actions mt-5 flex gap-3 justify-end">
-        <a id="feedback-mailto" href="mailto:hcw43446@gmail.com?subject=ToolKit%20Pro%20%E5%8F%8D%E9%A6%88" class="inline-flex items-center justify-center bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition">
+        <a id="feedback-mailto" href="mailto:hcw43446@gmail.com?subject=ToolKit%20Pro%20%E5%8F%8D%E9%A6%88" class="inline-flex items-center justify-center bg-indigo-600 text-white px-5 py-3 rounded-xl font-medium hover:bg-indigo-700 transition">
           发送邮件
         </a>
         <button id="feedback-close" type="button" class="inline-flex items-center justify-center bg-gray-100 text-gray-700 px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-200 transition">
