@@ -56,7 +56,7 @@
       --line: rgba(148, 163, 184, .22);
       --panel: rgba(255, 255, 255, .84);
     }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; overflow-x: clip; }
     body {
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
@@ -65,7 +65,7 @@
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
+    overflow-x: clip;
     background:
       radial-gradient(circle at 10% 6%, rgba(59, 130, 246, 0.16), transparent 28rem),
       radial-gradient(circle at 88% 10%, rgba(14, 165, 233, 0.12), transparent 26rem),
@@ -519,6 +519,8 @@
         gap: .65rem !important;
       }
       header .max-w-6xl, nav .max-w-6xl, main {
+        max-width: 100vw !important;
+        width: 100% !important;
         padding-left: 0.75rem !important;
         padding-right: 0.75rem !important;
         align-items: flex-start;
