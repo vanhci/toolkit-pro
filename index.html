@@ -62,12 +62,14 @@
     padding-bottom: env(safe-area-inset-bottom);
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at 10% 6%, rgba(59, 130, 246, 0.16), transparent 28rem),
-        radial-gradient(circle at 88% 10%, rgba(14, 165, 233, 0.12), transparent 26rem),
-        linear-gradient(180deg, #F8FBFF 0%, #EAF4FF 46%, #F8FAFC 100%);
-      color: var(--ink);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background:
+      radial-gradient(circle at 10% 6%, rgba(59, 130, 246, 0.16), transparent 28rem),
+      radial-gradient(circle at 88% 10%, rgba(14, 165, 233, 0.12), transparent 26rem),
+      linear-gradient(180deg, #F8FBFF 0%, #EAF4FF 46%, #F8FAFC 100%);
+    color: var(--ink);
       animation: pageRise .42s ease both;
     }
     body::before {
@@ -613,7 +615,7 @@
   </nav>
 
   <!-- MAIN CONTENT -->
-  <main class="max-w-6xl mx-auto px-4 py-6">
+  <main class="max-w-6xl mx-auto px-4 py-6 flex-1">
 
     <!-- 最近使用 - 顶部紧凑横条，跟随内容滚动 -->
     <div id="recent-tools" class="recent-strip flex gap-2 overflow-x-auto pb-1 mb-4 items-center" style="scrollbar-width:none;-ms-overflow-style:none;"></div>
