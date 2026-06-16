@@ -56,7 +56,7 @@
       --line: rgba(148, 163, 184, .22);
       --panel: rgba(255, 255, 255, .84);
     }
-    html { scroll-behavior: smooth; overflow-x: clip; }
+    html { scroll-behavior: smooth; }
     body {
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
@@ -65,7 +65,7 @@
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    overflow-x: clip;
+    overflow-x: hidden;
     background:
       radial-gradient(circle at 10% 6%, rgba(59, 130, 246, 0.16), transparent 28rem),
       radial-gradient(circle at 88% 10%, rgba(14, 165, 233, 0.12), transparent 26rem),
