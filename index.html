@@ -202,8 +202,15 @@
       animation: cardFadeIn .38s ease both;
       transform-origin: center bottom;
     }
+    .tool-content {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100%;
+    }
     .tool-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-left: 0 !important;
+      margin-right: 0 !important;
     }
     .tool-card h3,
     .tool-card p {
@@ -620,7 +627,7 @@
   </nav>
 
   <!-- MAIN CONTENT -->
-  <main class="max-w-full md:max-w-6xl mx-auto px-4 py-6 flex-1">
+  <main class="max-w-full lg:max-w-6xl mx-auto px-4 py-6 w-full" style="min-height:calc(100dvh - 140px)">
 
     <!-- 最近使用 - 顶部紧凑横条，跟随内容滚动 -->
     <div id="recent-tools" class="recent-strip flex gap-2 overflow-x-auto pb-1 mb-4 items-center" style="scrollbar-width:none;-ms-overflow-style:none;"></div>
@@ -1050,7 +1057,7 @@
   </div>
 
   <!-- TOAST -->
-  <div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-5 py-3 rounded-full text-sm font-medium shadow-xl z-50">
+  <div id="toast" class="hidden fixed top-24 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-5 py-3 rounded-full text-sm font-medium shadow-xl z-50">
   </div>
 
   <!-- BOTTOM AD SLOT -->
